@@ -13,15 +13,14 @@
   <form class="w-96" id="user-register-form" action="/auth/register" method="post"
     enctype="application/x-www-form-urlencoded">
     <%- include("../../partials/atoms/AuthHeading", authData.authHeading) %>
-
       <ul class="space-y-6">
         <% authData.inputFields.forEach((field)=> { %>
           <%- include("../../partials/atoms/inputField.ejs", { ...field }) %>
             <% }) %>
-              <!-- error box started -->
+              <!-- ====================error box started==================== -->
               <li id="error-box" class="hidden p-4 mb-4 text-sm  text-red-800 rounded-lg bg-red-50 dark:text-red-400">
               </li>
-              <!-- error box ended -->
+              <!-- ====================error box ended==================== -->
               <li class="pt-4">
                 <button
                   class="w-full  flex justify-center items-center gap-3 rounded-xl bg-[#1A1A1A] py-4 text-white hover:cursor-pointer hover:bg-black"
