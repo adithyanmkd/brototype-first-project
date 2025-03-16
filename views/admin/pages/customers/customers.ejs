@@ -1,0 +1,92 @@
+<div class="max-w-4xl mx-auto mt-6">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">Customer List</h2>
+
+  <!-- search field started -->
+  <div class="mb-4">
+    <form action="/admin/customers" method="GET" class="flex items-center space-x-2 mb-4">
+      <input type="text" name="search" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+        placeholder="Search by name or email..." />
+      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+        Search
+      </button>
+      <a href="/admin/customers" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
+        Clear
+      </a>
+    </form>
+  </div>
+  <!-- search field ended --> 
+
+  <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+    <table class="w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-200 text-gray-700">
+          <% const tableHeaders=["Profile", "Name" , "Email" , "Role" , "Actions" ]; %>
+            <% tableHeaders.forEach(header=> { %>
+              <th class="p-3 text-left">
+                <%= header %>
+              </th>
+              <% }) %>
+        </tr>
+      </thead>
+      <tbody id="customerTable">
+        <% users.forEach(user=> { %>
+          <tr class="border-b hover:bg-gray-100 transition">
+            <td class="p-3">
+              <img src="<%= user.profilePic %>" alt="Profile Pic" class="w-12 h-12 rounded-full border">
+            </td>
+            <td class="p-3">
+              <%= user.name %>
+            </td>
+            <td class="p-3">
+              <%= user.email %>
+            </td>
+            <td class="p-3">
+              <span class="px-3 py-1 rounded-md bg-blue-100 text-blue-600 font-medium">
+                <%= user.role %>
+              </span>
+            </td>
+            <td class="p-3">
+              <button onclick="showModal('<%= user._id %>', '<%= user.isBlocked %>')" class="px-4 py-2 rounded-md text-white font-medium 
+                    <%= user.isBlocked ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600' %>">
+                <%= user.isBlocked ? 'Unblock' : 'Block' %>
+              </button>
+            </td>
+          </tr>
+          <% }) %>
+      </tbody>
+    </table>
+    <!-- Pagination -->
+    <div class="flex justify-center space-x-2 mt-4">
+      <% if (page> 1) { %>
+        <a href="/admin/customers?page=<%= page - 1 %>"
+          class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Previous</a>
+        <% } %>
+
+          <% for (let i=1; i <=totalPages; i++) { %>
+            <a href="/admin/customers?page=<%= i %>"
+              class="px-3 py-2 rounded-lg <%= page === i ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300' %>">
+              <%= i %>
+            </a>
+            <% } %>
+
+              <% if (page < totalPages) { %>
+                <a href="/admin/customers?page=<%= page + 1 %>"
+                  class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Next</a>
+                <% } %>
+    </div>
+  </div>
+</div>
+<!-- Add this modal at the bottom of your user listing page -->
+<div id="confirmationModal" class="hidden fixed inset-0 bg-black/70  items-center justify-center">
+  <div class="bg-white p-6 rounded-lg w-96">
+    <h3 class="text-xl font-bold mb-4" id="modalTitle">Confirm Action</h3>
+    <p id="modalMessage">Are you sure you want to perform this action?</p>
+    <div class="mt-6 flex justify-end gap-4">
+      <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+      <button onclick="confirmAction()"
+        class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="/javascript/ajax/customers/customers.js"></script>
