@@ -1,0 +1,128 @@
+<div class="container mx-auto px-4">
+    <!-- Hero Section -->
+    <section class="py-16 text-center">
+        <h1 class="text-4xl font-bold">
+            AWARD WINNING <br />
+            #1 LUXURY MATTRESS
+        </h1>
+        <p class="mt-4">
+            Discover furniture that is both sustainable and environmentally
+            responsible. Our premium-certified foam maximizes comfort, reducing waste
+            and preserving the planet for future generations.
+        </p>
+        <button class="mt-6 rounded bg-black px-6 py-3 text-white">
+            SHOP MATTRESS
+        </button>
+    </section>
+
+    <!-- Best Seller Section -->
+    <section class="py-16">
+        <h2 class="text-center text-3xl font-bold">Best Seller</h2>
+        <div class="container mx-auto mt-8">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+                <% bestSellers.forEach((product)=> { %>
+                    <%- include("../../partials/organisms/bestSellerCard.ejs", { product }) %>
+                        <% }) %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guarantee Section -->
+    <section class="bg-gray-100 py-16 text-center">
+        <h2 class="text-2xl font-bold">
+            WE'VE GOT YOU COVERED: <br />
+            THE GUARANTEE
+        </h2>
+        <div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+            <div>
+                <h3 class="font-semibold">Sleep Tight: 101 Nights Risk-Free</h3>
+                <p>
+                    Enjoy 101 nights of risk-free comfort. If it’s not for you, return it
+                    hassle-free.
+                </p>
+            </div>
+            <div>
+                <h3 class="font-semibold">20 Awards Winning</h3>
+                <p>
+                    Our products are recognized for their unmatched quality and comfort.
+                </p>
+            </div>
+            <div>
+                <h3 class="font-semibold">Made in USA</h3>
+                <p>Crafted with sustainable materials for a better planet.</p>
+            </div>
+            <div>
+                <h3 class="font-semibold">Free Shipping in 1-4 Days</h3>
+                <p>Fast and free shipping to your doorstep.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-16 text-center">
+        <h2 class="text-2xl font-bold">
+            12,000+ SATISFIED SLEEPERS <br />
+            And Counting
+        </h2>
+        <div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+            <blockquote class="border-l-4 border-gray-600 pl-4">
+                <p>
+                    "I love my new mattress! It’s so comfortable and perfect for my
+                    sleep."
+                </p>
+                <cite>— Happy Customer</cite>
+            </blockquote>
+            <blockquote class="border-l-4 border-gray-600 pl-4">
+                <p>
+                    "Incredible support and softness! Highly recommend this to everyone."
+                </p>
+                <cite>— Satisfied Sleeper</cite>
+            </blockquote>
+            <blockquote class="border-l-4 border-gray-600 pl-4">
+                <p>"Changed my sleeping habits for the better. Worth every penny!"</p>
+                <cite>— Sleep Lover</cite>
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="bg-gray-100 py-16 text-center">
+        <h2 class="text-2xl font-bold">QUESTIONS? WE’VE GOT ANSWERS.</h2>
+        <div class="mx-auto mt-8 max-w-2xl space-y-4 text-left">
+            <details class="rounded border border-gray-300 p-4">
+                <summary class="font-semibold">
+                    What Is The Different Between Fully Mattress?
+                </summary>
+                <p class="mt-2">
+                    Our full-size mattresses offer balanced support and comfort for all
+                    sleepers.
+                </p>
+            </details>
+            <details class="rounded border border-gray-300 p-4">
+                <summary class="font-semibold">What Is Hybrid Mattress Means?</summary>
+                <p class="mt-2">
+                    A hybrid mattress combines foam and coils for optimal comfort and
+                    support.
+                </p>
+            </details>
+            <details class="rounded border border-gray-300 p-4">
+                <summary class="font-semibold">
+                    Does Your Return Policy Work With The 101 Sleep Trial?
+                </summary>
+                <p class="mt-2">
+                    Yes! You can return your mattress within 101 nights if it’s not a
+                    perfect fit.
+                </p>
+            </details>
+            <details class="rounded border border-gray-300 p-4">
+                <summary class="font-semibold">
+                    What Is The Weight Capacity Of The Puffy Mattress?
+                </summary>
+                <p class="mt-2">
+                    Our mattresses support various weights while ensuring long-lasting
+                    durability.
+                </p>
+            </details>
+        </div>
+    </section>
+</div>

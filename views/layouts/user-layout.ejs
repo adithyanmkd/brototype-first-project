@@ -4,13 +4,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%- title %></title>
+  <title>Document</title>
   <link rel="stylesheet" href="/style/output.css" />
+
+  <!-- poppins font started -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <!-- poppins font ended -->
 </head>
 
-<body>
-  <main><%- body %></main>
-  <script src=""></script>
+<body class="h-screen font-[Poppins]">
+  <%- include('../user/partials/organisms/navbar.ejs') %>
+    <main id="content" class="pt-28"><%- body %></main>
+    <%- include('../user/partials/organisms/footer.ejs') %>
 </body>
 
 </html>

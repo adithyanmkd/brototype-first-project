@@ -1,0 +1,10 @@
+<ul class="flex space-x-8 text-gray-700">
+  <% navLinks.forEach((link)=> { %>
+    <li class="relative">
+      <a href="<%- link.url %>" class="font-medium"><%- link.name %></a>
+      <% if (link.active) { %>
+        <div class="absolute left-0 w-full h-[2px] bg-black"></div>
+        <% } %>
+    </li>
+    <% }) %>
+</ul>

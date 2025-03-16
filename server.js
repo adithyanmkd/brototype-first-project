@@ -6,11 +6,11 @@ import expressLayouts from 'express-ejs-layouts'
 import session from 'express-session'
 
 // import config modules
-import connectDB from "./config/database.js";
+import connectDB from "./config/database.js"; // database config
+import passport from './config/passport.js' // for google sign in
 
 //importing routes
 import userRouter from './routes/user/index.js'
-
 
 const app = express()
 

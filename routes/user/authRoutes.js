@@ -1,7 +1,10 @@
 import express from "express";
 
+// import config modules
+import passport from "../../config/passport.js";
+
 // import controllers
-import authController from '../../controller/user/authController.js'
+import authController from '../../controllers/user/authController.js'
 
 const router = express.Router()
 
@@ -19,6 +22,21 @@ router.get("/forget-password", authController.getForgetPassword) // get forget p
 router.post("/forget-password", authController.postForgetPassword) // post forget password
 router.get("/change-password", authController.getChangePassword) // get change password
 router.post("/change-password", authController.postChangePassword) // post change password
+
+// Google login route
+router.get(
+    '/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] }),
+)
+
+// Google callback route
+router.get(
+    '/google/callback',
+    passport.authenticate('google', { failureRedirect: '/auth/login' }),
+    (req, res) => {
+        res.redirect('/') // Redirect to home on success
+    },
+)
 
 
 // export routes
