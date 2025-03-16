@@ -8,6 +8,10 @@ const loginAuthHeading = {
   description: "We are glad to see you back with us"
 }
 
+const adminLoginAuthHeading = {
+  title: "Welcome Admin",
+  description: "We are glad to see you back with us"
+}
 const forgetAuthHeading = {
   title: "Forgot Password?",
   description: "Enter your email to receive a password reset link."
@@ -69,6 +73,31 @@ const registerInputFields = [
   },
 ]
 
+const adminInputFields = [
+  {
+    icon: {
+      iconSrc: "/images/icons/user.svg",
+      altText: "user icon"
+    },
+    name: "username",
+    id: 'username',
+    floatName: "Username",
+    type: "text",
+    placeholder: "Enter your username"
+  },
+  {
+    icon: {
+      iconSrc: "/images/icons/lock.svg",
+      altText: "lock icon"
+    },
+    id: 'password',
+    name: "password",
+    floatName: "Password",
+    type: "password",
+    placeholder: "Enter your password"
+  }
+]
+
 const forgetInputFields = [
   {
     icon: {
@@ -117,7 +146,9 @@ const authData = {
   loginAuthHeading,
   forgetAuthHeading,
   forgetInputFields,
-  changePassinputFields
+  changePassinputFields,
+  adminLoginAuthHeading,
+  adminInputFields
 }
 
 export default authData

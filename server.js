@@ -7,10 +7,10 @@ import session from 'express-session'
 
 // import config modules
 import connectDB from "./config/database.js"; // database config
-import passport from './config/passport.js' // for google sign in
 
 //importing routes
 import userRouter from './routes/user/index.js'
+import adminRouter from './routes/admin/index.js'
 
 const app = express()
 
@@ -49,9 +49,7 @@ app.use(express.static(path.join(__dirname, 'public'))) //serve static files (im
 
 //router
 app.use('/', userRouter)
-// app.use('/admin', adminRouter)
-
-
+app.use('/admin', adminRouter)
 
 // connect db
 connectDB()

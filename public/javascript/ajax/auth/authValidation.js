@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	if (pathname.includes("/auth/register")) userRegister()
 	else if (pathname.includes("/auth/otp-verify")) otpVerify()
+	else if (pathname.includes("/admin/auth/login")) adminLogin()
 	else if (pathname.includes("/auth/login")) userLogin()
 	else if (pathname.includes("/auth/forget-password")) forgetPassword()
 	else if (pathname.includes("/auth/change-password")) changePassword()
@@ -374,6 +375,49 @@ document.addEventListener("DOMContentLoaded", () => {
 					Error: error,
 					DeveloperNote: 'Error from change password ajax',
 				})
+			}
+		})
+	}
+
+	function adminLogin() {
+		const loginForm = document.querySelector('#admin-login-form')
+
+		loginForm.addEventListener('submit', async (e) => {
+			e.preventDefault()
+
+			const username = loginForm.querySelector("[name='username']").value.trim()
+			const password = loginForm.querySelector("[name='password']").value.trim()
+
+			if (!username && !password) {
+				displayError('All field required')
+				return
+			} else if (!username) {
+				displayError('Please enter your username')
+				return
+			} else if (!password) {
+				displayError('Please enter password')
+				return
+			}
+
+			// hide error box
+			hideError()
+
+			try {
+				const response = await fetch('/admin/auth/login', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ username, password }),
+				})
+
+				const data = await response.json()
+
+				if (response.ok) {
+					window.location.href = '/admin'
+				} else {
+					displayError(data.message)
+				}
+			} catch (error) {
+				console.error({ Error: error })
 			}
 		})
 	}

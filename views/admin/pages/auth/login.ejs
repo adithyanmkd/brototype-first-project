@@ -1,0 +1,37 @@
+<div class="h-full items-center justify-evenly md:flex md:flex-row-reverse">
+
+  <!-- auth image passing -->
+  <%- include("../../partials/atoms/authImage.ejs", authData.authImage) %>
+
+    <!-- login form started -->
+    <form class="w-96" id="admin-login-form" action="/admin/auth/login" method="post"
+      enctype="application/x-www-form-urlencoded">
+      <%- include("../../partials/atoms/authHeading.ejs", authData.adminLoginAuthHeading) %>
+        <ul class="space-y-6">
+          <li id="success-box" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 hidden">
+          </li>
+
+          <% authData.adminInputFields.forEach((field)=> { %>
+            <%- include("../../partials/atoms/inputField.ejs", {...field}) %>
+              <% }) %>
+
+                <!-- error message box started -->
+                <li id="error-box" class="p-4 mb-4 text-sm text-red-800 rounded-lg hidden bg-red-50 dark:text-red-400">
+                </li>
+                <!-- error message box ended -->
+
+                <li id="client-error-box"
+                  class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:text-red-400 hidden">
+                  <p id="client-error-box-p"></p>
+                </li>
+                <!-- client side error box ended -->
+                <li class="pt-4">
+                  <button class="w-full rounded-xl bg-[#1A1A1A] py-4 text-white hover:cursor-pointer hover:bg-black"
+                    type="submit">
+                    Login
+                  </button>
+                </li>
+        </ul>
+    </form>
+    <!-- login form ended -->
+</div>
