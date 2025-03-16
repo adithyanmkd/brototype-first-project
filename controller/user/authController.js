@@ -30,7 +30,6 @@ const postRegister = async (req, res) => {
         return res.status(400).json({ error: errors.email });
     }
 
-
     // hashed password
     const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -123,6 +122,138 @@ const getResendOtp = async (req, res) => {
     }
 }
 
+//get login
+const getLogin = (req, res) => {
+    res.render('user/pages/auth/login', {
+        layout: 'layouts/auth-layout.ejs',
+        title: 'login',
+        authData
+    })
+}
+
+// check login credentials
+const postLogin = async (req, res) => {
+    const { email, password } = req.body
+
+    if (!validator.isEmail(email) || /[#$/%^&*]/.test(email)) {
+        return res.status(400).json({ error: 'Invalid email format!' })
+    }
+
+    try {
+        const user = await User.findOne({ email }) // fetch user
+
+        // if not user redirecting into login with message
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' })
+        }
+
+        // if user is a google user
+        if (user.isGoogleUser) {
+            return res.status(403).json({
+                error: 'You signed up with Google. Please log in using Google Sign-In.',
+            })
+        }
+
+        // if user blocked by admin
+        if (user.isBlocked) {
+            return res
+                .status(403)
+                .json({ error: 'Your account is currently blocked.' })
+        }
+
+        //compare form password and database password
+        const isMatch = await bcrypt.compare(password, user.password)
+
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid password.' })
+        }
+        req.session.user = user
+        res.json({ success: true, message: 'Login successful' })
+    } catch (error) {
+        res.json({ Error: error, DeveloperError: 'post login error' })
+    }
+}
+
+// get forget password
+const getForgetPassword = (req, res) => {
+    res.render('user/pages/auth/forgetPassword', {
+        layout: 'layouts/auth-layout.ejs',
+        title: 'login',
+        authData
+    })
+}
+
+// post forget password
+const postForgetPassword = async (req, res) => {
+    const { email } = req.body
+
+    try {
+        if (!validator.isEmail(email) || /[#$/%^&*]/.test(email)) {
+            return res.status(400).json({ error: 'Invalid email format!' })
+        }
+
+        const user = await User.findOne({ email }) // finding user
+
+        // checking user is exist
+        if (!user) {
+            return res.status(404).json({ error: 'User not found!' })
+        }
+
+        // generate OTP
+        const otp = generateOTP()
+        const otpExpiry = Date.now() + 10 * 60 * 100 // OTP expires in 10 minutes
+
+        console.log(`Generated otp is: ${otp}`)
+
+        user.otp = otp
+        user.otpExpires = otpExpiry
+        await user.save()
+
+        await sendOTP(email, otp) // send OTP to mail
+        req.session.tempEmail = email
+        req.session.isChangingPassword = true
+
+        res.status(200).json({ success: true, message: 'OTP sent successfully.' })
+    } catch (error) {
+        res.json({
+            Error: error,
+            DeveloperNote: 'error from post forget password controller',
+        })
+    }
+}
+
+// get change password
+const getChangePassword = (req, res) => {
+    res.render('user/pages/auth/changePassword', {
+        layout: 'layouts/auth-layout.ejs',
+        title: 'login',
+        authData
+    })
+}
+
+// post change password
+const postChangePassword = async (req, res) => {
+    const email = req.session.tempEmail
+    const { confirmPassword } = req.body
+
+    try {
+        const hashedPassword = await bcrypt.hash(confirmPassword, 10) // password hashing
+
+        const user = await User.findOne({ email })
+        user.password = hashedPassword
+        await user.save()
+
+        // req.flash('success', 'password changed successfully!')
+        // res.redirect('/auth/login')
+        res.status(200).json({ success: true })
+    } catch (error) {
+        res.json({
+            Error: error,
+            DeveloperNote: 'error from post change password controller',
+        })
+    }
+}
+
 
 // exporting auth controllers
 const authController = {
@@ -130,7 +261,13 @@ const authController = {
     postRegister,
     getOtpVerify,
     postOtpVerify,
-    getResendOtp
+    getResendOtp,
+    getLogin,
+    postLogin,
+    getForgetPassword,
+    postForgetPassword,
+    getChangePassword,
+    postChangePassword
 }
 
 export default authController
