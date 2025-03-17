@@ -4,7 +4,7 @@ import validator from "validator"
 import authData from "../../datasets/authData.js"
 
 //import model
-import { User } from '../../model/index.js'
+import { User } from '../../models/index.js'
 import { generateOTP, sendOTP } from '../../utils/otpHelper.js'
 
 // get register page 

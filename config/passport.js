@@ -1,6 +1,6 @@
 import passport from 'passport'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
-import { User } from '../model/index.js'
+import { User } from '../models/index.js'
 
 // import util functions
 import { saveProfileImage } from '../utils/saveProfileImage.js'

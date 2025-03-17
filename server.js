@@ -42,8 +42,8 @@ app.use(
     }),
 )
 
-app.use(express.urlencoded({ extended: true })) // Enables parsing of form data
 app.use(express.json()) // Enables JSON parsing (for APIs)
+app.use(express.urlencoded({ extended: true })) // Enables parsing of form data
 app.use(expressLayouts) // Use express-ejs-layouts
 app.use(express.static(path.join(__dirname, 'public'))) //serve static files (images, js, CSS)
 
