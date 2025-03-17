@@ -1,7 +1,7 @@
 const errorModal = document.getElementById('errorModal');
 const backendErrorText = document.getElementById('backendErrorText');
 const categoryForm = document.querySelector("#categoryFormElement")
-
+const categoryImageInput = document.getElementById('categoryImageInput')
 
 let errorTimeout // Store timeout reference
 
@@ -77,7 +77,6 @@ function saveImage() {
 
             thumbnailContainer.appendChild(img);
             document.getElementById('imagePreviewContainer').classList.add("hidden");
-            console.log(blob)
             blobImage = blob
         }
     })
@@ -85,7 +84,7 @@ function saveImage() {
 
 let cropper;
 
-document.getElementById('categoryImageInput').addEventListener('change', (e) => {
+categoryImageInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
         const reader = new FileReader();
@@ -141,7 +140,6 @@ categoryForm.addEventListener("submit", async (e) => {
     hideError()
 
     formData.append('categoryImageInput', categoryImageInput[0]);
-    console.log(categoryImageInput[0])
     try {
         const response = await fetch("/admin/categories/add", {
             method: 'POST',
@@ -154,7 +152,7 @@ categoryForm.addEventListener("submit", async (e) => {
             console.log("successfully added images into backend")
             window.location.href = '/admin/categories'
         } else {
-            console.log(data.error)
+            displayError(data.error)
         }
     } catch (error) {
         console.log("error in ajax form submit")

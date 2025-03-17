@@ -19,7 +19,12 @@ const postAddCategory = async (req, res) => {
     /.*\/public\//,
     '/',
   )
-  console.log(imgObj)
+
+  const category = await Category.findOne({ name: categoryName })
+
+  if (category) {
+    return res.status(409).json({ error: "Category already exists" })
+  }
 
   try {
     // Create new category
