@@ -15,12 +15,11 @@ router.get('/', categoryController.getCategoryList) // list all categories
 router.get('/add', categoryController.getAddCategory) // add category
 router.post('/add', uploadFields, categoryController.postAddCategory) // saving new category
 router.post('/:id/delete', categoryController.deleteCategory) // delete category
-// router.get('/edit/:id', categoryController.editCategory) // edit category
-// router.post(
-//     '/edit/:id',
-//     upload.single('image'),
-//     categoryController.postEditCategory,
-// ) // post edit controller
+router.get('/edit/:id', categoryController.editCategory) // edit category
+router.post(
+    '/edit/:id',
+    categoryController.postEditCategory,
+) // post edit controller
 
 // export router
 export default router

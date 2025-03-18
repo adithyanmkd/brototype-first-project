@@ -91,11 +91,12 @@ const deleteCategory = async (req, res) => {
   }
 }
 
-// edit category
+// get edit category
 const editCategory = async (req, res) => {
   try {
     const categoryId = req.params.id
     const category = await Category.findById(categoryId)
+    console.log(category)
 
     if (!category) {
       return res.status(404).render('admin/pages/categories/EditCategory', {
@@ -117,8 +118,10 @@ const editCategory = async (req, res) => {
 
 // post edit category
 const postEditCategory = async (req, res) => {
+  console.log("here")
   try {
     const categoryId = req.params.id
+    console.log(categoryId)
     const category = await Category.findById(categoryId)
 
     if (!category) {
@@ -126,6 +129,7 @@ const postEditCategory = async (req, res) => {
     }
 
     const { name, description } = req.body
+    console.log(req.body)
     let imagePath = category.image.path.replace(/.*\/public\//, '/')
 
     if (req.file) {
@@ -147,10 +151,11 @@ const postEditCategory = async (req, res) => {
     category.image.path = imagePath
     await category.save()
 
-    res.redirect('/admin/categories')
+    res.status(200).json({ success: "Successfully edited category" })
   } catch (error) {
     console.error(error)
-    res.redirect('/admin/categories')
+    // res.redirect('/admin/categories')
+    res.status(200).json({ Error: error, Note: "Error while editing category (edit category controller)" })
   }
 }
 
