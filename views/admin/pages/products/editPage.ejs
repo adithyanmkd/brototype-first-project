@@ -1,0 +1,300 @@
+<div class="mx-auto mt-2 max-w-6xl rounded-lg bg-white p-6 shadow-md">
+    <h2 class="mb-4 text-2xl font-semibold">Edit Product</h2>
+
+    <form action="/admin/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data" x-data="{
+        images: <%= JSON.stringify(product.images.productImages.map(img => img.path)) %>,
+        cardImage: '<%= product.images.cardImage.path %>',
+        selectedSize: '<%= product.sizeCategory %>',
+        errors: {},
+        productName: '<%= product.productName %>',
+        quantity: <%= product.quantity %>,
+        description: '<%= product.description %>',
+        category: '<%= product.category %>',
+        sellingPrice: <%= product.price.sellingPrice %>,
+        originalPrice: <%= product.price.originalPrice %>,
+  
+        addImage(event) {
+          const files = event.target.files;
+          for (let file of files) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.images.push(e.target.result);
+            };
+            reader.readAsDataURL(file);
+          }
+        },
+  
+        addCardImage(event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.cardImage = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        },
+  
+        clearCardImage() {
+          this.cardImage = null;
+        },
+  
+        validateForm() {
+          this.errors = {}; // Reset errors
+  
+          // Validate product name
+          if (!this.productName) {
+            this.errors.productName = 'Product name is required.';
+          }
+  
+          // Validate quantity
+          if (!this.quantity || this.quantity < 1) {
+            this.errors.quantity = 'Quantity must be at least 1.';
+          }
+  
+          // Validate description
+          if (!this.description) {
+            this.errors.description = 'Description is required.';
+          }
+  
+          // Validate category
+          if (!this.category) {
+            this.errors.category = 'Category is required.';
+          }
+  
+          // Validate size category
+         // if (!this.selectedSize) {
+           // this.errors.selectedSize = 'Size category is required.';
+          //} 
+  
+          // Validate selling price
+          if (!this.sellingPrice || this.sellingPrice < 0) {
+            this.errors.sellingPrice = 'Selling price must be a positive number.';
+          }
+  
+          // Validate original price
+          if (!this.originalPrice || this.originalPrice < 0) {
+            this.errors.originalPrice = 'Original price must be a positive number.';
+          }
+  
+          // Validate card image
+          if (!this.cardImage) {
+            this.errors.cardImage = 'Card image is required.';
+          }
+  
+          // Validate product images
+          if (this.images.length === 0) {
+            this.errors.productImages = 'At least one product image is required.';
+          }
+  
+          // Return true if no errors
+          return Object.keys(this.errors).length === 0;
+        },
+  
+        submitForm() {
+          if (this.validateForm()) {
+            // If validation passes, submit the form
+            this.$el.submit();
+          } else {
+            // If validation fails, log errors (or display them)
+            console.log('Form validation failed:', this.errors);
+          }
+        }
+      }" @submit.prevent="submitForm">
+        <!-- Add this hidden input for method override -->
+        <input type="hidden" name="_method" value="PATCH">
+        <div class="flex h-auto w-full">
+            <!-- Left Section -->
+            <div class="pl-20">
+                <h2 class="pb-8 text-[26px] font-semibold">Card Information</h2>
+                <ul class="max-w-[340px] space-y-2 rounded-t-4xl border border-[#D8DEE6]">
+                    <!-- ================== Card Image Upload ================= -->
+                    <li class="mb-4">
+                        <input type="file" name="cardImage" class="hidden" id="cardImageUpload"
+                            @change="addCardImage" />
+                        <label for="cardImageUpload">
+                            <template x-if="cardImage">
+                                <div class="relative h-[180px] w-[340px] cursor-pointer">
+                                    <img :src="cardImage" alt="Card Image Preview"
+                                        class="h-full w-full object-cover rounded-t-4xl border border-[#D8DEE6]" />
+                                    <button @click.prevent="clearCardImage"
+                                        class="absolute top-2 right-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">
+                                        ✕
+                                    </button>
+                                </div>
+                            </template>
+
+                            <template x-if="!cardImage">
+                                <div
+                                    class="flex h-[180px] w-[340px] cursor-pointer flex-col items-center justify-center space-y-3 rounded-t-4xl bg-[#D8DEE6]">
+                                    <img src="/images/icons/img-placeholder.svg" alt="img placeholder" />
+                                    <p class="text-sm font-medium text-[#81909F]">
+                                        Add a card image
+                                    </p>
+                                </div>
+                            </template>
+                        </label>
+                        <template x-if="errors.cardImage">
+                            <p class="text-sm text-red-500" x-text="errors.cardImage"></p>
+                        </template>
+                    </li>
+
+                    <!-- ================== Item and Quantity ================= -->
+                    <li class="flex min-h-[60px] w-full justify-between px-2">
+                        <div class="flex flex-col gap-1.5 pt-4">
+                            <label for="productName">Item</label>
+                            <input
+                                class="text-[16px] placeholder:text-[14px] placeholder:font-light placeholder:text-[#707070] focus:outline-none"
+                                type="text" id="productName" name="productName" placeholder="What are you selling?"
+                                x-model="productName" />
+                            <template x-if="errors.productName">
+                                <p class="text-sm text-red-500" x-text="errors.productName"></p>
+                            </template>
+                        </div>
+                        <div class="h-20 w-[1px] self-stretch bg-[#D8DEE6]"></div>
+                        <div class="flex w-1/3 flex-col gap-1.5 pt-4">
+                            <label for="quantity">Qty</label>
+                            <input
+                                class="text-[16px] placeholder:text-[14px] placeholder:font-light placeholder:text-[#707070] focus:outline-none"
+                                type="number" id="quantity" name="quantity" value="1" x-model="quantity" />
+                            <template x-if="errors.quantity">
+                                <p class="text-sm text-red-500" x-text="errors.quantity"></p>
+                            </template>
+                        </div>
+                    </li>
+
+                    <!-- ================== Description ================= -->
+                    <li class="min-h-[60px] w-full justify-between px-2">
+                        <div class="flex flex-col gap-3 pt-4">
+                            <label for="description">Description</label>
+                            <textarea
+                                class="outline-gray-600 p-2 h-30 rounded-lg border border-gray-300 placeholder:text-sm placeholder:font-light"
+                                name="description" id="description"
+                                placeholder="Describe what you’re selling in more detail..."
+                                x-model="description"></textarea>
+                            <template x-if="errors.description">
+                                <p class="text-sm text-red-500" x-text="errors.description"></p>
+                            </template>
+                        </div>
+                    </li>
+
+                    <!-- ================== Category ================= -->
+                    <li class="px-2">
+                        <div class="flex flex-col gap-y-3 pt-4">
+                            <label for="category">Category</label>
+                            <select id="category" name="category"
+                                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                                x-model="category">
+                                <option value="" disabled selected>Select category</option>
+                                <% categories.forEach((category)=> { %>
+                                    <option value="<%= category.name %>">
+                                        <%- category.name %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                            <template x-if="errors.category">
+                                <p class="text-sm text-red-500" x-text="errors.category"></p>
+                            </template>
+                        </div>
+                    </li>
+
+                    <!-- ================== Size Category ================= -->
+                    <!-- <li class="px-2">
+              <div class="flex flex-col gap-1.5 pt-4">
+                <label>Size category</label>
+                <ul class="flex flex-wrap gap-3">
+                  <template x-for="size in ['single', 'double', 'queen', 'king']" :key="size">
+                    <li>
+                      <input
+                        type="radio"
+                        x-model="selectedSize"
+                        :value="size"
+                        :id="size"
+                        name="sizeCategory"
+                        class="hidden"
+                      />
+                      <label
+                        :for="size"
+                        :class="selectedSize === size 
+                          ? 'bg-[#4470E2] text-white' 
+                          : 'border border-[#6C6C6C] text-[#303030] hover:bg-[#E6EDFF]'"
+                        class="cursor-pointer rounded-2xl px-5 py-1 font-light"
+                      >
+                        <span x-text="size.charAt(0).toUpperCase() + size.slice(1)"></span>
+                      </label>
+                    </li>
+                  </template>
+                </ul>
+                <template x-if="errors.selectedSize">
+                  <p class="text-sm text-red-500" x-text="errors.selectedSize"></p>
+                </template>
+              </div>
+            </li> -->
+
+                    <!-- ================== Price ================= -->
+                    <li class="flex min-h-[60px] w-full justify-between px-2">
+                        <div class="flex flex-col gap-1.5 pt-4">
+                            <label for="sellingPrice">Selling price</label>
+                            <input
+                                class="text-[16px] placeholder:text-[14px] placeholder:font-light placeholder:text-[#707070] focus:outline-none"
+                                type="number" id="sellingPrice" name="price[sellingPrice]" placeholder="₹0"
+                                x-model="sellingPrice" />
+                            <template x-if="errors.sellingPrice">
+                                <p class="text-sm text-red-500" x-text="errors.sellingPrice"></p>
+                            </template>
+                        </div>
+                        <div class="h-20 w-[2px] bg-[#D8DEE6]"></div>
+                        <div class="flex flex-col gap-1.5 pt-4">
+                            <label for="price">Price</label>
+                            <input
+                                class="text-[16px] placeholder:text-[14px] placeholder:font-light placeholder:text-[#707070] focus:outline-none"
+                                type="number" id="price" name="price[originalPrice]" placeholder="₹0"
+                                x-model="originalPrice" />
+                            <template x-if="errors.originalPrice">
+                                <p class="text-sm text-red-500" x-text="errors.originalPrice"></p>
+                            </template>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right Section: Product Images -->
+            <div class="pb-20 pl-20">
+                <h2 class="pb-8 text-[26px] font-semibold">Product Images</h2>
+                <div class="grid grid-cols-3 gap-6">
+                    <template x-for="(image, index) in images" :key="index">
+                        <div
+                            class="relative h-[178px] w-[146px] rounded-[10px] border border-[#D8DEE6] bg-amber-300 object-cover">
+                            <img class="h-full w-full rounded-[10px] object-cover" :src="image" alt="uploaded image" />
+                            <button @click.prevent="images.splice(index, 1)"
+                                class="absolute top-2 right-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">
+                                ✕
+                            </button>
+                        </div>
+                    </template>
+                    <div>
+                        <div>
+                            <input type="file" name="productImages" id="product-images" multiple class="hidden"
+                                @change="addImage" />
+                            <label for="product-images">
+                                <img class="cursor-pointer" id="add-img" src="/images/icons/add-img-frame.svg"
+                                    alt="add-img-frame" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <template x-if="errors.productImages">
+                    <p class="text-sm text-red-500" x-text="errors.productImages"></p>
+                </template>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex w-full items-center justify-between pt-8 pr-20 pl-20">
+            <a class="underline underline-offset-4" href="/admin/products">Cancel</a>
+            <button type="submit" class="flex gap-2 cursor-pointer rounded-[30px] bg-black py-2 pr-3 pl-6 text-white">
+                Save <img src="/images/icons/arrow.svg" alt="arrow icon" />
+            </button>
+        </div>
+    </form>
+</div>
