@@ -1,0 +1,102 @@
+<div class="container mx-auto mt-8 flex gap-6">
+    <!-- Filters Sidebar -->
+    <aside class="w-1/4 p-5 border-r bg-gray-50 rounded-md">
+        <h3 class="text-lg font-semibold mb-4">Filters</h3>
+
+        <form action="/products" method="GET">
+            <button type="submit" class="border px-4 py-2 rounded w-full mb-5 hover:bg-gray-200 transition">
+                RESET
+            </button>
+
+            <!-- Category Filter -->
+            <h4 class="font-medium mb-3 text-gray-700">CATEGORY</h4>
+            <div class="space-y-3">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="category" value="all" checked>
+                    <span class="text-gray-600">All</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="category" value="mattress">
+                    <span class="text-gray-600">Mattresses</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="category" value="pillow">
+                    <span class="text-gray-600">Pillows</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="category" value="bed">
+                    <span class="text-gray-600">Beds</span>
+                </label>
+            </div>
+
+            <button type="submit" class="mt-5 bg-blue-500 text-white py-2 px-4 rounded-md w-full">
+                Apply Filter
+            </button>
+        </form>
+    </aside>
+
+    <!-- Product Grid & Sorting -->
+    <div class="w-3/4">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-semibold">Our Products</h2>
+
+            <!-- Sorting Dropdown -->
+            <form action="/products" method="GET" class="flex gap-3">
+                <input type="hidden" name="category" value="<%= category || 'all' %>">
+                <select name="sort" class="border px-3 py-2 rounded-md">
+                    <option value="">Sort By</option>
+                    <option value="priceLow">Price: Low to High</option>
+                    <option value="priceHigh">Price: High to Low</option>
+                    <option value="nameAsc">Name: A to Z</option>
+                    <option value="nameDesc">Name: Z to A</option>
+                    <option value="discountHigh">Highest Discount</option>
+                </select>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">
+                    Sort
+                </button>
+            </form>
+        </div>
+
+        <!-- Product Grid -->
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <% products.forEach((product)=> { %>
+                <a href="/products/<%= product._id %>"
+                    class="block bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
+                    <img src="<%= product.images.cardImage.path %>" alt="<%= product.productName %>"
+                        class="w-full h-64 object-cover rounded-lg" />
+                    <h3 class="text-lg font-semibold mt-3">
+                        <%= product.productName %>
+                    </h3>
+                    <p class="text-gray-600 text-sm">
+                        <%= product.description %>
+                    </p>
+                    <div class="mt-2 flex items-center">
+                        <span class="text-black text-lg font-bold">₹<%= product.price.sellingPrice %></span>
+                        <% if (product.price.discount> 0) { %>
+                            <span class="text-gray-500 line-through ml-2">₹<%= product.price.originalPrice %></span>
+                            <span class="text-green-600 ml-2">save ₹<%= product.price.discount %></span>
+                            <% } %>
+                    </div>
+                </a>
+                <% }) %>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-center mt-8">
+            <% if (currentPage> 1) { %>
+                <a href="/products?page=<%= currentPage - 1 %>&category=<%= category || '' %>&sort=<%= sort || '' %>"
+                    class="bg-blue-500 text-white px-4 py-2 mx-2 rounded-md">Previous</a>
+                <% } %>
+
+                    <span class="px-4 py-2 border rounded-md bg-gray-100">
+                        Page <%= currentPage %> of <%= totalPages %>
+                    </span>
+
+                    <% if (currentPage < totalPages) { %>
+                        <a href="/products?page=<%= currentPage + 1 %>&category=<%= category || '' %>&sort=<%= sort || '' %>"
+                            class="bg-blue-500 text-white px-4 py-2 mx-2 rounded-md">Next</a>
+                        <% } %>
+        </div>
+    </div>
+</div>
