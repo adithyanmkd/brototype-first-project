@@ -242,9 +242,6 @@ const postChangePassword = async (req, res) => {
         const user = await User.findOne({ email })
         user.password = hashedPassword
         await user.save()
-
-        // req.flash('success', 'password changed successfully!')
-        // res.redirect('/auth/login')
         res.status(200).json({ success: true })
     } catch (error) {
         res.json({

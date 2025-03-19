@@ -1,0 +1,17 @@
+<div class="max-w-[200px] pb-10 pl-10">
+    <ul x-data="{menus: <%= JSON.stringify(menus) %>,
+      currentPath: window.location.pathname
+      }" class="space-y-4">
+        <template x-for="menu in menus" :key="menu.name">
+            <li :class="currentPath === menu.href ? 'bg-black' : 'bg-red-200'"
+                class="bg-white text-[#8D8D8D] hover:bg-[#F6F6F6] hover:font-medium hover:text-[#233593]">
+                <a :href="menu.href" x-text="menu.name" class="block h-full w-full px-[12px] py-[8px]"></a>
+            </li>
+        </template>
+        <li class="text-white] mt-20 rounded-[4px] bg-[#2B2F44] text-white hover:bg-black hover:font-medium">
+            <a href="/auth/login" class="block h-full w-full px-[12px] py-[8px] text-center">Logout</a>
+        </li>
+    </ul>
+</div>
+
+<script></script>

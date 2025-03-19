@@ -34,6 +34,7 @@ router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/auth/login' }),
     (req, res) => {
+        req.session.user = req.user
         res.redirect('/') // Redirect to home on success
     },
 )

@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	else if (pathname.includes("/auth/change-password")) changePassword()
 
 	let errorTimeout // Store timeout reference
+	let successTimeout
 
 	// display error 
 	function displayError(message) {
