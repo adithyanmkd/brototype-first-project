@@ -13,19 +13,17 @@
     <% } %>
 
       <% if(product.description){ %>
-        <p class="mt-1 text-[16px] font-light text-gray-600">
+        <p class="mt-1 text-[16px] max-h-[4.5rem] leading-[160%]  overflow-hidden font-light text-gray-600">
           <%- product.description %>
         </p>
         <% } %>
 
           <!-- Price -->
           <div class="flex items-baseline space-x-4">
-            <span class="text-2xl font-medium text-[#181818]">₹<%- product.price.sellingPrice %></span>
+            <span class="text-2xl font-medium text-[#181818]">₹<%= product.price.sellingPrice %></span>
             <span class="text-lg text-gray-400 line-through">₹<%= product.price.originalPrice %></span>
-            <% if(product.price.discount){ %>
-              <p class="text-sm  font-medium text-green-600">
-                save ₹<%- product.originalPrice - product.price.sellingPrice %>
-              </p>
-              <% } %>
+            <p class="text-sm  font-medium text-green-600">
+              save ₹<%= product.price.originalPrice - product.price.sellingPrice %>
+            </p>
           </div>
 </div>

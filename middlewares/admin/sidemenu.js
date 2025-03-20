@@ -62,8 +62,8 @@ const adminSidebar = (req, res, next) => {
       href: '#',
       active: req.path === '/settings',
     },
-  ]
-  next()
-}
+  ];
+  next();
+};
 
-export default adminSidebar
+export default adminSidebar;

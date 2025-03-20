@@ -1,17 +1,17 @@
-import express from 'express'
+import express from 'express';
 
-const router = express.Router()
+const router = express.Router();
 
 // import controller
-import dashboardController from '../../controllers/admin/dashboardController.js'
+import dashboardController from '../../controllers/admin/dashboardController.js';
 
 // import middlewares
-import adminSidebar from '../../middlewares/admin/sidemenu.js'
+import adminSidebar from '../../middlewares/admin/sidemenu.js';
 
 // adding app level middleware
-router.use(adminSidebar)
+router.use(adminSidebar);
 
-router.get('/', dashboardController.getDashboard) // get dashboard
+router.get('/', dashboardController.getDashboard); // get dashboard
 
 // export router
-export default router
+export default router;

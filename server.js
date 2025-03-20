@@ -1,59 +1,59 @@
-import express from "express";
-import path from 'path'
-import { fileURLToPath } from 'url'
-import MongoStore from 'connect-mongo'
-import expressLayouts from 'express-ejs-layouts'
-import session from 'express-session'
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import MongoStore from 'connect-mongo';
+import expressLayouts from 'express-ejs-layouts';
+import session from 'express-session';
 
 // import config modules
-import connectDB from "./config/database.js"; // database config
+import connectDB from './config/database.js'; // database config
 
 //importing routes
-import userRouter from './routes/user/index.js'
-import adminRouter from './routes/admin/index.js'
+import userRouter from './routes/user/index.js';
+import adminRouter from './routes/admin/index.js';
 
-const app = express()
+const app = express();
 
 //fix __dirname && __filename for module
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //set view engine
-app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, 'views'))
-app.set('layout', 'layouts/user-layout')
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.set('layout', 'layouts/user-layout');
 
 // Session Middleware
 app.use(
-    session({
-        secret: process.env.SESSION_SECRET_KEY,
-        resave: false,
-        saveUninitialized: false,
-        store: MongoStore.create({
-            mongoUrl: process.env.MONGO_URI,
-            collectionName: 'sessions', // Collection name in MongoDB
-            ttl: 24 * 60 * 60, // Session expires in 24 hours
-        }),
-        cookie: {
-            secure: false, // Set to true in production with HTTPS
-            httpOnly: true, // Prevents client-side JavaScript from accessing the session cookie
-            maxAge: 24 * 60 * 60 * 1000, // Cookie expiry in 24 hours
-        },
+  session({
+    secret: process.env.SESSION_SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: 'sessions', // Collection name in MongoDB
+      ttl: 24 * 60 * 60, // Session expires in 24 hours
     }),
-)
+    cookie: {
+      secure: false, // Set to true in production with HTTPS
+      httpOnly: true, // Prevents client-side JavaScript from accessing the session cookie
+      maxAge: 24 * 60 * 60 * 1000, // Cookie expiry in 24 hours
+    },
+  })
+);
 
-app.use(express.json()) // Enables JSON parsing (for APIs)
-app.use(express.urlencoded({ extended: true })) // Enables parsing of form data
-app.use(expressLayouts) // Use express-ejs-layouts
-app.use(express.static(path.join(__dirname, 'public'))) //serve static files (images, js, CSS)
+app.use(express.json()); // Enables JSON parsing (for APIs)
+app.use(express.urlencoded({ extended: true })); // Enables parsing of form data
+app.use(expressLayouts); // Use express-ejs-layouts
+app.use(express.static(path.join(__dirname, 'public'))); //serve static files (images, js, CSS)
 
 //router
-app.use('/', userRouter)
-app.use('/admin', adminRouter)
+app.use('/', userRouter);
+app.use('/admin', adminRouter);
 
 // connect db
-connectDB()
+connectDB();
 
 //start the server
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => console.log(`server running on ${PORT}`))
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`server running on ${PORT}`));

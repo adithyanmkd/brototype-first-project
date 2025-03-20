@@ -1,26 +1,26 @@
 const registerAuthHeading = {
-  title: "Join Us Today!",
-  description: "Create an account and start your journey with us."
-}
+  title: 'Join Us Today!',
+  description: 'Create an account and start your journey with us.',
+};
 
 const loginAuthHeading = {
-  title: "Welcome User",
-  description: "We are glad to see you back with us"
-}
+  title: 'Welcome User',
+  description: 'We are glad to see you back with us',
+};
 
 const adminLoginAuthHeading = {
-  title: "Welcome Admin",
-  description: "We are glad to see you back with us"
-}
+  title: 'Welcome Admin',
+  description: 'We are glad to see you back with us',
+};
 const forgetAuthHeading = {
-  title: "Forgot Password?",
-  description: "Enter your email to receive a password reset link."
-}
+  title: 'Forgot Password?',
+  description: 'Enter your email to receive a password reset link.',
+};
 
 const authImage = {
-  src: "/images/auth/auth-image.svg",
-  alt: "auth image"
-}
+  src: '/images/auth/auth-image.svg',
+  alt: 'auth image',
+};
 
 const loginInputFields = [
   {
@@ -30,7 +30,7 @@ const loginInputFields = [
     },
     id: 'email',
     name: 'email',
-    floatName: "Email",
+    floatName: 'Email',
     type: 'email',
     placeholder: 'Enter your email',
   },
@@ -41,12 +41,11 @@ const loginInputFields = [
     },
     id: 'password',
     name: 'password',
-    floatName: "Password",
+    floatName: 'Password',
     type: 'password',
     placeholder: 'Enter your password',
   },
-
-]
+];
 
 const registerInputFields = [
   {
@@ -55,7 +54,7 @@ const registerInputFields = [
     },
     id: 'fullname',
     name: 'fullname',
-    floatName: "Fullname",
+    floatName: 'Fullname',
     type: 'text',
     placeholder: 'Enter your name',
   },
@@ -67,36 +66,36 @@ const registerInputFields = [
     },
     id: 'confirmPassword',
     name: 'confirmPassword',
-    floatName: "Confirm password",
+    floatName: 'Confirm password',
     type: 'password',
     placeholder: 'Enter your password',
   },
-]
+];
 
 const adminInputFields = [
   {
     icon: {
-      iconSrc: "/images/icons/user.svg",
-      altText: "user icon"
+      iconSrc: '/images/icons/user.svg',
+      altText: 'user icon',
     },
-    name: "username",
+    name: 'username',
     id: 'username',
-    floatName: "Username",
-    type: "text",
-    placeholder: "Enter your username"
+    floatName: 'Username',
+    type: 'text',
+    placeholder: 'Enter your username',
   },
   {
     icon: {
-      iconSrc: "/images/icons/lock.svg",
-      altText: "lock icon"
+      iconSrc: '/images/icons/lock.svg',
+      altText: 'lock icon',
     },
     id: 'password',
-    name: "password",
-    floatName: "Password",
-    type: "password",
-    placeholder: "Enter your password"
-  }
-]
+    name: 'password',
+    floatName: 'Password',
+    type: 'password',
+    placeholder: 'Enter your password',
+  },
+];
 
 const forgetInputFields = [
   {
@@ -106,11 +105,11 @@ const forgetInputFields = [
     },
     id: 'email',
     name: 'email',
-    floatName: "Email",
+    floatName: 'Email',
     type: 'email',
     placeholder: 'Enter your email',
   },
-]
+];
 
 const changePassinputFields = [
   {
@@ -120,7 +119,7 @@ const changePassinputFields = [
     },
     id: 'password',
     name: 'newPassword',
-    floatName: "New Password",
+    floatName: 'New Password',
     type: 'password',
     placeholder: 'Enter new password',
   },
@@ -131,12 +130,11 @@ const changePassinputFields = [
     },
     id: 'confirm-password',
     name: 'confirmPassword',
-    floatName: "Confirm Password",
+    floatName: 'Confirm Password',
     type: 'password',
     placeholder: 'Confirm new password',
-  }
-]
-
+  },
+];
 
 const authData = {
   registerAuthHeading,
@@ -148,7 +146,7 @@ const authData = {
   forgetInputFields,
   changePassinputFields,
   adminLoginAuthHeading,
-  adminInputFields
-}
+  adminInputFields,
+};
 
-export default authData
+export default authData;

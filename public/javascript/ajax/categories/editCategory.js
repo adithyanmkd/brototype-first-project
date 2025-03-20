@@ -1,184 +1,190 @@
 const errorModal = document.getElementById('errorModal');
 const backendErrorText = document.getElementById('backendErrorText');
-const categoryForm = document.querySelector("#categoryFormElement")
-const categoryImageInput = document.getElementById('categoryImageInput')
+const categoryForm = document.querySelector('#categoryFormElement');
+const categoryImageInput = document.getElementById('categoryImageInput');
 
-let errorTimeout // Store timeout reference
+let errorTimeout; // Store timeout reference
 
-// display error 
+// display error
 function displayError(message) {
-    const errorBox = document.querySelector("#error-box")
+  const errorBox = document.querySelector('#error-box');
 
-    errorBox.classList.remove("hidden")
-    errorBox.textContent = message
+  errorBox.classList.remove('hidden');
+  errorBox.textContent = message;
 
-    // Clear any existing timeout to prevent multiple timers
-    clearTimeout(errorTimeout)
+  // Clear any existing timeout to prevent multiple timers
+  clearTimeout(errorTimeout);
 
-    // after 5 seconds message will be hide
-    errorTimeout = setTimeout(() => {
-        errorBox.classList.add('hidden')
-    }, 5000)
+  // after 5 seconds message will be hide
+  errorTimeout = setTimeout(() => {
+    errorBox.classList.add('hidden');
+  }, 5000);
 }
 
 // hide error message
 function hideError() {
-    let errorBox = document.querySelector('#error-box')
-    errorBox.classList.add('hidden')
+  let errorBox = document.querySelector('#error-box');
+  errorBox.classList.add('hidden');
 }
 
 // show modal with message
 function showErrorModal(message) {
-    backendErrorText.textContent = message;
-    errorModal.classList.remove('hidden');
-    setTimeout(() => {
-        errorModal.classList.add('hidden');
-    }, 5000);
+  backendErrorText.textContent = message;
+  errorModal.classList.remove('hidden');
+  setTimeout(() => {
+    errorModal.classList.add('hidden');
+  }, 5000);
 }
 
 // hide modal
 function hideErrorModal() {
-    errorModal.classList.add('hidden');
+  errorModal.classList.add('hidden');
 }
 
 // handle files and show preview
 function handleFileChange(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            document.getElementById('imagePreview').src = e.target.result;
-            document.getElementById('imagePreviewContainer').classList.remove("hidden");
-        };
-        reader.readAsDataURL(file);
-    }
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('imagePreview').src = e.target.result;
+      document
+        .getElementById('imagePreviewContainer')
+        .classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 // remove added image
 function removeImage() {
-    document.getElementById('imagePreviewContainer').classList.add("hidden");
-    document.getElementById('categoryImageInput').value = '';
+  document.getElementById('imagePreviewContainer').classList.add('hidden');
+  document.getElementById('categoryImageInput').value = '';
 }
 
-
-let blobImage = null
+let blobImage = null;
 
 function saveImage() {
-    // Get cropped image as blob
-    cropper.getCroppedCanvas().toBlob(async (blob) => {
-        if (blob) {
-            const thumbnailContainer = document.getElementById('imageThumbnail');
-            thumbnailContainer.innerHTML = ''; // Clear existing thumbnail
+  // Get cropped image as blob
+  cropper.getCroppedCanvas().toBlob(async (blob) => {
+    if (blob) {
+      const thumbnailContainer = document.getElementById('imageThumbnail');
+      thumbnailContainer.innerHTML = ''; // Clear existing thumbnail
 
-            thumbnailContainer.classList.remove("hidden")
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(blob);
-            img.classList.add('h-full', 'w-full', 'object-cover', 'rounded-lg', 'border', 'border-gray-300');
+      thumbnailContainer.classList.remove('hidden');
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(blob);
+      img.classList.add(
+        'h-full',
+        'w-full',
+        'object-cover',
+        'rounded-lg',
+        'border',
+        'border-gray-300'
+      );
 
-            thumbnailContainer.appendChild(img);
-            document.getElementById('imagePreviewContainer').classList.add("hidden");
-            blobImage = blob
-        }
-    })
+      thumbnailContainer.appendChild(img);
+      document.getElementById('imagePreviewContainer').classList.add('hidden');
+      blobImage = blob;
+    }
+  });
 }
 
 let cropper;
 
 categoryImageInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const img = document.getElementById('imagePreview');
-            img.src = event.target.result;
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = document.getElementById('imagePreview');
+      img.src = event.target.result;
 
-            // Destroy old cropper instance (if exists)
-            if (cropper) cropper.destroy();
+      // Destroy old cropper instance (if exists)
+      if (cropper) cropper.destroy();
 
-            // Initialize new cropper instance
-            cropper = new Cropper(img, {
-                aspectRatio: 1,
-                viewMode: 2,
-                autoCropArea: 1,
-                movable: true,
-                scalable: true,
-                zoomable: true,
-            });
-            document.getElementById('imagePreviewContainer').classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-    }
+      // Initialize new cropper instance
+      cropper = new Cropper(img, {
+        aspectRatio: 1,
+        viewMode: 2,
+        autoCropArea: 1,
+        movable: true,
+        scalable: true,
+        zoomable: true,
+      });
+      document
+        .getElementById('imagePreviewContainer')
+        .classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+  }
 });
 
-
-
 const currentUrl = window.location.href;
-const match = currentUrl.split("/");
-
+const match = currentUrl.split('/');
 
 // category form validation and send body data into server
-categoryForm.addEventListener("submit", async (e) => {
-    e.preventDefault()
-    let id = match[match.length - 1]
+categoryForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  let id = match[match.length - 1];
 
-    // const formData = new FormData(categoryForm)
+  // const formData = new FormData(categoryForm)
 
+  const categoryName = categoryForm
+    .querySelector("[name='categoryName']")
+    .value.trim();
+  const description = categoryForm
+    .querySelector("[name='description']")
+    .value.trim();
+  // const categoryName = formData.get("categoryName").trim()
+  // const description = formData.get("description").trim()
+  const categoryImageInput = categoryForm.querySelector('#categoryImageInput');
 
-    const categoryName = categoryForm.querySelector("[name='categoryName']").value.trim()
-    const description = categoryForm.querySelector("[name='description']").value.trim()
-    // const categoryName = formData.get("categoryName").trim()
-    // const description = formData.get("description").trim()
-    const categoryImageInput = categoryForm.querySelector("#categoryImageInput")
+  if (!categoryName && !description && categoryImageInput.files.length == 0) {
+    displayError('All fields are required');
+    return;
+  } else if (!categoryName) {
+    displayError('Please enter category name');
+    return;
+  } else if (!description) {
+    displayError('Please enter description');
+    return;
+  } else if (categoryImageInput.files.length == 0) {
+    displayError('Please add an image');
+    return;
+  }
 
+  // hide error box after successful validation
+  hideError();
 
-    if (!categoryName && !description && categoryImageInput.files.length == 0) {
-        displayError("All fields are required")
-        return
-    } else if (!categoryName) {
-        displayError("Please enter category name")
-        return
-    } else if (!description) {
-        displayError("Please enter description")
-        return
-    } else if (categoryImageInput.files.length == 0) {
-        displayError("Please add an image")
-        return
+  // formData.append('categoryImageInput', categoryImageInput[0]);
+
+  let formData = {
+    name: categoryName,
+    description,
+    categoryImageInput: categoryImageInput[0],
+  };
+
+  // formData.forEach((value, key) => {
+  //     console.log(`${key}: ${value}`);
+  // });
+
+  try {
+    const response = await fetch(`/admin/categories/edit/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('successfully edited images into backend');
+      window.location.href = '/admin/categories';
+    } else {
+      displayError(data.error);
     }
-
-    // hide error box after successful validation
-    hideError()
-
-    // formData.append('categoryImageInput', categoryImageInput[0]);
-
-    let formData = {
-        name: categoryName,
-        description,
-        categoryImageInput: categoryImageInput[0]
-    }
-
-
-    // formData.forEach((value, key) => {
-    //     console.log(`${key}: ${value}`);
-    // });
-
-    try {
-        const response = await fetch(`/admin/categories/edit/${id}`, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
-        })
-
-        const data = await response.json()
-
-        if (response.ok) {
-            console.log("successfully edited images into backend")
-            window.location.href = '/admin/categories'
-        } else {
-            displayError(data.error)
-        }
-    } catch (error) {
-        console.log("error in ajax form submit")
-    }
-
-})
-
+  } catch (error) {
+    console.log('error in ajax form submit');
+  }
+});

@@ -1,0 +1,378 @@
+<style>
+  .modal {
+    display: none;
+    z-index: 50;
+  }
+
+  .modal.show {
+    display: block;
+  }
+</style>
+
+<div class="flex">
+  <div><%- include("../../partials/organisms/ProfileSidebar.ejs") %></div>
+  <div class="mx-auto w-full max-w-6xl pb-20">
+    <h1 class="mb-8 text-3xl font-bold">MY ADDRESSES</h1>
+
+    <!-- Address Cards Container -->
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Add New Address Card -->
+      <div
+        onclick="showAddModal()"
+        class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 transition-colors hover:border-gray-400"
+      >
+        <div class="text-center">
+          <span class="mb-2 block text-4xl text-gray-400">+</span>
+          <span class="text-gray-600">Add new address</span>
+        </div>
+      </div>
+
+      <!-- Address Card 1 -->
+      <div class="overflow-hidden rounded-lg bg-white shadow-md">
+        <div class="flex items-center justify-between bg-black p-4 text-white">
+          <div class="flex items-center gap-2">
+            <span>Adithyan c</span>
+            <span class="text-sm">(Default)</span>
+            <svg
+              class="h-5 w-5 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              ></path>
+            </svg>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="mb-4 text-gray-600">
+            8848911254, Kinfra,<br />KOZHIKODE, KERALA, 673620
+          </p>
+          <div class="flex gap-3">
+            <button
+              onclick="showModal()"
+              class="rounded bg-yellow-400 px-6 py-2 font-medium transition-colors hover:bg-yellow-500"
+            >
+              Edit
+            </button>
+            <button
+              class="rounded border border-gray-300 px-6 py-2 font-medium transition-colors hover:bg-gray-50"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address Card 2 -->
+      <div class="overflow-hidden rounded-lg bg-white shadow-md">
+        <div class="bg-black p-4 text-white">
+          <span>Adithyan</span>
+        </div>
+        <div class="p-4">
+          <p class="mb-4 text-gray-600">
+            8848911254, Cholapadath (Ho),<br />Payyanedam (Po),Mylampadam
+            Road,<br />Poolachira (Mkd),<br />PALAKKAD, KERALA, 678583
+          </p>
+          <div class="flex gap-3">
+            <button
+              onclick="showModal()"
+              class="rounded bg-yellow-400 px-6 py-2 font-medium transition-colors hover:bg-yellow-500"
+            >
+              Edit
+            </button>
+            <button
+              class="rounded border border-gray-300 px-6 py-2 font-medium transition-colors hover:bg-gray-50"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Address Modal -->
+<div id="editModal" class="modal bg-opacity-50 fixed inset-0 bg-black/75 px-10">
+  <div class="mx-auto mt-20 w-full max-w-lg rounded-lg bg-white">
+    <div class="flex items-center justify-between border-b p-4">
+      <h2 class="text-xl font-semibold">Edit Address</h2>
+      <button
+        type="button"
+        class="text-gray-500 hover:text-gray-700"
+        onclick="closeModal()"
+      >
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <form class="space-y-4" onsubmit="event.preventDefault();">
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Full Name<span class="text-red-500">*</span></label
+          >
+          <input
+            type="text"
+            value="Adithyan c"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Email<span class="text-red-500">*</span></label
+          >
+          <input
+            type="email"
+            value="adithyankalladi@gmail.com"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Mobile No.<span class="text-red-500">*</span></label
+          >
+          <input
+            type="tel"
+            value="8848911254"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Address (House No, Building, Street Area)<span class="text-red-500"
+              >*</span
+            ></label
+          >
+          <input
+            type="text"
+            value="Kinfra"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+          />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Locality/Town</label
+            >
+            <input
+              type="text"
+              value="Kakkanchery"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Pincode<span class="text-red-500">*</span></label
+            >
+            <input
+              type="text"
+              value="673620"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >City/District<span class="text-red-500">*</span></label
+            >
+            <input
+              type="text"
+              value="KOZHIKODE"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >State<span class="text-red-500">*</span></label
+            >
+            <input
+              type="text"
+              value="KERALA"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+        </div>
+        <div class="flex items-center">
+          <input
+            type="checkbox"
+            name="isDefault"
+            class="rounded text-yellow-500 focus:ring-yellow-200"
+          />
+          <label class="ml-2 text-sm text-gray-700"
+            >Make this default address</label
+          >
+        </div>
+        <button
+          type="submit"
+          class="w-full rounded-md bg-yellow-400 py-2 font-medium text-black transition-colors hover:bg-yellow-500"
+        >
+          Save Address
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Address Modal -->
+<div id="addModal" class="modal bg-opacity-50 fixed inset-0 bg-black/75 px-10">
+  <div class="mx-auto mt-20 w-full max-w-lg rounded-lg bg-white">
+    <div class="flex items-center justify-between border-b p-4">
+      <h2 class="text-xl font-semibold">Add Address</h2>
+      <button
+        type="button"
+        class="text-gray-500 hover:text-gray-700"
+        onclick="closeAddModal()"
+      >
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <form
+        id="add-address-form"
+        class="space-y-4"
+        onsubmit="event.preventDefault();"
+      >
+        <!-- error message box started -->
+        <div
+          id="error-box"
+          class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:text-red-400 hidden"
+        ></div>
+        <!-- error message box ended -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Full Name<span class="text-red-500">*</span></label
+          >
+          <input
+            type="text"
+            name="fullname"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Email<span class="text-red-500">*</span></label
+          >
+          <input
+            type="email"
+            name="email"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Mobile No.<span class="text-red-500">*</span></label
+          >
+          <input
+            type="tel"
+            name="phoneNumber"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Address (House No, Building, Street Area)<span class="text-red-500"
+              >*</span
+            ></label
+          >
+          <input
+            type="text"
+            name="address"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+          />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Locality/Town</label
+            >
+            <input
+              type="text"
+              name="locality"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Pincode<span class="text-red-500">*</span></label
+            >
+            <input
+              type="text"
+              name="pincode"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >City/District<span class="text-red-500">*</span></label
+            >
+            <input
+              type="text"
+              name="district"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >State<span class="text-red-500">*</span></label
+            >
+            <input
+              type="text"
+              name="state"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+        </div>
+        <div class="flex items-center">
+          <input
+            type="checkbox"
+            name="isDefault"
+            class="rounded text-yellow-500 focus:ring-yellow-200"
+          />
+          <label class="ml-2 text-sm text-gray-700"
+            >Make this default address</label
+          >
+        </div>
+        <button
+          type="submit"
+          class="w-full rounded-md bg-yellow-400 py-2 font-medium text-black transition-colors hover:bg-yellow-500"
+        >
+          Save Address
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/javascript/ajax/profile/editAddress.js"></script>
