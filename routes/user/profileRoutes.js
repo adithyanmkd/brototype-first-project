@@ -12,5 +12,6 @@ router.get('/change-password', profileController.getPasswordChange); // get pass
 router.post('/change-password', profileController.postChangePassword); // post change password
 router.get('/address', profileController.getAddress); // address page
 router.post('/address', profileController.postAddAddress); // post add address
+router.post('/address/:id/delete', profileController.postDeleteAddress); // delete address
 
 export default router;

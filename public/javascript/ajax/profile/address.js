@@ -77,9 +77,43 @@ function closeModalOnOutsideClick(event) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  let pathname = window.location.pathname;
-});
+// Open Delete Modal
+function openDeleteModal(addressId) {
+  const modal = document.getElementById('deleteModal');
+  const deleteForm = document.getElementById('deleteForm');
+
+  // deleteForm.action = `/account/address/${addressId}/delete`;
+  modal.classList.add('flex');
+  modal.classList.remove('hidden');
+
+  deleteForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    try {
+      let response = await fetch(`/account/address/${addressId}/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      let data = await response.json();
+
+      if (response.ok) {
+        window.location.href = '/account/address';
+        console.log('Successfully deleted');
+      } else {
+        console.error(data.error);
+      }
+    } catch (error) {
+      console.error({ Error: error });
+    }
+  });
+}
+
+// Close Delete Modal
+function closeDeleteModal() {
+  const modal = document.getElementById('deleteModal');
+  modal.classList.add('hidden');
+}
 
 // add address form validation and ajax
 const addForm = document.getElementById('add-address-form');
@@ -170,7 +204,7 @@ async function validateAddForm(event) {
     let data = await response.json();
 
     if (response.ok) {
-      alert('Success');
+      window.location.href = '/account/address';
     } else {
       alert('Failed', data.message);
     }

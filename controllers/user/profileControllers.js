@@ -2,10 +2,9 @@
 import bcrypt from 'bcrypt';
 
 // import models
-import User from '../../models/userModel.js';
+import { Address, User } from '../../models/index.js';
 
 import menus from '../../datasets/profileMenus.js';
-import Address from '../../models/addressModel.js';
 
 // get user details page
 const userDetails = (req, res) => {
@@ -125,8 +124,10 @@ const postChangePassword = async (req, res) => {
   }
 };
 
-const getAddress = (req, res) => {
+const getAddress = async (req, res) => {
   let user = req.session.user;
+
+  let addresses = await Address.find({ userId: user._id }); // finding user addresses
 
   let userMenus = [...menus];
 
@@ -141,26 +142,9 @@ const getAddress = (req, res) => {
   res.render('user/pages/profile/address', {
     layout: 'layouts/user-layout.ejs',
     menus: userMenus,
+    addresses,
   });
 };
-
-// get address page
-// const postAddress = (req, res) => {
-//   let user = req.session.user;
-
-//   // google user no need of password change
-//   if (!user.isGoogleUser) {
-//     userMenus.splice(1, 0, {
-//       name: 'Password',
-//       href: '/account/change-password',
-//     });
-//   }
-
-//   res.render('user/pages/profile/address', {
-//     layout: 'layouts/user-layout.ejs',
-//     menus: userMenus,
-//   });
-// };
 
 // post address add page
 const postAddAddress = async (req, res) => {
@@ -180,6 +164,19 @@ const postAddAddress = async (req, res) => {
   res.status(200).json({ user });
 };
 
+// post delete address
+const postDeleteAddress = async (req, res) => {
+  let user = req.session.user;
+  let addressId = req.params.id;
+
+  try {
+    let address = await Address.findByIdAndDelete(addressId);
+    res.status(200).json({ message: 'Successfully deleted address' });
+  } catch (error) {
+    res.json({ Error: error, message: 'error while deleting address' });
+  }
+};
+
 // export profile controller
 const profileController = {
   userDetails,
@@ -189,6 +186,7 @@ const profileController = {
   postChangePassword,
   getAddress,
   postAddAddress,
+  postDeleteAddress,
 };
 
 export default profileController;
