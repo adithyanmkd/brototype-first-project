@@ -1,107 +1,83 @@
-<div class="container mx-auto px-4 py-8">
-    <!-- Back Button -->
-    <button onclick="history.back()"
-        class="mb-4 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center">
-        ◀ Back
-    </button>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Product Gallery -->
-        <div>
-            <div class="relative group">
-                <img src="<%= product.images.cardImage.path %>" alt="<%= product.productName %>"
-                    class="w-full h-96 object-cover rounded-lg shadow-lg main-image transition-transform duration-300 ease-in-out group-hover:scale-110">
-            </div>
-            <div class="flex mt-4 space-x-2">
-                <% product.images.productImages.forEach(img=> { %>
-                    <img src="<%= img.path %>"
-                        class="w-20 h-20 object-cover rounded-lg cursor-pointer border border-gray-300 hover:border-blue-500"
-                        onclick="changeImage('<%= img.path %>')">
-                    <% }); %>
-            </div>
-        </div>
-
-        <!-- Product Details -->
-        <div class="space-y-4">
-            <h1 class="text-3xl font-bold text-gray-800">
-                <%= product.productName %>
-            </h1>
-            <p class="text-yellow-500 font-medium">⭐ <strong>
-                    <%= product.rating || "4.8" %>
-                </strong> | 67 Reviews</p>
-            <p class="text-gray-600">
-                <%= product.description %>
-            </p>
-
-            <!-- Category Selection -->
+<form id="add-to-cart-form">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Back Button -->
+        <button onclick="history.back()"
+            class="mb-4 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center">
+            ◀ Back
+        </button>
+    
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Product Gallery -->
             <div>
-                <label class="block text-gray-700 font-semibold mb-2">Select Category:</label>
-                <div class="flex space-x-2">
-                    <% ["Single", "Double" , "Queen" , "King" ].forEach(cat=> { %>
-                        <button
-                            class="px-4 py-2 rounded-lg border border-gray-300 <%= product.category === cat ? 'bg-blue-500 text-white' : 'bg-white text-gray-700' %> hover:bg-blue-500 hover:text-white">
-                            <%= cat %>
-                        </button>
+                <div class="relative group">
+                    <img src="<%= product.images.cardImage.path %>" alt="<%= product.productName %>"
+                        class="w-full h-96 object-cover rounded-lg shadow-lg main-image transition-transform duration-300 ease-in-out group-hover:scale-110">
+                </div>
+                <div class="flex mt-4 space-x-2">
+                    <% product.images.productImages.forEach(img=> { %>
+                        <img src="<%= img.path %>"
+                            class="w-20 h-20 object-cover rounded-lg cursor-pointer border border-gray-300 hover:border-blue-500"
+                            onclick="changeImage('<%= img.path %>')">
                         <% }); %>
                 </div>
             </div>
-
-            <!-- Quantity Selector -->
-            <div>
-                <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
-                <div class="flex items-center space-x-2">
-                    <button onclick="updateQuantity(-1)"
-                        class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">-</button>
-                    <input type="text" id="quantity" value="1"
-                        class="w-12 text-center border border-gray-300 rounded-lg">
-                    <button onclick="updateQuantity(1)"
-                        class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">+</button>
+    
+            <!-- Product Details -->
+            <div class="space-y-4">
+                <h1 class="text-3xl font-bold text-gray-800">
+                    <%= product.productName %>
+                </h1>
+                <p class="text-yellow-500 font-medium">⭐ <strong>
+                        <%= product.rating || "4.8" %>
+                    </strong> | 67 Reviews</p>
+                <p class="text-gray-600">
+                    <%= product.description %>
+                </p>
+    
+                <!-- Category Selection -->
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Select Category:</label>
+                    <div class="flex space-x-2">
+                        <% ["Single", "Double" , "Queen" , "King" ].forEach(cat=> { %>
+                            <button
+                                class="px-4 py-2 rounded-lg border border-gray-300 <%= product.category === cat ? 'bg-blue-500 text-white' : 'bg-white text-gray-700' %> hover:bg-blue-500 hover:text-white">
+                                <%= cat %>
+                            </button>
+                            <% }); %>
+                    </div>
                 </div>
+    
+                <!-- Quantity Selector -->
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="updateQuantity(-1, event)"
+                            class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">-</button>
+                        <input name="quantity" type="text" id="quantity" value="1"
+                            class="w-12 text-center border border-gray-300 rounded-lg">
+                        <button onclick="updateQuantity(1, event)"
+                            class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">+</button>
+                    </div>
+                </div>
+    
+                <!-- Pricing Section -->
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-500" id="sellingPrice">₹<%= product.price.sellingPrice %>
+                    </h2>
+                    <span class="text-gray-500 line-through" id="originalPrice">₹<%= product.price.originalPrice %></span>
+                    <span class="text-green-600 font-semibold ml-2" id="saveAmount">Save ₹<%= product.price.originalPrice -
+                            product.price.sellingPrice %></span>
+                </div>
+                
+                <input type="text" class="hidden" name="productId" value="<%- product._id %>">
+                <!-- Add to Cart Button -->
+                <button
+                type="submit"
+                    class="w-full cursor-pointer py-3 text-center bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600">🛒
+                    Add To Cart</button>
             </div>
-
-            <!-- Pricing Section -->
-            <div>
-                <h2 class="text-2xl font-bold text-blue-500">₹<%= product.price.sellingPrice %>
-                </h2>
-                <span class="text-gray-500 line-through">₹<%= product.price.originalPrice %></span>
-                <span class="text-green-600 font-semibold ml-2">Save ₹<%= product.price.originalPrice -
-                        product.price.sellingPrice %></span>
-            </div>
-
-            <!-- Add to Cart Button -->
-            <button
-                class="w-full py-3 text-center bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600">🛒
-                Add To Cart</button>
         </div>
     </div>
-</div>
+</form>
 
-<script>
-    function changeImage(img) {
-        document.querySelector('.main-image').src = img;
-    }
-
-    function updateQuantity(change) {
-        let qty = parseInt(document.getElementById('quantity').value);
-        qty = Math.max(1, qty + change);
-        document.getElementById('quantity').value = qty;
-    }
-
-    // Zoom functionality
-    document.addEventListener('DOMContentLoaded', function () {
-        const mainImage = document.querySelector('.main-image');
-
-        mainImage.addEventListener('mousemove', function (event) {
-            const { left, top, width, height } = this.getBoundingClientRect();
-            const x = ((event.clientX - left) / width) * 100;
-            const y = ((event.clientY - top) / height) * 100;
-
-            this.style.transformOrigin = `${x}% ${y}%`;
-            this.style.transform = "scale(1.5)";
-        });
-
-        mainImage.addEventListener('mouseleave', function () {
-            this.style.transform = "scale(1)";
-        });
-    });
-</script>
+<script src="/javascript/ajax/cart/addTocart.js"></script>

@@ -2,7 +2,7 @@
 import bcrypt from 'bcrypt';
 
 // import models
-import { Address, User } from '../../models/index.js';
+import { Address, Cart, User } from '../../models/index.js';
 
 import menus from '../../datasets/profileMenus.js';
 

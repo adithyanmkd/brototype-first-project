@@ -1,4 +1,6 @@
-<nav class="fixed top-0 flex w-full items-center justify-between bg-white px-8 py-4 shadow-md">
+<nav
+  class="fixed top-0 flex w-full items-center justify-between bg-white px-8 py-4 shadow-md"
+>
   <!-- Logo -->
   <a href="/">
     <div class="flex items-center space-x-2">
@@ -9,15 +11,15 @@
 
   <!-- Navigation Links -->
   <%- include("../molecules/navLinks.ejs") %>
-    <!-- Icons -->
-    <div class="flex items-center space-x-6">
-      <a href="#">
-        <!-- Cart Icon -->
-        <img src="/images/icons/cart.svg" alt="cart icon" />
-      </a>
-      <a href="/account/my-details">
-        <!-- User Icon -->
-        <img class="w-10" src="/images/icons/profile.svg" alt="profile icon" />
-      </a>
-    </div>
+  <!-- Icons -->
+  <div class="flex items-center space-x-6">
+    <a href="/cart">
+      <!-- Cart Icon -->
+      <img src="/images/icons/cart.svg" alt="cart icon" />
+    </a>
+    <a href="/account/my-details">
+      <!-- User Icon -->
+      <img class="w-10" src="/images/icons/profile.svg" alt="profile icon" />
+    </a>
+  </div>
 </nav>
