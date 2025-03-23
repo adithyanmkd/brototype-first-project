@@ -34,19 +34,6 @@
                     <%= product.description %>
                 </p>
     
-                <!-- Category Selection -->
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Select Category:</label>
-                    <div class="flex space-x-2">
-                        <% ["Single", "Double" , "Queen" , "King" ].forEach(cat=> { %>
-                            <button
-                                class="px-4 py-2 rounded-lg border border-gray-300 <%= product.category === cat ? 'bg-blue-500 text-white' : 'bg-white text-gray-700' %> hover:bg-blue-500 hover:text-white">
-                                <%= cat %>
-                            </button>
-                            <% }); %>
-                    </div>
-                </div>
-    
                 <!-- Quantity Selector -->
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
@@ -80,4 +67,4 @@
     </div>
 </form>
 
-<script src="/javascript/ajax/cart/addTocart.js"></script>
+<script src="/javascript/ajax/products/product.js"></script>

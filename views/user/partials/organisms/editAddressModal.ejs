@@ -1,0 +1,148 @@
+<div id="editModal" class="modal bg-opacity-50 fixed inset-0 bg-black/75 px-10">
+    <div class="mx-auto mt-20 w-full max-w-lg rounded-lg bg-white">
+      <div class="flex items-center justify-between border-b p-4">
+        <h2 class="text-xl font-semibold">Edit Address</h2>
+        <button
+          type="button"
+          class="text-gray-500 hover:text-gray-700"
+          onclick="closeEditModal()"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div class="p-6">
+        <form class="space-y-4" onsubmit="event.preventDefault();">
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Full Name<span class="text-red-500">*</span></label
+            >
+            <input
+              type="text"
+              name="name"
+              value="<%= address.name %>"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+        
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Email<span class="text-red-500">*</span></label
+            >
+            <input
+              type="email"
+              name="email"
+              value="<%= address.email %>"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+        
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Mobile No.<span class="text-red-500">*</span></label
+            >
+            <input
+              type="tel"
+              name="phone"
+              value="<%= address.phone %>"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+        
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Address (House No, Building, Street Area)<span class="text-red-500"
+                >*</span
+              ></label
+            >
+            <input
+              type="text"
+              name="address"
+              value="<%= address.address %>"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+            />
+          </div>
+        
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Locality/Town</label
+              >
+              <input
+                type="text"
+                name="locality"
+                value="<%= address.locality %>"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Pincode<span class="text-red-500">*</span></label
+              >
+              <input
+                type="text"
+                name="pincode"
+                value="<%= address.pincode %>"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+              />
+            </div>
+          </div>
+        
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >City/District<span class="text-red-500">*</span></label
+              >
+              <input
+                type="text"
+                name="district"
+                value="<%= address.district %>"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >State<span class="text-red-500">*</span></label
+              >
+              <input
+                type="text"
+                name="state"
+                value="<%= address.state %>"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
+              />
+            </div>
+          </div>
+        
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              name="isDefault"
+              <%= address.isDefault ? 'checked' : '' %>
+              class="rounded text-yellow-500 focus:ring-yellow-200"
+            />
+            <label class="ml-2 text-sm text-gray-700"
+              >Make this default address</label
+            >
+          </div>
+        
+          <button
+            type="submit"
+            class="w-full rounded-md bg-yellow-400 py-2 font-medium text-black transition-colors hover:bg-yellow-500"
+          >
+            Save Address
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>

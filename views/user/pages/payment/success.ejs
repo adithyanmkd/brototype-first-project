@@ -1,0 +1,41 @@
+<div class="min-h-screen flex flex-col items-center justify-center p-4">
+  <!-- Success Animation -->
+  <div class="">
+    <script
+      src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
+      type="module"
+    ></script>
+    <dotlottie-player
+      src="https://lottie.host/32eaf273-5b3e-4e26-a789-00572810dfd8/B3oTbgLZS3.lottie"
+      background="transparent"
+      speed="1"
+      style="width: 200px; height: 200px"
+      loop
+      autoplay
+    ></dotlottie-player>
+  </div>
+
+  <!-- Success Message -->
+  <h1 class="text-3xl font-bold text-gray-900 mb-2 text-center">
+    Thank you for ordering!
+  </h1>
+  <p class="text-gray-600 mb-8 text-center">
+    Thank you for your purchase! Your order has been successfully placed.
+  </p>
+
+  <!-- Buttons -->
+  <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+    <a
+      href="/account/orders"
+      class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+    >
+      VIEW ORDER
+    </a>
+    <a
+      href="/products"
+      class="flex-1 px-6 py-3 bg-[#3B4784] text-white rounded-lg hover:bg-[#2C3A6E] transition-colors"
+    >
+      CONTINUE SHOPPING
+    </a>
+  </div>
+</div>

@@ -1,3 +1,5 @@
+const pathname = window.location.pathname;
+
 const editModal = document.getElementById('editModal');
 const addModal = document.getElementById('addModal');
 
@@ -78,7 +80,8 @@ function closeModalOnOutsideClick(event) {
 }
 
 // Open Delete Modal
-function openDeleteModal(addressId) {
+function openDeleteModal(addressId, event) {
+  event.preventDefault();
   const modal = document.getElementById('deleteModal');
   const deleteForm = document.getElementById('deleteForm');
 
@@ -98,7 +101,11 @@ function openDeleteModal(addressId) {
       let data = await response.json();
 
       if (response.ok) {
-        window.location.href = '/account/address';
+        if (pathname.includes('/checkout')) {
+          window.location.href = '/checkout';
+        } else {
+          window.location.href = '/account/address';
+        }
         console.log('Successfully deleted');
       } else {
         console.error(data.error);
@@ -204,7 +211,11 @@ async function validateAddForm(event) {
     let data = await response.json();
 
     if (response.ok) {
-      window.location.href = '/account/address';
+      if (pathname.includes('/checkout')) {
+        window.location.href = '/checkout';
+      } else {
+        window.location.href = '/account/address';
+      }
     } else {
       alert('Failed', data.message);
     }

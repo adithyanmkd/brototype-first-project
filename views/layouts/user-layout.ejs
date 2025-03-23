@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/style/output.css" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <link rel="stylesheet" href="/style/output.css" />
+    <!-- poppins font started -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- poppins font ended -->
+    <!-- alpine script started -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <!-- alpine script ended -->
+  </head>
 
-  <!-- poppins font started -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet" />
-  <!-- poppins font ended -->
-  <!-- alpine script started -->
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <!-- alpine script ended -->
-</head>
-
-<body class="h-screen font-[Poppins]">
-  <%- include('../user/partials/organisms/navbar.ejs') %>
+  <body class="h-screen font-[Poppins]">
+    <%- include('../user/partials/organisms/navbar.ejs') %>
     <main id="content" class="pt-28"><%- body %></main>
     <%- include('../user/partials/organisms/footer.ejs') %>
-</body>
-
+    <!-- lotti file animation cdn  -->
+    <script
+      src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
+      type="module"
+    ></script>
+    <!-- lotti file animation cdn ended -->
+  </body>
 </html>
