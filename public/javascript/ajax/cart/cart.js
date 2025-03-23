@@ -22,6 +22,59 @@ async function deleteItem(productId, event) {
   }
 }
 
+// update quantity needed elements ended
+function updateQuantity(change, id, event, index) {
+  event.preventDefault();
+  let qtyElm = document.querySelector(
+    `input[name='items[${index}][quantity]']`
+  );
+
+  let totalSellingPrice = document.querySelector(
+    `div[name='items[${index}][totalSellingPrice]']`
+  );
+
+  let totalOriginalPrice = document.querySelector(
+    `div[name='items[${index}][totalOriginalPrice]']`
+  );
+
+  let productSellingPrice = document.querySelector(
+    `input[name='items[${index}][sellingPrice]']`
+  ).value;
+
+  let productOriginalPrice = document.querySelector(
+    `input[name='items[${index}][originalPrice]']`
+  ).value;
+  let grandOriginal = document.querySelector('#grandOriginalPrice');
+  let grandTotal = document.querySelector('#grandTotal');
+  let grandDiscount = document.querySelector('#grandDiscount');
+
+  qtyElm.value = Math.max(1, Number(qtyElm.value) + change);
+
+  if (Number(qtyElm.value) > 3) {
+    alert('purchase limit reached');
+    qtyElm.value = 3;
+  } else {
+    totalSellingPrice.innerHTML = `₹${Number(qtyElm.value) * Number(productSellingPrice)}`;
+    totalOriginalPrice.innerHTML = `₹${Number(qtyElm.value) * Number(productOriginalPrice)}`;
+
+    // grand discount and grand original calculations
+    let curDiscount = Number(grandDiscount.innerHTML.replace('₹', ''));
+    let curOrginalPrice = Number(grandOriginal.innerHTML.replace('₹', ''));
+    let curTotal = curOrginalPrice - curDiscount;
+
+    let discount = Number(productOriginalPrice) - Number(productSellingPrice);
+    if (change == 1) {
+      grandDiscount.innerHTML = `₹${curDiscount + discount}`;
+      grandOriginal.innerHTML = `₹${curOrginalPrice + Number(productOriginalPrice)}`;
+      grandTotal.innerHTML = `₹${curTotal + Number(productSellingPrice)}`;
+    } else if (change == -1) {
+      grandDiscount.innerHTML = `₹${curDiscount - discount}`;
+      grandOriginal.innerHTML = `₹${curOrginalPrice - Number(productOriginalPrice)}`;
+      grandTotal.innerHTML = `₹${curTotal - Number(productSellingPrice)}`;
+    }
+  }
+}
+
 // post form event listener
 cartForm.addEventListener('submit', postCartForm);
 

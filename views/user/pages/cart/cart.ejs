@@ -95,20 +95,24 @@
                 <div class="flex items-center space-x-2">
                  <!-- Quantity Selector -->
                 <div>
+                  <!-- product prices started -->
+                   <input name="items[<%= index %>][sellingPrice]" hidden type="text" value="<%= item._doc.price.sellingPrice %>">
+                   <input name="items[<%= index %>][originalPrice]" hidden type="text" value="<%= item._doc.price.originalPrice %>">
+                  <!-- product prices ended -->
                   <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
                   <div class="flex items-center space-x-2">
-                      <button onclick="updateQuantity(-1, event, '<%= item._doc._id %>')"
+                      <button onclick="updateQuantity(-1, '<%= item._doc._id %>', event, '<%= index %>')"
                           class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">-</button>
-                      <input name="items[<%= index %>][quantity]" type="text" id="<%= item._doc._id %>" value="<%= item.quantity %>" data-quantity="<%= item.quantity %>"
+                      <input name="items[<%= index %>][quantity]" disabled type="text" id="<%= item._doc._id %>" value="<%= item.quantity %>" data-quantity="<%= item.quantity %>"
                           class="w-12 cart-item text-center border border-gray-300 rounded-lg">
-                      <button onclick="updateQuantity(1, event, '<%= item._doc._id %>')"
+                      <button onclick="updateQuantity(1, '<%= item._doc._id %>', event, '<%= index %>')"
                           class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">+</button>
                   </div>
               </div>
                 </div>
                 <div class="text-right">
-                  <div id="sellingPrice" class="text-lg font-medium">₹<%= item._doc.price.sellingPrice * item.quantity %></div>
-                  <div id="originalPrice" class="text-sm text-gray-500 line-through">₹<%= item._doc.price.originalPrice * item.quantity %></div>
+                  <div name="items[<%= index %>][totalSellingPrice]" class="text-lg font-medium">₹<%= item._doc.price.sellingPrice * item.quantity %></div>
+                  <div name="items[<%= index %>][totalOriginalPrice]" class="text-sm text-gray-500 line-through">₹<%= item._doc.price.originalPrice * item.quantity %></div>
                 </div>
               </div>
             </div>
@@ -143,15 +147,15 @@
         <div class="space-y-4">
           <div class="flex justify-between">
             <span class="text-gray-600">Price</span>
-            <span id="totalSellingPrice"><%= totalSellingPrice %></span>
+            <span id="grandOriginalPrice"><%= totalOriginalPrice %></span>
           </div>
           <div class="flex justify-between text-green-600">
             <span>Discount</span>
-            <span id="saveAmount"><%=  totalSellingPrice %></span>
+            <span id="grandDiscount"><%= totalOriginalPrice - totalSellingPrice %></span>
           </div>
           <div class="border-t pt-4 flex justify-between font-medium">
             <span>Total Amount</span>
-            <span><%= totalSellingPrice %></span>
+            <span id="grandTotal"><%= totalSellingPrice %></span>
           </div>
         </div>
 
