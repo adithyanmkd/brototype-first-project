@@ -47,6 +47,10 @@ function updateQuantity(change, id, event, index) {
   let grandOriginal = document.querySelector('#grandOriginalPrice');
   let grandTotal = document.querySelector('#grandTotal');
   let grandDiscount = document.querySelector('#grandDiscount');
+  let totalItems = document.querySelector('#totalItems');
+  let decreaseBtn = document.querySelector(
+    `button[name='items[${index}][decreaseBtn]']`
+  );
 
   qtyElm.value = Math.max(1, Number(qtyElm.value) + change);
 
@@ -57,7 +61,8 @@ function updateQuantity(change, id, event, index) {
     totalSellingPrice.innerHTML = `₹${Number(qtyElm.value) * Number(productSellingPrice)}`;
     totalOriginalPrice.innerHTML = `₹${Number(qtyElm.value) * Number(productOriginalPrice)}`;
 
-    // grand discount and grand original calculations
+    // grand discount and grand original and grand total calculations
+    let curTotalItems = Number(totalItems.innerHTML);
     let curDiscount = Number(grandDiscount.innerHTML.replace('₹', ''));
     let curOrginalPrice = Number(grandOriginal.innerHTML.replace('₹', ''));
     let curTotal = curOrginalPrice - curDiscount;
@@ -67,10 +72,12 @@ function updateQuantity(change, id, event, index) {
       grandDiscount.innerHTML = `₹${curDiscount + discount}`;
       grandOriginal.innerHTML = `₹${curOrginalPrice + Number(productOriginalPrice)}`;
       grandTotal.innerHTML = `₹${curTotal + Number(productSellingPrice)}`;
+      totalItems.innerHTML = `${curTotalItems + 1}`;
     } else if (change == -1) {
       grandDiscount.innerHTML = `₹${curDiscount - discount}`;
       grandOriginal.innerHTML = `₹${curOrginalPrice - Number(productOriginalPrice)}`;
       grandTotal.innerHTML = `₹${curTotal - Number(productSellingPrice)}`;
+      totalItems.innerHTML = `${curTotalItems - 1}`;
     }
   }
 }
@@ -93,7 +100,7 @@ async function postCartForm(e) {
   document
     .querySelectorAll('.cart-item[data-quantity]')
     .forEach((item, index) => {
-      cartItems[index].quantity = item.dataset.quantity;
+      cartItems[index].quantity = item.value;
     });
 
   try {

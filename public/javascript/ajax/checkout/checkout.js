@@ -6,6 +6,21 @@ async function postCheckoutForm(e) {
   e.preventDefault();
   let selectedAddress = document.querySelector("[name='isAddress']:checked");
 
+  // const cartItems = [];
+
+  // document.querySelectorAll('input.cart-item.hidden').forEach((item, index) => {
+  //   cartItems[index] = {
+  //     productId: item.dataset.productId,
+  //     quantity: 0,
+  //   };
+  // });
+
+  // document
+  //   .querySelectorAll('.cart-item[data-quantity]')
+  //   .forEach((item, index) => {
+  //     cartItems[index].quantity = item.value;
+  //   });
+
   if (!selectedAddress) {
     alert('please choose a address');
     return;
@@ -25,7 +40,12 @@ async function postCheckoutForm(e) {
     if (response.ok) {
       window.location.href = '/payment';
     } else {
-      console.error('Error while posting checkout address');
+      console.error('Error while posting checkout address', data.message);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error({
+      Error: error,
+      message: 'error while posting checkout data',
+    });
+  }
 }

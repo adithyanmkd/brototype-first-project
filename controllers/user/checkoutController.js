@@ -1,10 +1,15 @@
+// import config files
+import redisClient from '../../config/redisConfig.js';
+
 import { Cart, Product, Address } from '../../models/index.js';
 
 // get checkout page
 let getCheckout = async (req, res) => {
   let user = req.session.user;
-  let userCart = await Cart.findOne({ userId: user._id });
   let addresses = await Address.find({ userId: user._id }); // finding user addresses
+  // let userCart = await Cart.findOne({ userId: user._id });
+  let cart = await redisClient.get(`cart:${user._id}`);
+  let userCart = JSON.parse(cart);
 
   // calcalated prices
   let totalSellingPrice = 0;
@@ -43,10 +48,18 @@ let getCheckout = async (req, res) => {
 // post checkout page
 let postCheckout = async (req, res) => {
   let user = req.session.user;
-  let cartItems = req.session.cartItems;
-
-  req.session.addressId = req.body;
-  res.json(req.body);
+  try {
+    await redisClient.set(`address:${user._id}`, req.body.addressId);
+    res.status(200).json({
+      success: true,
+      message: 'successfully added address into redisClient',
+    });
+  } catch (error) {
+    console.error({
+      Error: error,
+      message: 'Error from postCheckout controller',
+    });
+  }
 };
 
 const checkoutController = {

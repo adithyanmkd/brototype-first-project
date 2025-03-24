@@ -1,9 +1,14 @@
+// import configs
+import redisClient from '../../config/redisConfig.js';
+
 import { Cart, Product } from '../../models/index.js';
 
 // get payment page
 const getPayment = async (req, res) => {
   let user = req.session.user;
-  let userCart = await Cart.findOne({ userId: user._id });
+  // let userCart = await Cart.findOne({ userId: user._id });
+  let cart = await redisClient.get(`cart:${user._id}`);
+  let userCart = JSON.parse(cart);
 
   // calcalated prices
   let totalSellingPrice = 0;

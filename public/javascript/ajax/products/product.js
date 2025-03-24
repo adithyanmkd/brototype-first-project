@@ -36,7 +36,13 @@ function updateQuantity(change, event) {
   event.preventDefault();
 
   let qty = parseInt(document.getElementById('quantity').value);
+
   qty = Math.max(1, qty + change);
+
+  if (qty > 3) {
+    alert('Max quantity reached!!');
+    return;
+  }
   document.getElementById('quantity').value = qty;
   sellingPriceEl.innerHTML = `₹${qty * Number(sellingPrice)}`;
   originalPriceEl.innerHTML = `₹${qty * Number(originalPrice)}`;

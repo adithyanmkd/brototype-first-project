@@ -101,7 +101,7 @@
                   <!-- product prices ended -->
                   <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
                   <div class="flex items-center space-x-2">
-                      <button onclick="updateQuantity(-1, '<%= item._doc._id %>', event, '<%= index %>')"
+                      <button name="items[<%= index %>][decreaseBtn]" onclick="updateQuantity(-1, '<%= item._doc._id %>', event, '<%= index %>')"
                           class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">-</button>
                       <input name="items[<%= index %>][quantity]" disabled type="text" id="<%= item._doc._id %>" value="<%= item.quantity %>" data-quantity="<%= item.quantity %>"
                           class="w-12 cart-item text-center border border-gray-300 rounded-lg">
@@ -141,7 +141,7 @@
             <path d="m3.3 7 8.7 5 8.7-5" />
             <path d="M12 22V12" />
           </svg>
-          <h2 class="text-lg font-medium">Order Summary (<%= totalItems %> items)</h2>
+          <h2 class="text-lg font-medium">Order Summary (<span id="totalItems"><%= totalItems %></span> items)</h2>
         </div>
 
         <div class="space-y-4">

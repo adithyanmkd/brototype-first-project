@@ -51,8 +51,7 @@ app.use(express.static(path.join(__dirname, 'public'))); //serve static files (i
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
 
-// connect db
-connectDB();
+connectDB(); // connect mongoDB
 
 //start the server
 const PORT = process.env.PORT || 3000;

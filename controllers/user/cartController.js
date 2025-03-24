@@ -1,6 +1,9 @@
 // imoprt models
 import { Cart, Product, Address } from '../../models/index.js';
 
+// import config
+import redisClient from '../../config/redisConfig.js';
+
 const getEmptyCart = (req, res) => {
   res.render('user/pages/cart/emptyCart.ejs');
 };
@@ -13,7 +16,9 @@ const getCart = async (req, res) => {
     return res.render('user/pages/cart/emptyCart.ejs');
   }
 
-  let userCart = await Cart.findOne({ userId: user._id });
+  // let userCart = await Cart.findOne({ userId: user._id });
+  const cartData = await redisClient.get(`cart:${user._id}`);
+  let userCart = JSON.parse(cartData);
 
   // calcalated prices
   let totalSellingPrice = 0;
@@ -59,26 +64,42 @@ const addToCart = async (req, res) => {
 
   let { productId, quantity } = req.body;
 
-  let cart = await Cart.findOne({ userId: user._id }); // checking cart already exist
+  // let cart = await Cart.findOne({ userId: user._id }); // checking cart already exist
 
   // if cart is not exist
-  if (!cart) {
-    cart = new Cart({ userId, items: [] });
-  }
+  // if (!cart) {
+  //   cart = new Cart({ userId: user._id, items: [] });
+  // }
 
   // find() returns a reference to the found object
-  let existingItem = cart.items.find(
-    (item) => item.productId.toString() === productId
-  );
+  // let existingItem = cart.items.find(
+  //   (item) => item.productId.toString() === productId
+  // );
+
+  let cart = await redisClient.get(`cart:${user._id}`);
+  cart = cart ? JSON.parse(cart) : { items: [] };
+
+  // checking item already exist
+  const itemIndex = cart.items.findIndex((item) => item.productId == productId);
 
   try {
-    if (existingItem) {
-      existingItem.quantity += Number(quantity);
+    // if (existingItem) {
+    //   existingItem.quantity += Number(quantity);
+    // } else {
+    //   cart.items.push({ productId, quantity });
+    // }
+    // await cart.save(); // save item
+    if (itemIndex !== -1) {
+      cart.items[itemIndex].quantity =
+        Number(cart.items[itemIndex].quantity) + Number(quantity);
     } else {
       cart.items.push({ productId, quantity });
     }
-    await cart.save(); // save item
-    res.json({ success: true, message: 'Item added succesfully' });
+
+    // store updated car in Redis
+    await redisClient.set(`cart:${user._id}`, JSON.stringify(cart));
+
+    res.json({ success: true, message: 'Item added succesfully', cart });
   } catch (error) {
     console.log({
       Error: error,
@@ -88,16 +109,21 @@ const addToCart = async (req, res) => {
 };
 
 const deleteItem = async (req, res) => {
-  let userId = req.session.user;
+  let user = req.session.user;
   let { productId } = req.body;
 
-  let cart = await Cart.findOne({ userId });
+  // let cart = await Cart.findOne({ userId: user._id });
+
+  let userCart = await redisClient.get(`cart:${user._id}`);
+  let cart = JSON.parse(userCart);
 
   try {
-    cart.items = cart.items.filter(
-      (item) => productId !== item.productId.toString()
-    );
-    await cart.save();
+    cart.items = cart.items.filter((item) => productId !== item.productId);
+    // await cart.save();
+
+    // saving updated cart
+    await redisClient.set(`cart:${user._id}`, JSON.stringify(cart));
+
     if (cart.items.length > 0) {
       res
         .status(200)
@@ -111,8 +137,23 @@ const deleteItem = async (req, res) => {
 };
 
 const postCart = async (req, res) => {
-  req.session.cartItems = req.body.cartItems;
-  res.status(200).json('success');
+  let user = req.session.user;
+  let cartItems = req.body.cartItems;
+
+  let userCart = await redisClient.get(`cart:${user._id}`);
+  let cart = JSON.parse(userCart);
+
+  cartItems.forEach((item) => {
+    let existingItemIndex = cart.items.findIndex(
+      (existItem) => item.productId === existItem.productId
+    );
+
+    cart.items[existingItemIndex].quantity = Number(item.quantity);
+  });
+
+  // update quantity saving
+  await redisClient.set(`cart:${user._id}`, JSON.stringify(cart));
+  res.status(200).json({ success: true, message: 'cart post' });
 };
 
 const cartController = {
