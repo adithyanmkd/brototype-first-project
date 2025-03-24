@@ -6,6 +6,7 @@ const router = express.Router();
 import paymentController from '../../controllers/user/paymentController.js';
 
 router.get('/', paymentController.getPayment); // get payment page
+router.post('/', paymentController.postPayment); // post payment
 router.get('/success', paymentController.successPage); // success page
 
 export default router;

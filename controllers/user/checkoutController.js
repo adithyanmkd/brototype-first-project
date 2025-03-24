@@ -6,6 +6,10 @@ import { Cart, Product, Address } from '../../models/index.js';
 // get checkout page
 let getCheckout = async (req, res) => {
   let user = req.session.user;
+
+  if (!user) {
+    return res.render('user/pages/auth/login.ejs');
+  }
   let addresses = await Address.find({ userId: user._id }); // finding user addresses
   // let userCart = await Cart.findOne({ userId: user._id });
   let cart = await redisClient.get(`cart:${user._id}`);

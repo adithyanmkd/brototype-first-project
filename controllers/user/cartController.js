@@ -24,7 +24,7 @@ const getCart = async (req, res) => {
   let totalSellingPrice = 0;
   let totalOriginalPrice = 0;
 
-  if (!userCart) {
+  if (!userCart?.items.length > 0) {
     return res.render('user/pages/cart/emptyCart.ejs');
   }
 

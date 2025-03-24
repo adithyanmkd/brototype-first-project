@@ -106,19 +106,6 @@
       >
         <div class="flex items-center justify-between">
           <span class="font-medium">Cash On Delivery</span>
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            ></path>
-          </svg>
         </div>
       </button>
 
@@ -135,7 +122,7 @@
 
       <!-- Pay Button -->
       <a
-        href="/payment/success"
+        id="pay-btn"
         class="w-full block text-center cursor-pointer py-4 bg-[#3B4784] text-white rounded-lg font-medium hover:bg-[#2C3A6E] mt-8"
       >
         Pay Via COD
@@ -143,3 +130,4 @@
     </div>
   </div>
 </div>
+<script type="module" src="javascript/ajax/pages/payment.js"></script>
