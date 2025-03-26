@@ -85,6 +85,7 @@ const allProduct = async (req, res) => {
 
   // Fetch filtered and paginated product
   const products = await Product.find({ ...filter, isDeleted: false })
+    .populate('category', 'name')
     .skip(skip)
     .limit(limit);
 

@@ -51,6 +51,12 @@ const adminSidebar = (req, res, next) => {
       ],
     },
     {
+      id: 'orders',
+      name: 'Orders',
+      href: '/admin/orders',
+      active: req.path === '/orders',
+    },
+    {
       id: 'banner',
       name: 'Banner',
       href: '#',

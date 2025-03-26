@@ -1,4 +1,13 @@
 import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+
+function generateOrderId() {
+  const timestamp = Date.now().toString().slice(-8); // Last 8 digits of timestamp
+  const randomDigits = Math.floor(
+    10000000 + Math.random() * 90000000
+  ).toString(); // 7 random digits
+  return timestamp + randomDigits.slice(0, 6); // Ensure it's exactly 14 digits
+}
 
 const orderSchema = new mongoose.Schema(
   {
@@ -7,14 +16,27 @@ const orderSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    orderId: {
+      type: String,
+      unique: true,
+      required: true,
+      default: generateOrderId, // generating unique order id
+    },
     orderedItems: [
       {
         productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
         productName: String,
+        thumbnail: String,
         quantity: Number,
         price: Number,
       },
     ],
+    orderThumbnail: {
+      type: String,
+    },
+    productName: {
+      type: String,
+    },
     totalAmount: { type: Number, required: true },
     paymentMethod: {
       type: String,

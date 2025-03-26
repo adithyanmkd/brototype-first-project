@@ -11,6 +11,11 @@ const userDetails = (req, res) => {
   const user = req.session.user;
   const userMenus = [...menus]; // profile menus accessing
 
+  // if user not registerd
+  if (!user) {
+    return res.redirect('/auth/login');
+  }
+
   // google user no need of password change
   if (!user.isGoogleUser) {
     userMenus.splice(1, 0, {
@@ -19,10 +24,6 @@ const userDetails = (req, res) => {
     });
   }
 
-  // if user not registerd
-  if (!user) {
-    return res.redirect('/auth/login');
-  }
   res.render('user/pages/profile/UserDetails', { user, menus: userMenus });
 };
 

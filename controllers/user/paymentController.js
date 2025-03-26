@@ -58,13 +58,21 @@ const postPayment = async (req, res) => {
   //   cartItems.items.map(async (item) => await Product.findById(item.productId))
   // );
 
+  if (!cartItems) {
+    return res.status(404).json({ success: false, message: 'cart is empty!' });
+  }
+
+  let cardImagePaths = []; // all product card images for thumbnail
+
   let orderedItems = await Promise.all(
     cartItems.items.map(async (item) => {
       let product = await Product.findById(item.productId);
+      cardImagePaths.push(product.images.cardImage.path); // images pushing for order thumbnails
 
       return {
         productId: product._doc._id,
         productName: product._doc.productName,
+        thumbnail: product._doc.images.cardImage.path,
         quantity: item.quantity,
         price: product._doc.price.sellingPrice,
       };
@@ -93,6 +101,8 @@ const postPayment = async (req, res) => {
     let newOrder = new Order({
       userId: user._id,
       orderedItems,
+      orderThumbnail: cardImagePaths[0], // now displaying 1st card image thumnail or oder list page
+      productName: orderedItems[0].productName,
       totalAmount,
       paymentMethod,
       deliveryAddress,
@@ -111,7 +121,10 @@ const postPayment = async (req, res) => {
     await redisClient.del(`cart:${user._id}`, `address:${user._id}`);
     res.status(200).json({ success: true, message: 'Order placed' });
   } catch (error) {
-    console.error({ Error: 'Error from post payment method controller' });
+    console.error({
+      Error: 'Error from post payment method controller',
+      error,
+    });
   }
 };
 

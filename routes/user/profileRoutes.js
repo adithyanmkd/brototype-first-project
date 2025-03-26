@@ -4,7 +4,7 @@ const router = express.Router();
 
 // import controllers
 import profileController from '../../controllers/user/profileControllers.js';
-import orderController from '../../controllers/user/orderController.js';
+import ordersController from '../../controllers/user/ordersController.js';
 
 router.get('/my-details', profileController.userDetails); // get user detail page
 router.get('/my-details/:id', profileController.getEditProfile); // get edit profile page
@@ -17,6 +17,6 @@ router.get('/address', profileController.getAddress); // address page
 router.post('/address', profileController.postAddAddress); // post add address
 router.post('/address/:id/delete', profileController.postDeleteAddress); // delete address
 
-router.get('/orders', orderController.getAllOrders); // get all orders
+router.get('/orders', ordersController.getAllOrders); // get all orders
 
 export default router;

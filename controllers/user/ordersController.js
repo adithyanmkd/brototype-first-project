@@ -1,9 +1,16 @@
 import menus from '../../datasets/profileMenus.js';
+import Order from '../../models/orderModel.js';
 
 // get all orders
-const getAllOrders = (req, res) => {
+const getAllOrders = async (req, res) => {
   let userMenus = [...menus];
   let user = req.session.user;
+
+  let orders = await Order.find();
+
+  if (!user) {
+    return res.redirect('/auth/login');
+  }
 
   // google user no need of password change
   if (!user.isGoogleUser) {
@@ -13,7 +20,10 @@ const getAllOrders = (req, res) => {
     });
   }
 
-  res.render('user/pages/order/orders.ejs', { menus: userMenus });
+  res.render('user/pages/order/orders.ejs', {
+    menus: userMenus,
+    orders,
+  });
 };
 
 // Place an order
@@ -52,9 +62,9 @@ const placeOrder = async (req, res) => {
   }
 };
 
-const orderController = {
+const ordersController = {
   getAllOrders,
   placeOrder,
 };
 
-export default orderController;
+export default ordersController;

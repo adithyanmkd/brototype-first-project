@@ -30,7 +30,10 @@ const getCart = async (req, res) => {
 
   let cartItems = await Promise.all(
     userCart.items.map(async (item) => {
-      let product = await Product.findById(item.productId);
+      let product = await Product.findById(item.productId).populate(
+        'category',
+        'name'
+      );
 
       return {
         ...product,

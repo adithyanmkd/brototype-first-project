@@ -24,8 +24,7 @@ const productSchema = new mongoose.Schema(
     quantity: { type: Number, required: true },
     wishlistStatus: { type: Boolean, default: false },
     category: {
-      // type: mongoose.Schema.Types.ObjectId,
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
       required: true,
     }, // Reference to Category model

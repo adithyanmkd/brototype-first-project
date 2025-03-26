@@ -8,6 +8,9 @@ const generateOTP = () => {
 
 const sendOTP = async (email, otp) => {
   const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465, // SSL
+    secure: true, // Required for SSL
     service: 'gmail',
     auth: {
       user: process.env.ADMIN_EMAIL,

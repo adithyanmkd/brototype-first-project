@@ -123,7 +123,11 @@ const getResendOtp = async (req, res) => {
     await sendOTP(user.email, otp); // resending OTP to mail
     res.redirect('/auth/otp-verify');
   } catch (error) {
-    res.json({ Error: error });
+    res.json({
+      Error: error,
+      success: false,
+      message: 'Error from get resend otp controller',
+    });
   }
 };
 
@@ -208,15 +212,20 @@ const postForgetPassword = async (req, res) => {
     const otp = generateOTP();
     const otpExpiry = Date.now() + 10 * 60 * 100; // OTP expires in 10 minutes
 
-    console.log(`Generated otp is: ${otp}`);
-
     user.otp = otp;
     user.otpExpires = otpExpiry;
     await user.save();
 
-    await sendOTP(email, otp); // send OTP to mail
+    try {
+      await sendOTP(email, otp); // send OTP to mail
+      console.log('OTP sent successfully.');
+    } catch (error) {
+      console.log('Failed while sending OTP to mail', error);
+    }
     req.session.tempEmail = email;
     req.session.isChangingPassword = true;
+
+    console.log(`Generated otp is: ${otp}`);
 
     res.status(200).json({ success: true, message: 'OTP sent successfully.' });
   } catch (error) {
