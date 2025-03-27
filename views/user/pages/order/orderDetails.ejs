@@ -1,0 +1,166 @@
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-6">
+        <a href="/account/orders" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Orders
+        </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Order Details Section -->
+      <div class="md:col-span-2 space-y-6">
+        <!-- Order Status Flow -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold">Order Status</h2>
+            <div x-data="{ status: '<%= order.orderStatus %>' }" class="flex items-center space-x-2">
+              <span
+                :class="{
+                  'bg-yellow-100 text-yellow-800': status === 'Pending',
+                  'text-indigo-600 bg-indigo-50' : status === 'Confirmed',
+                  'bg-purple-100 text-purple-500' : status === 'Shipped',
+                  'bg-green-50 text-green-600': status === 'Delivered',
+                  'bg-red-50 text-red-600 ': status === 'Cancelled'
+                }" 
+                class="px-3 py-1 rounded-full text-sm font-medium"
+                ><%= order.orderStatus %></span
+              >
+            </div>
+          </div>
+          
+          <div class="relative">
+            <!-- Status Timeline -->
+            <div class="absolute left-8 top-0 h-full w-0.5 bg-gray-200"></div>
+            
+            <!-- Pending Status -->
+          <div x-data="{ status: '<%= order.orderStatus %>' }">
+            <div id="pending-div" :class="{ 'opacity-50' : status !== 'Pending' }" class="relative flex items-center mb-8">
+              <div class="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full">
+                <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-lg font-medium">Order Placed</h3>
+                <p class="text-gray-500">Waiting for admin confirmation</p>
+              </div>
+            </div>
+          
+  
+            <!-- Confirmed Status -->
+            <div id="confirm-div" :class="{ 'opacity-50' : status !== 'Confirmed' }" class="relative flex items-center mb-8">
+              <div class="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full">
+                <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-lg font-medium">Order Confirmed</h3>
+                <p class="text-gray-500">Ready to be shipped</p>
+              </div> 
+            </div>
+  
+            <!-- Shipped Status -->
+            <div class="relative flex items-center mb-8" :class="{ 'opacity-50' : status !== 'Shipped' }">
+              <div class="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full">
+                <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-lg font-medium">Order Shipped</h3>
+                <p class="text-gray-500">On the way to delivery</p>
+              </div>
+            </div>
+  
+            <!-- Delivered Status -->
+            <div :class="{ 'opacity-50' : status !== 'Delivered' }" class="relative flex items-center">
+              <div class="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
+                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-lg font-medium">Order Delivered</h3>
+                <p class="text-gray-500">Successfully delivered</p>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+  
+        <!-- Order Items -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold">Order details</h2>
+          </div>
+  
+          <table class="w-full">
+            <thead>
+              <tr class="text-left text-gray-600">
+                <th class="py-3">PRODUCTS</th>
+                <th class="py-3">PRICE</th>
+                <th class="py-3">QTY</th>
+                <th class="py-3">TOTAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% order.orderedItems.forEach((item) => { %>
+                <tr class="border-t">
+                  <td class="py-4">
+                    <div class="flex items-center gap-3">
+                      <img src="<%= item.thumbnail %>" alt="Wooden Chair" class="w-10 h-10 object-cover">
+  
+                      <div>
+                        <p class="font-medium"><%= item.productName %></p>
+                        <!-- <p class="text-sm text-gray-500">category</p> -->
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4">₹<%= item.price %></td>
+                  <td class="py-4"><%= item.quantity %></td>
+                  <td class="py-4">₹<%= item.price * item.quantity %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+  
+          <div class="mt-6 space-y-2 border-t pt-4">
+            <div class="flex justify-between">
+              <span>Subtotal:</span>
+              <span>₹<%= order.totalAmount %></span>
+            </div>
+            <!-- <div class="flex justify-between">
+              <span>Discount:</span>
+              <span>100</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Tax:</span>
+              <span>$100.00</span>
+            </div> -->
+            <div class="flex justify-between font-semibold">
+              <span>Total:</span>
+              <span>₹<%= order.totalAmount %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Customer Details Section -->
+      <div class="space-y-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">Shipping address</h2>
+          </div>
+          <address class="text-gray-600 not-italic">
+            <%= order.deliveryAddress.address %>, <%= order.deliveryAddress.locality %><br>
+            <%= order.deliveryAddress.district %>, <%= order.deliveryAddress.state %> <br>
+            <%= order.deliveryAddress.pincode %>
+          </address>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script type="module" src="/javascript/ajax/pages/adminOrders.js"></script>

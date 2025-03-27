@@ -26,6 +26,27 @@ const getAllOrders = async (req, res) => {
   });
 };
 
+// get single order details page
+const getOrder = async (req, res) => {
+  let id = req.params.orderId; // accessing id from query params
+  let order = await Order.findById(id).populate(
+    'userId',
+    'email name profilePic number'
+  );
+
+  // calculate total items
+  let totalItems = order.orderedItems.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  ); // calculating total quantity
+
+  res.render('user/pages/order/orderDetails.ejs', {
+    layout: 'layouts/user-layout.ejs',
+    order,
+    totalItems,
+  });
+};
+
 // Place an order
 const placeOrder = async (req, res) => {
   try {
@@ -64,6 +85,7 @@ const placeOrder = async (req, res) => {
 
 const ordersController = {
   getAllOrders,
+  getOrder,
   placeOrder,
 };
 
