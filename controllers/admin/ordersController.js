@@ -2,8 +2,49 @@ import { Order } from '../../models/index.js';
 
 // get all orders list page
 const getOrders = async (req, res) => {
+  let search = req.query.search || '';
+  let category = req.query.category || '';
+
+  let matchQuery = {
+    $or: [
+      { orderId: { $regex: search, $options: 'i' } },
+      { 'user.name': { $regex: search, $options: 'i' } },
+    ],
+  };
+
+  // Add category filter only if category is provided
+  if (category) {
+    if (category === 'All') {
+      matchQuery.orderStatus = { $regex: '', $options: 'i' };
+    } else {
+      matchQuery.orderStatus = { $regex: category, $options: 'i' };
+    }
+  }
+
   try {
-    let orders = await Order.find().populate('userId', 'name email profilePic');
+    let orders = await Order.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      { $unwind: '$user' },
+      {
+        $match: matchQuery,
+      },
+      {
+        $sort: { orderDate: -1 },
+      },
+    ]);
+
+    console.log(orders);
+    if (req.xhr) {
+      return res.status(200).json({ orders });
+    }
+
     res.render('admin/pages/orders/orders.ejs', {
       layout: 'layouts/admin-layout.ejs',
       orders,

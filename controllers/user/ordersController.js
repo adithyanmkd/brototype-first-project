@@ -6,45 +6,63 @@ const getAllOrders = async (req, res) => {
   let userMenus = [...menus];
   let user = req.session.user;
 
-  let orders = await Order.find();
+  try {
+    let orders = await Order.find().sort({ orderDate: -1 });
 
-  if (!user) {
-    return res.redirect('/auth/login');
-  }
+    if (!user) {
+      return res.redirect('/auth/login');
+    }
 
-  // google user no need of password change
-  if (!user.isGoogleUser) {
-    userMenus.splice(1, 0, {
-      name: 'Password',
-      href: '/account/change-password',
+    // google user no need of password change
+    if (!user.isGoogleUser) {
+      userMenus.splice(1, 0, {
+        name: 'Password',
+        href: '/account/change-password',
+      });
+    }
+
+    res.render('user/pages/order/orders.ejs', {
+      menus: userMenus,
+      orders,
+    });
+  } catch (error) {
+    console.log({ Error: error });
+    res.status(501).json({
+      success: false,
+      Error: error,
+      message: 'error while listing orders',
     });
   }
-
-  res.render('user/pages/order/orders.ejs', {
-    menus: userMenus,
-    orders,
-  });
 };
 
 // get single order details page
 const getOrder = async (req, res) => {
   let id = req.params.orderId; // accessing id from query params
-  let order = await Order.findById(id).populate(
-    'userId',
-    'email name profilePic number'
-  );
+  try {
+    let order = await Order.findById(id).populate(
+      'userId',
+      'email name profilePic number'
+    );
 
-  // calculate total items
-  let totalItems = order.orderedItems.reduce(
-    (acc, item) => acc + item.quantity,
-    0
-  ); // calculating total quantity
+    // calculate total items
+    let totalItems = order.orderedItems.reduce(
+      (acc, item) => acc + item.quantity,
+      0
+    ); // calculating total quantity
 
-  res.render('user/pages/order/orderDetails.ejs', {
-    layout: 'layouts/user-layout.ejs',
-    order,
-    totalItems,
-  });
+    res.render('user/pages/order/orderDetails.ejs', {
+      layout: 'layouts/user-layout.ejs',
+      order,
+      totalItems,
+    });
+  } catch (error) {
+    console.log({ Error: error });
+    res.status(501).json({
+      success: false,
+      Error: error,
+      message: 'Error while a showing order details',
+    });
+  }
 };
 
 // Place an order
