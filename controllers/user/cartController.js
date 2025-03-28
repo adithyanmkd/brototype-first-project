@@ -92,7 +92,29 @@ const addToCart = async (req, res) => {
     //   cart.items.push({ productId, quantity });
     // }
     // await cart.save(); // save item
+    let product = await Product.findById(productId);
+
+    if (cart.quantity >= 3) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Max product purchase reached' });
+    }
+
+    if (quantity > product.quantity) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Product is out of stock' });
+    }
+
+    // if product already exist increase qty
     if (itemIndex !== -1) {
+      let itemQty = cart.items[itemIndex].quantity;
+
+      if (itemQty >= 3) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'Max product purchase reached' });
+      }
       cart.items[itemIndex].quantity =
         Number(cart.items[itemIndex].quantity) + Number(quantity);
     } else {
@@ -106,6 +128,10 @@ const addToCart = async (req, res) => {
   } catch (error) {
     console.log({
       Error: error,
+      message: 'Error while adding product to cart',
+    });
+    res.status(501).status({
+      success: false,
       message: 'Error while adding product to cart',
     });
   }
@@ -143,20 +169,53 @@ const postCart = async (req, res) => {
   let user = req.session.user;
   let cartItems = req.body.cartItems;
 
-  let userCart = await redisClient.get(`cart:${user._id}`);
-  let cart = JSON.parse(userCart);
+  try {
+    let userCart = await redisClient.get(`cart:${user._id}`);
+    let cart = JSON.parse(userCart);
 
-  cartItems.forEach((item) => {
-    let existingItemIndex = cart.items.findIndex(
-      (existItem) => item.productId === existItem.productId
+    cartItems.forEach((item) => {
+      let existingItemIndex = cart.items.findIndex(
+        (existItem) => item.productId === existItem.productId
+      );
+
+      cart.items[existingItemIndex].quantity = Number(item.quantity);
+    });
+
+    let products = await Promise.all(
+      cart.items.map(async (item) => {
+        let product = await Product.findById(item.productId);
+        return {
+          ...product,
+        };
+      })
     );
 
-    cart.items[existingItemIndex].quantity = Number(item.quantity);
-  });
+    let flag = false;
 
-  // update quantity saving
-  await redisClient.set(`cart:${user._id}`, JSON.stringify(cart));
-  res.status(200).json({ success: true, message: 'cart post' });
+    products.forEach((item, index) => {
+      if (item._doc.quantity < cart.items[index].quantity) {
+        flag = true;
+        return res.status(404).json({
+          success: false,
+          message: 'Item out stock',
+          product: item._doc.productName,
+        });
+      }
+    });
+
+    if (flag) {
+      return;
+    }
+
+    // update quantity saving
+    await redisClient.set(`cart:${user._id}`, JSON.stringify(cart));
+    res.status(200).json({ success: true, message: 'cart post' });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(501)
+      .json({ success: false, message: 'Error while posting cart items' });
+  }
 };
 
 const cartController = {

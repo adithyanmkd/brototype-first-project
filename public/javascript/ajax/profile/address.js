@@ -219,5 +219,112 @@ async function validateAddForm(event) {
     } else {
       alert('Failed', data.message);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error, 'error from add address ajax');
+  }
+}
+
+// accessing edit form
+const editForm = document.getElementById('edit-address-form');
+
+// making ajax request and validation
+
+editForm.addEventListener('submit', validateEditform);
+
+// edit address
+async function validateEditform(event) {
+  event.preventDefault();
+
+  // Get form values
+  const addressId = document.querySelector('[name="addressId"]').value.trim();
+  const fullName = document.querySelector('[name="fullname"]').value.trim();
+  const email = document.querySelector('[name="email"]').value.trim();
+  const phoneNumber = document
+    .querySelector('[name="phoneNumber"]')
+    .value.trim();
+  const address = document.querySelector('[name="address"]').value.trim();
+  const pincode = document.querySelector('[name="pincode"]').value.trim();
+  const district = document.querySelector('[name="district"]').value.trim();
+  const state = document.querySelector('[name="state"]').value.trim();
+  const locality = document.querySelector('[name="locality"]').value.trim();
+  const isDefault = document.querySelector('[name="isDefault"]').checked;
+  console.log(isDefault);
+
+  // Regex for email, phone number, and pincode
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phonePattern = /^[0-9]{10}$/;
+  const pincodePattern = /^[0-9]{6}$/;
+
+  // Validation Checks
+  if (!fullName) {
+    displayError('Full name is required');
+    return;
+  }
+
+  if (!email || !emailPattern.test(email)) {
+    displayError('Enter a valid email');
+    return;
+  }
+
+  if (!phoneNumber || !phonePattern.test(phoneNumber)) {
+    displayError('Enter a valid 10-digit phone number');
+    return;
+  }
+
+  if (!address) {
+    displayError('Address is required');
+    return;
+  }
+
+  if (!pincode || !pincodePattern.test(pincode)) {
+    displayError('Enter a valid 6-digit pincode');
+    return;
+  }
+
+  if (!district) {
+    displayError('District is required');
+    return;
+  }
+
+  if (!state) {
+    displayError('State is required');
+    return;
+  }
+
+  hideError();
+
+  let body = {
+    addressId,
+    name: fullName,
+    email,
+    phone: phoneNumber,
+    address,
+    locality,
+    pincode,
+    district,
+    state,
+    isDefault,
+  };
+
+  try {
+    let response = await fetch('/account/address/edit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    let data = await response.json();
+
+    if (response.ok) {
+      if (pathname.includes('/checkout')) {
+        window.location.href = '/checkout';
+      } else {
+        window.location.href = '/account/address';
+      }
+    } else {
+      alert('Failed', data.message);
+    }
+  } catch (error) {
+    console.log(error, 'error from edit address ajax');
+  }
 }

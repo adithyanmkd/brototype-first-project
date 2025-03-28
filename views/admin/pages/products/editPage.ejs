@@ -187,7 +187,7 @@
                                 x-model="category">
                                 <option value="" disabled selected>Select category</option>
                                 <% categories.forEach((category)=> { %>
-                                    <option value="<%= category.name %>">
+                                    <option value="<%= category._id %>">
                                         <%- category.name %>
                                     </option>
                                     <% }) %>

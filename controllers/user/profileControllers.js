@@ -147,7 +147,7 @@ const getAddress = async (req, res) => {
   });
 };
 
-// post address add page
+// add address
 const postAddAddress = async (req, res) => {
   let user = req.session.user;
 
@@ -158,6 +158,25 @@ const postAddAddress = async (req, res) => {
     });
 
     await newAddress.save();
+  } catch (error) {
+    console.log({ Error: error, message: 'error from profile controller' });
+  }
+
+  res.status(200).json({ user });
+};
+
+// edit address
+const postEditAddress = async (req, res) => {
+  let user = req.session.user;
+  let { addressId, ...body } = req.body;
+  console.log(addressId);
+
+  try {
+    let updateAddress = await Address.findByIdAndUpdate(
+      { _id: addressId },
+      { $set: { ...body } },
+      { new: true }
+    );
   } catch (error) {
     console.log({ Error: error, message: 'error from profile controller' });
   }
@@ -187,6 +206,7 @@ const profileController = {
   postChangePassword,
   getAddress,
   postAddAddress,
+  postEditAddress,
   postDeleteAddress,
 };
 

@@ -1,3 +1,27 @@
+let errorTimeout; // Store timeout reference
+
+// display error
+function displayError(message) {
+  const errorBox = document.querySelector('#error-box');
+
+  errorBox.classList.remove('hidden');
+  errorBox.textContent = message;
+
+  // Clear any existing timeout to prevent multiple timers
+  clearTimeout(errorTimeout);
+
+  // after 5 seconds message will be hide
+  errorTimeout = setTimeout(() => {
+    errorBox.classList.add('hidden');
+  }, 5000);
+}
+
+// hide error message
+function hideError() {
+  let errorBox = document.querySelector('#error-box');
+  errorBox.classList.add('hidden');
+}
+
 // delete item
 async function deleteItem(productId, event) {
   event.preventDefault();
@@ -114,7 +138,8 @@ async function postCartForm(e) {
     if (response.ok) {
       window.location.href = '/checkout';
     } else {
-      console.error(data.error, 'error');
+      displayError(`${data.product} ${data.message} `);
+      console.error(data.message, 'error');
     }
   } catch (error) {
     console.log('error catch block');

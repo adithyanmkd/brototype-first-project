@@ -40,7 +40,6 @@ const getOrders = async (req, res) => {
       },
     ]);
 
-    console.log(orders);
     if (req.xhr) {
       return res.status(200).json({ orders });
     }

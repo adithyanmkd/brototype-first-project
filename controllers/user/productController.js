@@ -1,3 +1,4 @@
+import Category from '../../models/categoryModel.js';
 import Product from '../../models/productModel.js';
 
 const products = async (req, res) => {
@@ -33,10 +34,14 @@ const products = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
+    let categories = await Category.find({ isDeleted: false });
+    console.log(categories);
+
     // Render Products Page
     res.render('user/pages/products/Products', {
       products,
       category,
+      categories,
       sort,
       currentPage,
       totalPages,
