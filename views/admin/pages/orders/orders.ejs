@@ -16,6 +16,7 @@
         placeholder="Search orders..."
         class="pl-10 pr-4 py-2 w-full md:w-64 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
       />
+      <a  href="/admin/orders?search=" class="px-4 pr-4 py-2 bg-blue-50 border border-blue-400 hover:bg-blue-100 text-blue-600 font-semibold rounded-[8px]">clear</a>
       </div>
 
      <!-- Status Filter Dropdown -->
@@ -109,10 +110,26 @@
               </td>
             </tr>
           <% }) %>
-          
-          <!-- More rows with similar structure -->
         </tbody>
       </table>
+      <div class="flex justify-center space-x-2 mt-4">
+        <% if (page> 1) { %>
+            <a href="/admin/orders?page=<%= page - 1 %>"
+                class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Previous</a>
+            <% } %>
+
+                <% for (let i=1; i <=totalPages; i++) { %>
+                    <a href="/admin/orders?page=<%= i %>"
+                        class="px-3 py-2 rounded-lg <%= page === i ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300' %>">
+                        <%= i %>
+                    </a>
+                    <% } %>
+
+                        <% if (page < totalPages) { %>
+                            <a href="/admin/orders?page=<%= page + 1 %>"
+                                class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Next</a>
+                            <% } %>
+    </div>
     </div>
   </div>
 

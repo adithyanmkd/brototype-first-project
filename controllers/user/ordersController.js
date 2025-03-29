@@ -16,8 +16,19 @@ const getAllOrders = async (req, res) => {
   let userMenus = [...menus];
   let user = req.session.user;
 
+  const page = parseInt(req.query.page) || 1;
+  const limit = 6; // Number of users per page
+  const skip = (page - 1) * limit;
+
+  // Count total matching users
+  const totalProducts = await Order.countDocuments();
+  const totalPages = Math.ceil(totalProducts / limit);
+
   try {
-    let orders = await Order.find().sort({ orderDate: -1 });
+    let orders = await Order.find()
+      .sort({ orderDate: -1 })
+      .skip(skip)
+      .limit(limit);
 
     if (!user) {
       return res.redirect('/auth/login');
@@ -34,6 +45,8 @@ const getAllOrders = async (req, res) => {
     res.render('user/pages/order/orders.ejs', {
       menus: userMenus,
       orders,
+      page,
+      totalPages,
     });
   } catch (error) {
     console.log({ Error: error });

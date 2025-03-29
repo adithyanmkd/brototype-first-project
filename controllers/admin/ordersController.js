@@ -5,6 +5,14 @@ const getOrders = async (req, res) => {
   let search = req.query.search || '';
   let category = req.query.category || '';
 
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10; // Number of users per page
+  const skip = (page - 1) * limit;
+
+  // Count total matching users
+  const totalProducts = await Order.countDocuments();
+  const totalPages = Math.ceil(totalProducts / limit);
+
   let matchQuery = {
     $or: [
       { orderId: { $regex: search, $options: 'i' } },
@@ -38,6 +46,12 @@ const getOrders = async (req, res) => {
       {
         $sort: { orderDate: -1 },
       },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
     ]);
 
     if (req.xhr) {
@@ -47,6 +61,8 @@ const getOrders = async (req, res) => {
     res.render('admin/pages/orders/orders.ejs', {
       layout: 'layouts/admin-layout.ejs',
       orders,
+      page,
+      totalPages,
     });
   } catch (error) {
     console.error({ Error: 'error from orders listing page' });

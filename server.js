@@ -42,6 +42,17 @@ app.use(
   })
 );
 
+// cache management
+app.use((req, res, next) => {
+  res.setHeader(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, private'
+  );
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
 app.use(express.json()); // Enables JSON parsing (for APIs)
 app.use(express.urlencoded({ extended: true })); // Enables parsing of form data
 app.use(expressLayouts); // Use express-ejs-layouts
