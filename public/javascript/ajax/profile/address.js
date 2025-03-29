@@ -126,7 +126,9 @@ function closeDeleteModal() {
 const addForm = document.getElementById('add-address-form');
 
 // Add submit event listener
-addForm.addEventListener('submit', validateAddForm);
+if (addForm) {
+  addForm.addEventListener('submit', validateAddForm);
+}
 
 // add form validation
 async function validateAddForm(event) {
@@ -228,8 +230,9 @@ async function validateAddForm(event) {
 const editForm = document.getElementById('edit-address-form');
 
 // making ajax request and validation
-
-editForm.addEventListener('submit', validateEditform);
+if (editForm) {
+  editForm.addEventListener('submit', validateEditform);
+}
 
 // edit address
 async function validateEditform(event) {
@@ -317,6 +320,8 @@ async function validateEditform(event) {
 
     if (response.ok) {
       if (pathname.includes('/checkout')) {
+        window.location.href = '/checkout';
+      } else if (pathname.includes('/address/edit')) {
         window.location.href = '/checkout';
       } else {
         window.location.href = '/account/address';

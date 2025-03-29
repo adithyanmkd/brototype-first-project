@@ -165,6 +165,12 @@ const postAddAddress = async (req, res) => {
   res.status(200).json({ user });
 };
 
+const getAddressEdit = async (req, res) => {
+  let addressId = req.params.id;
+  let address = await Address.findById(addressId);
+  res.render('user/partials/organisms/editAddressModal.ejs', { address });
+};
+
 // edit address
 const postEditAddress = async (req, res) => {
   let user = req.session.user;
@@ -207,6 +213,7 @@ const profileController = {
   getAddress,
   postAddAddress,
   postEditAddress,
+  getAddressEdit,
   postDeleteAddress,
 };
 

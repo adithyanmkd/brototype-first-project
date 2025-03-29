@@ -2,10 +2,9 @@
     <div class="mx-auto mt-20 w-full max-w-lg rounded-lg bg-white">
       <div class="flex items-center justify-between border-b p-4">
         <h2 class="text-xl font-semibold">Edit Address</h2>
-        <button
-          type="button"
+        <a
+        href="/checkout"
           class="text-gray-500 hover:text-gray-700"
-          onclick="closeEditModal()"
         >
           <svg
             class="h-6 w-6"
@@ -20,17 +19,24 @@
               d="M6 18L18 6M6 6l12 12"
             ></path>
           </svg>
-        </button>
+        </a>
       </div>
       <div class="p-6">
-        <form class="space-y-4" onsubmit="event.preventDefault();">
+        <form class="space-y-4" id="edit-address-form">
+          <input type="text" name="addressId"  class="hidden" value="<%= address._id %>">
+          <!-- error message box started -->
+            <div
+            id="error-box"
+            class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:text-red-400 hidden"
+          ></div>
+          <!-- error message box ended -->
           <div>
             <label class="block text-sm font-medium text-gray-700"
               >Full Name<span class="text-red-500">*</span></label
             >
             <input
               type="text"
-              name="name"
+              name="fullname"
               value="<%= address.name %>"
               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
             />
@@ -54,7 +60,7 @@
             >
             <input
               type="tel"
-              name="phone"
+              name="phoneNumber"
               value="<%= address.phone %>"
               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
             />
@@ -140,9 +146,11 @@
             type="submit"
             class="w-full rounded-md bg-yellow-400 py-2 font-medium text-black transition-colors hover:bg-yellow-500"
           >
-            Save Address
+            Edit Address
           </button>
         </form>
       </div>
     </div>
   </div>
+
+<script src="/javascript/ajax/profile/address.js"></script>

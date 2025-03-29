@@ -1,3 +1,13 @@
+// import libraries
+import pdf from 'html-pdf';
+import ejs from 'ejs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+//fix __dirname && __filename for module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 import menus from '../../datasets/profileMenus.js';
 import Order from '../../models/orderModel.js';
 
@@ -101,10 +111,58 @@ const placeOrder = async (req, res) => {
   }
 };
 
+// Sample invoice data
+const invoiceData = {
+  customerName: 'John Doe',
+  date: new Date().toLocaleDateString(),
+  items: [
+    { name: 'Product 1', price: '$10' },
+    { name: 'Product 2', price: '$20' },
+  ],
+  total: '$30',
+};
+
+// download invoice
+const downloadInvoice = async (req, res) => {
+  let user = req.session.user;
+  let orderId = req.params.orderId;
+
+  let order = await Order.findById(orderId);
+
+  // res.render('user/pages/order/invoice.ejs', { layout: false, order });
+
+  ejs.renderFile(
+    path.join(__dirname, '../../views/user/pages/order/invoice.ejs'),
+    { order },
+    (err, html) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send('Error generating invoice');
+      }
+
+      pdf.create(html).toStream((err, stream) => {
+        if (err) {
+          if (err) {
+            return res.status(500).send('Error generating PDF');
+          }
+        }
+
+        res.setHeader(
+          'Content-Disposition',
+          'attachment; filename=invoice.pdf'
+        );
+        res.setHeader('Content-Type', 'application/pdf');
+        stream.pipe(res);
+      });
+    }
+  );
+};
+
 const ordersController = {
   getAllOrders,
   getOrder,
   placeOrder,
+  downloadInvoice,
 };
 
 export default ordersController;

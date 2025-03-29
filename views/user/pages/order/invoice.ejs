@@ -1,0 +1,213 @@
+<style>
+  body {
+    background-color: rgb(243, 244, 246);
+    min-height: auto;
+    padding: 1.5rem; /* Reduced padding */
+  }
+
+  .container {
+    max-width: 48rem;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 12px -3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem; /* Reduced padding */
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem; /* Reduced margin */
+  }
+
+  .title {
+    font-size: 1.75rem; /* Slightly smaller */
+    font-weight: bold;
+  }
+
+  .text-gray {
+    color: rgb(107, 114, 128);
+    margin-top: 0.2rem;
+  }
+
+  .client-info {
+    margin-top: 0.4rem;
+  }
+
+  .semi-bold {
+    font-weight: 600;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+
+  .table-container {
+    margin-top: 1.5rem; /* Reduced margin */
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse; /* Helps with spacing */
+  }
+
+  th {
+    text-align: left;
+    padding: 0.4rem 0; /* Reduced padding */
+    border-bottom: 1px solid rgb(229, 231, 235);
+  }
+
+  th.center {
+    text-align: center;
+  }
+
+  th.right {
+    text-align: right;
+  }
+
+  td {
+    padding: 0.4rem 0; /* Reduced padding */
+    border-bottom: 1px solid rgb(229, 231, 235);
+  }
+
+  td.center {
+    text-align: center;
+  }
+
+  td.right {
+    text-align: right;
+  }
+
+  .footer {
+    margin-top: 1rem; /* Reduced margin */
+    padding-top: 1rem; /* Reduced padding */
+    border-top: 1px solid rgb(229, 231, 235);
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .logo {
+    height: 2.5rem; /* Reduced size */
+    width: 2.5rem;
+  }
+
+  .company-name {
+    font-weight: bold;
+    margin-top: 0.4rem;
+  }
+
+  .email-link {
+    color: rgb(37, 99, 235);
+    text-decoration: none;
+  }
+</style>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h1 class="title">Invoice</h1>
+      <p class="text-gray">Billed To:</p>
+      <div class="client-info">
+        <h2 class="semi-bold"><%= order.deliveryAddress.name %></h2>
+        <address>
+          <%= order.deliveryAddress.address %>, <%=
+          order.deliveryAddress.locality %><br />
+          <%= order.deliveryAddress.district %>, <%= order.deliveryAddress.state
+          %> <br />
+          <%= order.deliveryAddress.pincode %>,<br />
+          +91 <%= order.deliveryAddress.phone %>
+        </address>
+      </div>
+    </div>
+    <div class="text-right">
+      <p class="text-gray">Invoice No.</p>
+      <p class="semi-bold">#<%= order.orderId %></p>
+      <p class="text-gray">Issued on</p>
+      <p class="semi-bold"><%= new Date().toLocaleDateString() %></p>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Services</th>
+          <th class="center">Qty.</th>
+          <th class="right">Price</th>
+          <th class="right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% order.orderedItems.forEach((item) => { %>
+            <tr>
+                <td><%= item.productName %></td>
+                <td class="center"><%= item.quantity %></td>
+                <td class="right"><%= item.price %></td>
+                <td class="right"><%= item.price * item.quantity %></td>
+              </tr>
+        <% }) %>
+        
+      </tbody>
+      <tfoot>
+        <tr class="semi-bold">
+          <td colspan="3" class="right">Total (rupees)</td>
+          <td class="right"><%= order.totalAmount %></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-content">
+      <div>
+        <svg
+          width="26"
+          height="26"
+          viewBox="0 0 26 26"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M14.0537 25.2427C14.0537 25.6611 14.3928 26.0002 14.8112 26.0002H25.2643C25.6826 26.0002 26.0243 25.6602 25.9982 25.2426C25.623 19.2363 20.8177 14.4307 14.8113 14.0556C14.3939 14.0295 14.0537 14.3711 14.0537 14.7895V25.2427Z"
+            fill="#157BC0"
+          />
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M11.9459 14.8117C11.9459 14.3933 11.6067 14.0542 11.1884 14.0542H0.735277C0.316927 14.0542 -0.0246926 14.3943 0.00140214 14.8118C0.376577 20.8182 5.18196 25.6237 11.1882 25.9989C11.6057 26.0249 11.9459 25.6833 11.9459 25.265V14.8117Z"
+            fill="#157BC0"
+          />
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M11.9459 11.1886C11.9459 11.6069 11.6067 11.9461 11.1884 11.9461H0.735277C0.316927 11.9461 -0.0246926 11.6059 0.00140214 11.1884C0.376577 5.18205 5.18196 0.376583 11.1882 0.00140216C11.6057 -0.0246931 11.9459 0.316932 11.9459 0.73529V11.1886Z"
+            fill="#157BC0"
+          />
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M14.0537 0.757483C14.0537 0.339136 14.3928 0 14.8112 0H25.2643C25.6826 0 26.0243 0.340095 25.9982 0.757626C25.623 6.76397 20.8177 11.5695 14.8113 11.9447C14.3939 11.9707 14.0537 11.6291 14.0537 11.2108V0.757483Z"
+            fill="#157BC0"
+          />
+        </svg>
+
+        <h3 class="company-name">ComfyNest</h3>
+        <p class="text-gray">Address / Contact Info</p>
+        <a href="mailto:email@company.com" class="email-link">comfiNe</a>
+      </div>
+      <div class="text-right">
+        <h4 class="semi-bold">Additional Notes</h4>
+        <p class="text-gray">Have a great day</p>
+      </div>
+    </div>
+  </div>
+</div>

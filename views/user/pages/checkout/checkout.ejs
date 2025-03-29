@@ -129,12 +129,12 @@
                       <%= address.district %>, <%= address.state.toUpperCase() %>, <%= address.pincode %>
                     </p>
                     <div class="flex gap-3">
-                      <button
-                        onclick="showEditModal('<%= address._id %>', event)"
+                      <a
+                        href="/account/address/edit/<%= address._id %>"
                         class="cursor-pointer rounded bg-yellow-400 px-6 py-2 font-medium transition-colors hover:bg-yellow-500"
                       >
                         Edit
-                      </button>
+                      </a>
                         <button
                           onclick="openDeleteModal('<%= address._id %>', event)"
                           class="cursor-pointer rounded border border-gray-300 px-6 py-2 font-medium transition-colors hover:bg-gray-50"
@@ -160,8 +160,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- Edit Address Modal -->
-                <% include("../../partials/organisms/editAddressModal.ejs", { address }) %>
               <% }) %>
             </div>
           </div>
@@ -188,6 +186,7 @@
           </div>
       </div>
     </div>
+
     
     <!-- Add Address Modal -->
     <div id="addModal" class="modal bg-opacity-50 fixed inset-0 bg-black/75 px-10">
@@ -332,6 +331,7 @@
         </div>
       </div>
     </div>
+
     
   </div>
 </div>

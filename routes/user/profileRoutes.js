@@ -18,6 +18,7 @@ router.post('/change-password', profileController.postChangePassword); // post c
 
 router.get('/address', profileController.getAddress); // address page
 router.post('/address', profileController.postAddAddress); // post add address
+router.get('/address/edit/:id', profileController.getAddressEdit); // get address edit page
 router.post('/address/edit', profileController.postEditAddress); // post edit address
 router.post('/address/:id/delete', profileController.postDeleteAddress); // delete address
 
