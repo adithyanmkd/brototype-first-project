@@ -31,7 +31,6 @@ async function handlePayment(e) {
       currency: 'INR',
       order_id: response.order.id,
       handler: async function (paymentResponse) {
-        console.log(paymentResponse);
         const verifyRes = await fetch(
           '/payment/success?payment_method=razorpay'
         );
@@ -39,7 +38,6 @@ async function handlePayment(e) {
         let data = await verifyRes.json();
 
         if (data.success) {
-          console.log('-----------success----------');
           window.location.href = data.redirect;
         }
       },

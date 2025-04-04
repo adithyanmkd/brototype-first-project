@@ -16,6 +16,9 @@ const getAllOrders = async (req, res) => {
   let userMenus = [...menus];
   let user = req.session.user;
 
+  let search = req.query.search || '';
+  let category = req.query.category || '';
+
   const page = parseInt(req.query.page) || 1;
   const limit = 6; // Number of users per page
   const skip = (page - 1) * limit;
@@ -24,11 +27,50 @@ const getAllOrders = async (req, res) => {
   const totalProducts = await Order.countDocuments({ userId: user._id });
   const totalPages = Math.ceil(totalProducts / limit);
 
+  let matchQuery = {
+    $or: [
+      { orderId: { $regex: search, $options: 'i' } },
+      { productName: { $regex: search, $options: 'i' } },
+    ],
+  };
+
+  // Add category filter only if category is provided
+  if (category) {
+    if (category === 'All') {
+      matchQuery.orderStatus = { $regex: '', $options: 'i' };
+    } else {
+      matchQuery.orderStatus = { $regex: category, $options: 'i' };
+    }
+  }
+
   try {
-    let orders = await Order.find({ userId: user._id })
-      .sort({ orderDate: -1 })
-      .skip(skip)
-      .limit(limit);
+    // let orders = await Order.find({ userId: user._id })
+    //   .sort({ orderDate: -1 })
+    //   .skip(skip)
+    //   .limit(limit);
+    let orders = await Order.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      { $unwind: '$user' },
+      {
+        $match: matchQuery,
+      },
+      {
+        $sort: { orderDate: -1 },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
+    ]);
 
     if (!user) {
       return res.redirect('/auth/login');

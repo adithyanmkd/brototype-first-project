@@ -182,12 +182,16 @@ const postPayment = async (req, res) => {
 // get success page
 const successPage = async (req, res) => {
   let user = req.session.user;
+  let paymentMethod = req.query.payment_method;
+
+  if (paymentMethod == 'cash_on_delivery') {
+    return res.render('user/pages/payment/success.ejs');
+  }
 
   let jsonCart = await redisClient.get(`cart:${user._id}`);
   let cartItems = JSON.parse(jsonCart); // converting json into javascript object
 
   let addressId = await redisClient.get(`address:${user._id}`);
-  let paymentMethod = req.query.payment_method;
 
   let totalAmount = 0;
 
@@ -226,12 +230,7 @@ const successPage = async (req, res) => {
     pincode: address.pincode,
   };
 
-  console.log(paymentMethod);
-
-  if (paymentMethod == 'cash_on_delivery') {
-    return res.render('user/pages/payment/success.ejs');
-  } else if (paymentMethod === 'razorpay') {
-    console.log('here');
+  if (paymentMethod === 'razorpay') {
     try {
       let newOrder = new Order({
         userId: user._id,
