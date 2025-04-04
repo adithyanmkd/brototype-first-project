@@ -78,7 +78,7 @@ const getOrder = async (req, res) => {
   );
 
   // calculate total items
-  let totalItems = order.orderedItems.reduce(
+  let totalItems = order?.orderedItems.reduce(
     (acc, item) => acc + item.quantity,
     0
   ); // calculating total quantity

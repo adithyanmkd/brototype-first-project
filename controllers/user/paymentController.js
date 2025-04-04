@@ -1,12 +1,32 @@
 // import configs
 import redisClient from '../../config/redisConfig.js';
+import razorpay from '../../config/razorpay.js';
 
 import { Product, Order, Address } from '../../models/index.js';
+
+let paymentMethods = [
+  {
+    name: 'Cash On delivery',
+    value: 'cash_on_delivery',
+  },
+  {
+    name: 'Wallet',
+    value: 'wallet',
+  },
+  {
+    name: 'Razorpay',
+    value: 'razorpay',
+  },
+];
 
 // get payment page
 const getPayment = async (req, res) => {
   let user = req.session.user;
   // let userCart = await Cart.findOne({ userId: user._id });
+
+  if (!user) {
+    return res.redirect('/auth/login');
+  }
   let cart = await redisClient.get(`cart:${user._id}`);
   let userCart = JSON.parse(cart);
 
@@ -40,6 +60,7 @@ const getPayment = async (req, res) => {
     totalItems,
     totalSellingPrice,
     totalOriginalPrice,
+    paymentMethods,
   });
 };
 
@@ -98,28 +119,58 @@ const postPayment = async (req, res) => {
   };
 
   try {
-    let newOrder = new Order({
-      userId: user._id,
-      orderedItems,
-      orderThumbnail: cardImagePaths[0], // now displaying 1st card image thumnail or oder list page
-      productName: orderedItems[0].productName,
-      totalAmount,
-      paymentMethod,
-      deliveryAddress,
-    });
+    // cash on delivery method logic
+    if (paymentMethod === 'cash_on_delivery') {
+      let newOrder = new Order({
+        userId: user._id,
+        orderedItems,
+        orderThumbnail: cardImagePaths[0], // now displaying 1st card image thumnail or oder list page
+        productName: orderedItems[0].productName,
+        totalAmount,
+        paymentMethod,
+        deliveryAddress,
+      });
 
-    await newOrder.save();
+      await newOrder.save();
 
-    // descrease the quantity from the product
-    cartItems.items.map(async (item) => {
-      let product = await Product.findById(item.productId);
-      product.quantity -= item.quantity;
-      await product.save();
-    });
+      // descrease the quantity from the product
+      cartItems.items.map(async (item) => {
+        let product = await Product.findById(item.productId);
+        product.quantity -= item.quantity;
+        await product.save();
+      });
 
-    // remove cart items and address
-    await redisClient.del(`cart:${user._id}`, `address:${user._id}`);
-    res.status(200).json({ success: true, message: 'Order placed' });
+      // remove cart items and address
+      await redisClient.del(`cart:${user._id}`, `address:${user._id}`);
+      res.status(200).json({
+        success: true,
+        message: 'Order placed throuch cash on delivery',
+      });
+    } else if (paymentMethod === 'razorpay') {
+      const options = {
+        amount: totalAmount * 100,
+        currency: 'INR',
+        payment_capture: 1,
+      };
+      const order = await razorpay.orders.create(options);
+
+      let razorpayOptions = {
+        user,
+        order,
+        totalAmount,
+        key: process.env.RAZORPAY_KEY_ID,
+      };
+
+      return res.status(200).json({
+        success: true,
+        message: 'proceed to razorpay payment',
+        ...razorpayOptions,
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Invalid payment method' });
+    }
   } catch (error) {
     console.error({
       Error: 'Error from post payment method controller',
@@ -129,14 +180,102 @@ const postPayment = async (req, res) => {
 };
 
 // get success page
-const successPage = (req, res) => {
-  res.render('user/pages/payment/success.ejs');
+const successPage = async (req, res) => {
+  let user = req.session.user;
+
+  let jsonCart = await redisClient.get(`cart:${user._id}`);
+  let cartItems = JSON.parse(jsonCart); // converting json into javascript object
+
+  let addressId = await redisClient.get(`address:${user._id}`);
+  let paymentMethod = req.query.payment_method;
+
+  let totalAmount = 0;
+
+  let cardImagePaths = []; // all product card images for thumbnail
+
+  let orderedItems = await Promise.all(
+    cartItems.items.map(async (item) => {
+      let product = await Product.findById(item.productId);
+      cardImagePaths.push(product.images.cardImage.path); // images pushing for order thumbnails
+
+      return {
+        productId: product._doc._id,
+        productName: product._doc.productName,
+        thumbnail: product._doc.images.cardImage.path,
+        quantity: item.quantity,
+        price: product._doc.price.sellingPrice,
+      };
+    })
+  );
+
+  // calculating total price
+  orderedItems.forEach((item) => {
+    totalAmount += item.price * item.quantity;
+  });
+
+  let address = await Address.findById(addressId);
+
+  // accessing address for order
+  let deliveryAddress = {
+    name: address.name,
+    phone: address.phone,
+    address: address.address,
+    locality: address.locality,
+    district: address.district,
+    state: address.state,
+    pincode: address.pincode,
+  };
+
+  console.log(paymentMethod);
+
+  if (paymentMethod == 'cash_on_delivery') {
+    return res.render('user/pages/payment/success.ejs');
+  } else if (paymentMethod === 'razorpay') {
+    console.log('here');
+    try {
+      let newOrder = new Order({
+        userId: user._id,
+        orderedItems,
+        orderThumbnail: cardImagePaths[0], // now displaying 1st card image thumnail or oder list page
+        productName: orderedItems[0].productName,
+        totalAmount,
+        paymentMethod,
+        deliveryAddress,
+      });
+
+      await newOrder.save();
+
+      // descrease the quantity from the product
+      cartItems.items.map(async (item) => {
+        let product = await Product.findById(item.productId);
+        product.quantity -= item.quantity;
+        await product.save();
+      });
+
+      // remove cart items and address
+      await redisClient.del(`cart:${user._id}`, `address:${user._id}`);
+      return res.json({
+        success: true,
+        redirect: '/payment/success-view',
+        message: 'successfully order placed through razorpay',
+      });
+    } catch (error) {
+      console.error(error, {
+        message: 'Error while creating new order from razorpay',
+      });
+    }
+  }
+};
+
+const successView = (req, res) => {
+  return res.render('user/pages/payment/success.ejs');
 };
 
 const paymentController = {
   getPayment,
   postPayment,
   successPage,
+  successView,
 };
 
 export default paymentController;

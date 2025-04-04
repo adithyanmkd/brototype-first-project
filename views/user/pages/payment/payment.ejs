@@ -90,37 +90,61 @@
       <h2 class="text-lg font-medium mb-4">Payment Methods</h2>
 
       <!-- Wallet Payment (Disabled) -->
-      <button
+
+      <!-- <button
         disabled
-        class="w-full p-4 bg-gray-100 rounded-lg text-left opacity-50 cursor-not-allowed"
+        class="w-full p-4 bg-gray-100 rounded-lg text-left cursor-not-allowed"
       >
         <div class="flex items-center justify-between">
           <span class="font-medium">Wallet</span>
           <span class="text-sm text-gray-500">Balance: ₹0</span>
         </div>
-      </button>
+      </button> -->
 
       <!-- Cash on Delivery (Enabled) -->
-      <button
+      <!-- <button
         class="w-full p-4 bg-black text-white rounded-lg text-left hover:bg-gray-900 transition"
       >
         <div class="flex items-center justify-between">
           <span class="font-medium">Cash On Delivery</span>
         </div>
-      </button>
+      </button> -->
 
-      <!-- Card Payment (Disabled) -->
-      <button
-        disabled
-        class="w-full p-4 bg-gray-100 rounded-lg text-left opacity-50 cursor-not-allowed"
+      <!-- payment methods started -->
+
+      <div
+        class="w-full space-y-4"
+        x-data="{ paymentMethods: <%= JSON.stringify(paymentMethods) %>, 
+                  selectedMethod: null
+                }"
       >
-        <div class="flex items-center justify-between">
-          <span class="font-medium">Pay using cards</span>
-          <img src="images/icons/cards.svg" alt="cards" />
-        </div>
-      </button>
-
-      <!-- Pay Button -->
+        <template x-for="method in paymentMethods">
+          <div class="flex">
+            <label
+              @click="selectedMethod = method.value"
+              x-text="method.name"
+              :for="method.value"
+              :class="selectedMethod === method.value 
+                      ? 'text-white bg-black font-medium hover:bg-gray-900'
+                      : 'bg-gray-100 font-medium'"
+              class="p-4 w-full rounded-lg text-left transition cursor-pointer"
+            ></label>
+            <input
+              type="radio"
+              name="paymentMethod"
+              :id="method.value"
+              :value="method.value"
+              class="hidden"
+            />
+          </div>
+        </template>
+      </div>
+      <!-- ====================error box started==================== -->
+      <div
+        id="error-box"
+        class="hidden p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:text-red-400"
+      ></div>
+      <!-- ====================error box ended==================== -->
       <a
         id="pay-btn"
         class="w-full block text-center cursor-pointer py-4 bg-[#3B4784] text-white rounded-lg font-medium hover:bg-[#2C3A6E] mt-8"

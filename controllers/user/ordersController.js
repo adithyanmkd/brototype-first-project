@@ -21,11 +21,11 @@ const getAllOrders = async (req, res) => {
   const skip = (page - 1) * limit;
 
   // Count total matching users
-  const totalProducts = await Order.countDocuments();
+  const totalProducts = await Order.countDocuments({ userId: user._id });
   const totalPages = Math.ceil(totalProducts / limit);
 
   try {
-    let orders = await Order.find()
+    let orders = await Order.find({ userId: user._id })
       .sort({ orderDate: -1 })
       .skip(skip)
       .limit(limit);
@@ -122,17 +122,6 @@ const placeOrder = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error placing order', error });
   }
-};
-
-// Sample invoice data
-const invoiceData = {
-  customerName: 'John Doe',
-  date: new Date().toLocaleDateString(),
-  items: [
-    { name: 'Product 1', price: '$10' },
-    { name: 'Product 2', price: '$20' },
-  ],
-  total: '$30',
 };
 
 // download invoice

@@ -188,6 +188,12 @@
           <%= order.deliveryAddress.pincode %>
         </address>
       </div>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold">Payment method</h2>
+        </div>
+        <p class="text-gray-600"><%= order.paymentMethod %></p>
+      </div>
     </div>
   </div>
 </div>
