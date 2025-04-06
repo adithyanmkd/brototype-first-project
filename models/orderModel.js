@@ -45,9 +45,19 @@ const orderSchema = new mongoose.Schema(
     },
     orderStatus: {
       type: String,
-      enum: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'],
+      enum: [
+        'Pending',
+        'Confirmed',
+        'Shipped',
+        'Delivered',
+        'Cancelled',
+        'Return Requested',
+        'Return Rejected',
+        'Returned',
+      ],
       default: 'Pending',
     },
+    returnReason: String,
     deliveryAddress: {
       name: String,
       phone: String,

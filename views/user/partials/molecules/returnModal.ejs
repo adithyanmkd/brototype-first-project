@@ -1,0 +1,55 @@
+<div
+  id="return-modal"
+  x-show="returnOpen"
+  x-data="{ reason: '' }"
+  x-transition
+  :class="{'flex': returnOpen, 'hidden': !returnOpen}"
+  class="bg-black/75 h-screen hidden justify-center items-center w-full overflow-hidden top-0 absolute"
+>
+  <div class="bg-white px-4 py-4 rounded-2xl w-[650px]">
+    <div class="flex justify-between items-center pb-2">
+      <div class="flex gap-x-2">
+        <img src="/images/icons/message.svg" alt="message icon" />
+        <span>Return request</span>
+      </div>
+      <button @click="returnOpen = false" class="cursor-pointer">
+        <img src="/images/icons/close-icon.svg" alt="close icon" />
+      </button>
+    </div>
+    <div class="h-px w-full bg-[#9C9C9C]"></div>
+    <div class="text-center flex flex-col justify-center">
+      <h3 class="text-[26px] font-semibold pb-4 pt-4">How are you feeilng</h3>
+      <p class="max-w-[500px] mx-auto text-[#4A4A4A] font-light text-[14px]">
+        Your feedback helps us improve our return process and ensure a better
+        experience for you.
+      </p>
+      <img
+        class="w-[400px] mx-auto"
+        src="/images/icons/person-with-note.svg"
+        alt="person with note"
+      />
+      <textarea
+        x-model="reason"
+        class="h-30 w-[90%] mx-auto rounded-[8px] placeholder:font-thin placeholder:text-sm"
+        name="reason"
+        id="reason"
+        placeholder="Please describe the reason for your return…"
+      ></textarea>
+      <!-- error message box ended -->
+      <div
+        id="error-box"
+        class="p-4 w-[90%] mx-auto mb-4 mt-2 text-sm border border-red-700 text-red-800 rounded-lg bg-red-50 dark:text-red-400 hidden"
+      ></div>
+      <!--  error box ended -->
+      <button
+        id="returnSubmit"
+        :disabled="reason.trim() == ''"
+        :class="reason.trim() == '' ? 'bg-gray-400 cursor-not-allowed' : 'cursor-pointer'"
+        class="bg-[#3A4980] w-[410px] h-[56px] mx-auto mt-2 text-white font-medium rounded-[10px]"
+      >
+        Submit Now
+      </button>
+    </div>
+  </div>
+</div>
+<script type="module" src="/javascript/ajax/pages/userOrders.js"></script>

@@ -20,7 +20,7 @@
       </div>
 
      <!-- Status Filter Dropdown -->
-      <div x-data="{ open: false, selectedStatus: 'All', statuses: ['All', 'Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'],
+      <div x-data="{ open: false, selectedStatus: 'All', statuses: ['All', 'Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled', 'Return Requested', 'Return Rejected', 'Returned'],
           init() {
             const params = new URLSearchParams(window.location.search);
             const status = params.get('category');
@@ -101,7 +101,10 @@
                         'text-indigo-600 bg-indigo-50' : status === 'Confirmed',
                         'bg-purple-100 text-purple-500' : status === 'Shipped',
                         'bg-green-50 text-green-600': status === 'Delivered',
-                        'bg-red-50 text-red-600 ': status === 'Cancelled'
+                        'bg-red-50 text-red-600 ': status === 'Cancelled',
+                        'bg-orange-50 text-orange-600': status === 'Return Requested',
+                        'bg-red-50 text-red-600': status === 'Return Rejected',
+                        'bg-green-50 text-green-600 ': status === 'Returned'
                       }" 
                       class="px-3 py-1 rounded-full text-sm font-medium"
                       ><%= order.orderStatus %></span

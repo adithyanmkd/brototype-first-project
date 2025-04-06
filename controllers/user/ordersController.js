@@ -3,11 +3,13 @@ import pdf from 'html-pdf';
 import ejs from 'ejs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { ObjectId } from 'mongodb';
 
 //fix __dirname && __filename for module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// import models
 import menus from '../../datasets/profileMenus.js';
 import Order from '../../models/orderModel.js';
 
@@ -15,6 +17,10 @@ import Order from '../../models/orderModel.js';
 const getAllOrders = async (req, res) => {
   let userMenus = [...menus];
   let user = req.session.user;
+
+  if (!user) {
+    return res.redirect('/auth/login');
+  }
 
   let search = req.query.search || '';
   let category = req.query.category || '';
@@ -28,6 +34,7 @@ const getAllOrders = async (req, res) => {
   const totalPages = Math.ceil(totalProducts / limit);
 
   let matchQuery = {
+    userId: new ObjectId(`${user._id}`),
     $or: [
       { orderId: { $regex: search, $options: 'i' } },
       { productName: { $regex: search, $options: 'i' } },
@@ -50,6 +57,9 @@ const getAllOrders = async (req, res) => {
     //   .limit(limit);
     let orders = await Order.aggregate([
       {
+        $match: { ...matchQuery },
+      },
+      {
         $lookup: {
           from: 'users',
           localField: 'userId',
@@ -58,9 +68,6 @@ const getAllOrders = async (req, res) => {
         },
       },
       { $unwind: '$user' },
-      {
-        $match: matchQuery,
-      },
       {
         $sort: { orderDate: -1 },
       },
@@ -202,11 +209,36 @@ const downloadInvoice = async (req, res) => {
   );
 };
 
+// return order
+const returnOrder = async (req, res) => {
+  let { orderId, response } = req.body;
+
+  try {
+    let order = await Order.findById(orderId);
+
+    order.orderStatus = 'Return Requested';
+    order.returnReason = response;
+    order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'return requested',
+      redirect: `/account/orders/${orderId}`,
+    });
+  } catch (error) {
+    console.log('error');
+    res
+      .status(500)
+      .json({ success: false, message: 'return order processing failed' });
+  }
+};
+
 const ordersController = {
   getAllOrders,
   getOrder,
   placeOrder,
   downloadInvoice,
+  returnOrder,
 };
 
 export default ordersController;

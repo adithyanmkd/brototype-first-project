@@ -26,20 +26,32 @@
     <!-- flowbite cdn ended -->
   </head>
 
-  <body class="h-screen font-[Poppins]">
+  <body
+    x-data="{returnOpen: false}"
+    :class="{'overflow-hidden': returnOpen}"
+    class="min-h-screen font-[Poppins] relative"
+  >
     <%- include('../user/partials/organisms/navbar.ejs') %>
+
     <main id="content" class="pt-28"><%- body %></main>
+
     <%- include('../user/partials/organisms/footer.ejs') %>
+
+    <!-- return modal -->
+    <%- include("../user/partials/molecules/returnModal.ejs") %>
+    <!-- return modal ended -->
 
     <!-- razorpay script started -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <!-- razorpay script ended -->
+
     <!-- lotti file animation cdn  -->
     <script
       src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
       type="module"
     ></script>
     <!-- lotti file animation cdn ended -->
+
     <!-- flowbite script started -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <!-- flowbite script ended -->

@@ -6,7 +6,14 @@ import passport from '../../config/passport.js';
 // import controllers
 import authController from '../../controllers/user/authController.js';
 
+// import middlewares
+import { auth } from '../../middlewares/user/auth.js';
+
 const router = express.Router();
+
+router.use(auth);
+
+router.get('/logout', authController.logout); // logout
 
 router.get('/register', authController.getRegister); // register page
 router.post('/register', authController.postRegister); // create new user

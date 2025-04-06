@@ -1,13 +1,17 @@
 let changeFilterBtn = document.querySelectorAll('.status-item'); // accessing filter value
 let searchInput = document.getElementById('searchField'); // accessing search value
+let returnBtnSubmit = document.querySelector('#returnSubmit');
+
+// import helpers
+import {
+  searchOrder,
+  changeFilter,
+  submitResponse,
+} from '../handlers/userOrdersHandler.js';
 
 // search functionality
-searchInput.addEventListener('keydown', searchOrder);
-function searchOrder(e) {
-  if (e.key == 'Enter') {
-    let searchVal = e.target.value;
-    window.location.href = `/account/orders?search=${searchVal}`;
-  }
+if (searchInput) {
+  searchInput.addEventListener('keydown', searchOrder);
 }
 
 // filter functionality
@@ -15,7 +19,6 @@ changeFilterBtn.forEach((btn) => {
   btn.addEventListener('click', changeFilter);
 });
 
-function changeFilter(e) {
-  let category = e.target.value;
-  window.location.href = `/account/orders?category=${category}`;
+if (returnBtnSubmit) {
+  returnBtnSubmit.addEventListener('click', submitResponse);
 }

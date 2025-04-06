@@ -3,27 +3,34 @@
 </h3>
 
 <div class="space-y-2">
+  <!-- Rating -->
+  <div class="flex items-center text-sm text-yellow-500">
+    <img src="/images/icons/stars.svg" alt="stars" /><span
+      class="ml-1 text-gray-500"
+      ><%- product.quantity %></span
+    >
+    <!-- now i added product quantity for rating future this would be rating -->
+  </div>
+  <p
+    class="mt-1 text-[16px] max-h-[4.5rem] leading-[160%] overflow-hidden font-light text-gray-600"
+  >
+    <%- product.description %>
+  </p>
 
-  <% if(product.quantity){ %>
-    <!-- Rating -->
-    <div class="flex items-center text-sm text-yellow-500">
-      <img src="/images/icons/stars.svg" alt="stars" /><span class="ml-1 text-gray-500"><%- product.quantity %></span>
-      <!-- now i added product quantity for rating future this would be rating -->
+  <!-- Price -->
+   <% if(product.quantity){ %>
+    <div class="flex items-baseline space-x-4">
+      <span class="text-2xl font-medium text-[#181818]"
+      >₹<%= product.price.sellingPrice %></span
+      >
+      <span class="text-lg text-gray-400 line-through"
+      >₹<%= product.price.originalPrice %></span
+      >
+      <p class="text-sm font-medium text-green-600">
+        save ₹<%= product.price.originalPrice - product.price.sellingPrice %>
+      </p>
     </div>
+    <% }else{ %>
+      <p class="bg-red-50 py-2 text-red-800 border  text-center rounded-[8px] border-red-500 font-medium ">out of stock</p>
     <% } %>
-
-      <% if(product.description){ %>
-        <p class="mt-1 text-[16px] max-h-[4.5rem] leading-[160%]  overflow-hidden font-light text-gray-600">
-          <%- product.description %>
-        </p>
-        <% } %>
-
-          <!-- Price -->
-          <div class="flex items-baseline space-x-4">
-            <span class="text-2xl font-medium text-[#181818]">₹<%= product.price.sellingPrice %></span>
-            <span class="text-lg text-gray-400 line-through">₹<%= product.price.originalPrice %></span>
-            <p class="text-sm  font-medium text-green-600">
-              save ₹<%= product.price.originalPrice - product.price.sellingPrice %>
-            </p>
-          </div>
 </div>

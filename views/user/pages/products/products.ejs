@@ -75,19 +75,6 @@
                     class="block bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
                     <img src="<%= product.images.cardImage.path %>" alt="<%= product.productName %>"
                         class="w-full h-64 object-cover rounded-lg" />
-                    <!-- <h3 class="text-lg font-semibold mt-3">
-                        <%= product.productName %>
-                    </h3>
-                    <p class="text-gray-600 text-sm">
-                        <%= product.description %>
-                    </p>
-                    <div class="mt-2 flex items-center">
-                        <span class="text-black text-lg font-bold">₹<%= product.price.sellingPrice %></span>
-                        <% if (product.price.discount> 0) { %>
-                            <span class="text-gray-500 line-through ml-2">₹<%= product.price.originalPrice %></span>
-                            <span class="text-green-600 ml-2">save ₹<%= product.price.discount %></span>
-                            <% } %>
-                    </div> -->
                     <%- include("../../partials/molecules/cardTextBlock.ejs", {product}) %>
                 </a>
                 <% }) %>

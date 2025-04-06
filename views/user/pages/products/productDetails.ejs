@@ -1,10 +1,13 @@
 <form id="add-to-cart-form">
     <div class="container mx-auto px-4 py-8">
         <!-- Back Button -->
-        <button onclick="history.back()"
+        <!-- <button onclick="history.back()"
             class="mb-4 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center">
             ◀ Back
-        </button>
+        </button> -->
+        <a href="/products" class="mb-4 w-40 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center">
+            ◀ Back
+        </a>
     
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Product Gallery -->
@@ -32,8 +35,16 @@
                     </strong> | 67 Reviews</p>
                 <p class="text-gray-600">
                     <%= product.description %>
-                </p>
-    
+                </p>            
+                <input type="text" class="hidden" name="productId" value="<%- product._id %>">
+                <!-- error message box started -->
+                <div id="error-box" class="p-4 mb-4 hidden text-sm text-red-800 rounded-lg  bg-red-50 dark:text-red-400">
+                    
+                </div>
+                <!-- error message box ended -->
+                <!-- Add to Cart Button -->
+
+                <% if(product.quantity){ %>
                 <!-- Quantity Selector -->
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
@@ -46,7 +57,7 @@
                             class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">+</button>
                     </div>
                 </div>
-    
+                
                 <!-- Pricing Section -->
                 <div>
                     <h2 class="text-2xl font-bold text-blue-500" id="sellingPrice">₹<%= product.price.sellingPrice %>
@@ -55,18 +66,13 @@
                     <span class="text-green-600 font-semibold ml-2" id="saveAmount">Save ₹<%= product.price.originalPrice -
                             product.price.sellingPrice %></span>
                 </div>
-                
-                <input type="text" class="hidden" name="productId" value="<%- product._id %>">
-                <!-- error message box started -->
-                <div id="error-box" class="p-4 mb-4 hidden text-sm text-red-800 rounded-lg  bg-red-50 dark:text-red-400">
-                    
-                </div>
-                <!-- error message box ended -->
-                <!-- Add to Cart Button -->
-                <button
-                type="submit"
-                    class="w-full cursor-pointer py-3 text-center bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600">🛒
-                    Add To Cart</button>
+                    <button
+                    type="submit"
+                        class="w-full cursor-pointer py-3 text-center bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600">🛒
+                        Add To Cart</button>
+                <% }else{ %>
+                    <p class="bg-red-50 py-2 text-red-800 border  text-center rounded-[8px] border-red-500 font-medium ">out of stock</p>
+                <% } %>
 
             </div>
         </div>

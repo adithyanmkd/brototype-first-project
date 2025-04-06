@@ -265,6 +265,13 @@ const postChangePassword = async (req, res) => {
   }
 };
 
+// user logout
+const logout = (req, res) => {
+  req.session.user = null;
+  console.log(req.session.user, 'user');
+  res.redirect('/auth/login');
+};
+
 // exporting auth controllers
 const authController = {
   getRegister,
@@ -278,6 +285,7 @@ const authController = {
   postForgetPassword,
   getChangePassword,
   postChangePassword,
+  logout,
 };
 
 export default authController;

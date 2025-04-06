@@ -35,7 +35,6 @@ const products = async (req, res) => {
       .limit(limit);
 
     let categories = await Category.find({ isDeleted: false });
-    console.log(categories);
 
     // Render Products Page
     res.render('user/pages/products/Products', {

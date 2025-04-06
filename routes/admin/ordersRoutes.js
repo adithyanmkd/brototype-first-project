@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/', ordersController.getOrders); // get orders list page
 router.get('/:orderId', ordersController.getOrder); // get single order details page
 router.post('/update-order-status', ordersController.updateOrderStatus); // update order status
+router.post('/return', ordersController.returnAction); // approve or reject return request
 
 // export router
 export default router;

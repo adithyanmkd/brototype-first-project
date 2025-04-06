@@ -112,10 +112,40 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+// return action for return approve or reject
+const returnAction = async (req, res) => {
+  let { orderId, action } = req.body;
+  try {
+    let order = await Order.findById(orderId);
+
+    if (action === 'approve') {
+      order.orderStatus = 'Returned';
+      await order.save();
+    } else if (action === 'reject') {
+      order.orderStatus = 'Return Rejected';
+      await order.save();
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: `request ${action}` });
+  } catch (error) {
+    console.error({
+      Error: error,
+      message: 'Error while return request processing',
+    });
+    res.status(500).json({
+      success: true,
+      message: 'Error while return request processing',
+    });
+  }
+};
+
 const ordersController = {
   getOrders,
   getOrder,
   updateOrderStatus,
+  returnAction,
 };
 
 // export controller
