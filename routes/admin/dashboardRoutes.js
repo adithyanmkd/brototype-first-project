@@ -12,6 +12,7 @@ import adminSidebar from '../../middlewares/admin/sidemenu.js';
 router.use(adminSidebar);
 
 router.get('/', dashboardController.getDashboard); // get dashboard
+router.get('/user-chart', dashboardController.getUserChartData); // get user chart
 
 // export router
 export default router;
