@@ -1,82 +1,123 @@
 <form id="add-to-cart-form">
     <div class="container mx-auto px-4 py-8">
         <!-- Back Button -->
-        <!-- <button onclick="history.back()"
-            class="mb-4 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center">
-            ◀ Back
-        </button> -->
-        <a href="/products" class="mb-4 w-40 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center">
+        <a @click="history.back()"  class="mb-4 cursor-pointer w-40 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center">
             ◀ Back
         </a>
-    
+
+        <!-- Toast Messages -->
+        <div class="absolute top-10 right-10">
+            <%- include("../../partials/organisms/toastMsg.ejs") %>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Product Gallery -->
             <div>
                 <div class="relative group">
-                    <img src="<%= product.images.cardImage.path %>" alt="<%= product.productName %>"
-                        class="w-full h-96 object-cover rounded-lg shadow-lg main-image transition-transform duration-300 ease-in-out group-hover:scale-110">
+                    <img 
+                        src="<%= product.images.cardImage.path %>" 
+                        alt="<%= product.productName %>"
+                        class="w-full h-96 object-cover rounded-lg shadow-lg main-image transition-transform duration-300 ease-in-out group-hover:scale-110"
+                    >
                 </div>
                 <div class="flex mt-4 space-x-2">
-                    <% product.images.productImages.forEach(img=> { %>
-                        <img src="<%= img.path %>"
+                    <% product.images.productImages.forEach(img => { %>
+                        <img 
+                            src="<%= img.path %>" 
                             class="w-20 h-20 object-cover rounded-lg cursor-pointer border border-gray-300 hover:border-blue-500"
-                            onclick="changeImage('<%= img.path %>')">
-                        <% }); %>
+                            onclick="changeImage('<%= img.path %>')"
+                        >
+                    <% }); %>
                 </div>
             </div>
-    
+
             <!-- Product Details -->
             <div class="space-y-4">
+                <!-- Product Name -->
                 <h1 class="text-3xl font-bold text-gray-800">
                     <%= product.productName %>
                 </h1>
-                <p class="text-yellow-500 font-medium">⭐ <strong>
-                        <%= product.rating || "4.8" %>
-                    </strong> | 67 Reviews</p>
+
+                <!-- Product Rating -->
+                <p class="text-yellow-500 font-medium">
+                    ⭐ <strong><%= product.rating || "4.8" %></strong> | 67 Reviews
+                </p>
+
+                <!-- Product Description -->
                 <p class="text-gray-600">
                     <%= product.description %>
-                </p>            
-                <input type="text" class="hidden" name="productId" value="<%- product._id %>">
-                <!-- error message box started -->
-                <div id="error-box" class="p-4 mb-4 hidden text-sm text-red-800 rounded-lg  bg-red-50 dark:text-red-400">
-                    
-                </div>
-                <!-- error message box ended -->
-                <!-- Add to Cart Button -->
+                </p>
 
-                <% if(product.quantity){ %>
-                <!-- Quantity Selector -->
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="updateQuantity(-1, event)"
-                            class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">-</button>
-                        <input name="quantity" type="text" id="quantity" value="1"
-                            class="w-12 text-center border border-gray-300 rounded-lg">
-                        <button onclick="updateQuantity(1, event)"
-                            class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">+</button>
+                <!-- Hidden Product ID -->
+                <input type="hidden" name="productId" value="<%- product._id %>">
+
+                <!-- Error Message Box -->
+                <div id="error-box" class="p-4 mb-4 hidden text-sm text-red-800 rounded-lg bg-red-50 dark:text-red-400"></div>
+
+                <% if (product.quantity) { %>
+                    <!-- Quantity Selector -->
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
+                        <div class="flex items-center space-x-2">
+                            <button 
+                                onclick="updateQuantity(-1, event)" 
+                                class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                            >
+                                -
+                            </button>
+                            <input 
+                                name="quantity" 
+                                type="text" 
+                                id="quantity" 
+                                value="1" 
+                                class="w-12 text-center border border-gray-300 rounded-lg"
+                            >
+                            <button 
+                                onclick="updateQuantity(1, event)" 
+                                class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                            >
+                                +
+                            </button>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Pricing Section -->
-                <div>
-                    <h2 class="text-2xl font-bold text-blue-500" id="sellingPrice">₹<%= product.price.sellingPrice %>
-                    </h2>
-                    <span class="text-gray-500 line-through" id="originalPrice">₹<%= product.price.originalPrice %></span>
-                    <span class="text-green-600 font-semibold ml-2" id="saveAmount">Save ₹<%= product.price.originalPrice -
-                            product.price.sellingPrice %></span>
-                </div>
-                    <button
-                    type="submit"
-                        class="w-full cursor-pointer py-3 text-center bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600">🛒
-                        Add To Cart</button>
-                <% }else{ %>
-                    <p class="bg-red-50 py-2 text-red-800 border  text-center rounded-[8px] border-red-500 font-medium ">out of stock</p>
-                <% } %>
 
+                    <!-- Pricing Section -->
+                    <div>
+                        <h2 class="text-2xl font-bold text-blue-500" id="sellingPrice">
+                            ₹<%= product.price.sellingPrice %>
+                        </h2>
+                        <span class="text-gray-500 line-through" id="originalPrice">
+                            ₹<%= product.price.originalPrice %>
+                        </span>
+                        <span class="text-green-600 font-semibold ml-2" id="saveAmount">
+                            Save ₹<%= product.price.originalPrice - product.price.sellingPrice %>
+                        </span>
+                    </div>
+
+                    <!-- Wishlist and Add to Cart Buttons -->
+                    <button
+                        id="wishlist-btn"
+                        class="w-full cursor-pointer py-3 text-center border border-blue-500 font-medium rounded-lg shadow-md hover:bg-blue-50"
+                    >
+                        Move to Wishlist
+                    </button>
+                    <button
+                        type="submit"
+                        class="w-full cursor-pointer py-3 text-center bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600"
+                    >
+                        🛒 Add To Cart
+                    </button>
+                <% } else { %>
+                    <!-- Out of Stock Message -->
+                    <p class="bg-red-50 py-2 text-red-800 border text-center rounded-lg border-red-500 font-medium">
+                        Out of Stock
+                    </p>
+                <% } %>
             </div>
         </div>
     </div>
 </form>
 
+<!-- Scripts -->
+<script type="module" src="/javascript/ajax/pages/userProduct.js"></script>
 <script src="/javascript/ajax/products/product.js"></script>

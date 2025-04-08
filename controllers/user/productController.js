@@ -1,7 +1,11 @@
 import Category from '../../models/categoryModel.js';
 import Product from '../../models/productModel.js';
+import Wishlist from '../../models/wishlist.js';
 
+// get all products
 const products = async (req, res) => {
+  let user = req.session.user;
+
   try {
     let { category, sort, page } = req.query;
     let limit = 6; // Number of products per page
@@ -36,6 +40,11 @@ const products = async (req, res) => {
 
     let categories = await Category.find({ isDeleted: false });
 
+    let userWishlist = await Wishlist.findOne({ userId: user._id });
+
+    let wishlistIds = userWishlist.items.map((item) => item.product.toString());
+    console.log(wishlistIds);
+
     // Render Products Page
     res.render('user/pages/products/Products', {
       products,
@@ -44,6 +53,7 @@ const products = async (req, res) => {
       sort,
       currentPage,
       totalPages,
+      wishlistIds,
     });
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -51,6 +61,7 @@ const products = async (req, res) => {
   }
 };
 
+// get product (single product)
 const productDetails = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);

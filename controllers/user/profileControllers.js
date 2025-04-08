@@ -1,8 +1,9 @@
 // import packages
 import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 // import models
-import { Address, Cart, User } from '../../models/index.js';
+import { Address, Cart, Product, User, Wishlist } from '../../models/index.js';
 
 import menus from '../../datasets/profileMenus.js';
 
@@ -125,6 +126,7 @@ const postChangePassword = async (req, res) => {
   }
 };
 
+// show all address
 const getAddress = async (req, res) => {
   let user = req.session.user;
 
@@ -165,6 +167,7 @@ const postAddAddress = async (req, res) => {
   res.status(200).json({ user });
 };
 
+// edit address page
 const getAddressEdit = async (req, res) => {
   let addressId = req.params.id;
   let address = await Address.findById(addressId);
@@ -175,7 +178,6 @@ const getAddressEdit = async (req, res) => {
 const postEditAddress = async (req, res) => {
   let user = req.session.user;
   let { addressId, ...body } = req.body;
-  console.log(addressId);
 
   try {
     let updateAddress = await Address.findByIdAndUpdate(
@@ -203,6 +205,138 @@ const postDeleteAddress = async (req, res) => {
   }
 };
 
+// get wishlist page
+const getWishlist = async (req, res) => {
+  const user = req.session.user;
+  const userMenus = [...menus]; // profile menus accessing
+
+  if (!user) {
+    return res.redirect('/auth/login');
+  }
+
+  const wishlist = await Wishlist.aggregate([
+    {
+      $match: { userId: new mongoose.Types.ObjectId(`${user._id}`) },
+    },
+    {
+      $unwind: '$items',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'items.product',
+        foreignField: '_id',
+        as: 'items.productDetails',
+      },
+    },
+    { $unwind: '$items.productDetails' },
+    {
+      $group: {
+        _id: '$_id',
+        userId: { $first: '$userId' },
+        addedAt: { $first: '$addedAt' },
+        items: {
+          $push: {
+            productId: '$items.product',
+            addedAt: '$addedAt',
+            productDetails: '$items.productDetails',
+          },
+        },
+      },
+    },
+  ]);
+
+  // google user no need of password change
+  if (!user.isGoogleUser) {
+    userMenus.splice(1, 0, {
+      name: 'Password',
+      href: '/account/change-password',
+    });
+  }
+
+  if (!wishlist[0]) {
+    return res.render('user/pages/profile/emptyWishlist', {
+      user,
+      menus: userMenus,
+    });
+  }
+
+  res.render('user/pages/profile/wishlist.ejs', {
+    user,
+    menus: userMenus,
+    wishlist: wishlist[0],
+  });
+};
+
+// add wishlist
+const postWishlist = async (req, res) => {
+  const user = req.session.user;
+  const { productId } = req.body;
+
+  try {
+    let wishlist = await Wishlist.findOne({ userId: user._id });
+
+    if (!wishlist) {
+      wishlist = new Wishlist({
+        userId: user._id,
+        items: [
+          {
+            product: productId,
+          },
+        ],
+      });
+    } else {
+      const alreadyExists = wishlist.items.some(
+        (item) => item.product.toString() === productId
+      );
+
+      // if product not it wishlist push the new produt into wishlist
+      if (!alreadyExists) {
+        wishlist.items.push({ product: productId });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: 'product already added in wishlist',
+        });
+      }
+    }
+
+    await wishlist.save(); // saving new wishlist item
+    res
+      .status(200)
+      .json({ success: true, message: 'Successfully added in wishlist' });
+  } catch (error) {
+    console.error({ Error: error });
+    res.status(500).status({
+      success: false,
+      message: 'wishlist item adding failed',
+      error,
+    });
+  }
+};
+
+// delete wishlist item
+const deleteWishlist = async (req, res) => {
+  let user = req.session.user;
+  let productId = req.params.productId;
+
+  try {
+    await Wishlist.updateOne(
+      { userId: new mongoose.Types.ObjectId(`${user._id}`) },
+      {
+        $pull: {
+          items: { product: new mongoose.Types.ObjectId(`${productId}`) },
+        },
+      }
+    );
+    res
+      .status(200)
+      .json({ success: true, message: 'item deleted successfully' });
+  } catch (error) {
+    console.error({ Error: error });
+  }
+};
+
 // export profile controller
 const profileController = {
   userDetails,
@@ -215,6 +349,9 @@ const profileController = {
   postEditAddress,
   getAddressEdit,
   postDeleteAddress,
+  getWishlist,
+  postWishlist,
+  deleteWishlist,
 };
 
 export default profileController;

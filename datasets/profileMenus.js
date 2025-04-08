@@ -3,7 +3,7 @@ const menus = [
   { name: 'My Orders', href: '/account/orders' },
   { name: 'Wallet', href: '#' },
   { name: 'My Addresses', href: '/account/address' },
-  { name: 'My Wishlist', href: '#' },
+  { name: 'My Wishlist', href: '/account/wishlist' },
 ];
 
 export default menus;

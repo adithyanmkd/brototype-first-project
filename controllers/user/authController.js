@@ -268,7 +268,6 @@ const postChangePassword = async (req, res) => {
 // user logout
 const logout = (req, res) => {
   req.session.user = null;
-  console.log(req.session.user, 'user');
   res.redirect('/auth/login');
 };
 
