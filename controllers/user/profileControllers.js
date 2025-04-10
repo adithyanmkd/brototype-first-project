@@ -273,6 +273,13 @@ const postWishlist = async (req, res) => {
   const user = req.session.user;
   const { productId } = req.body;
 
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      message: 'You are not logged in',
+    });
+  }
+
   try {
     let wishlist = await Wishlist.findOne({ userId: user._id });
 

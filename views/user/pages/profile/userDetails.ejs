@@ -1,56 +1,65 @@
 <div class="flex space-x-40 pb-20">
-    <%- include("../../partials/organisms/ProfileSidebar.ejs") %>
+  <%- include("../../partials/organisms/ProfileSidebar.ejs") %>
 
-        <div class="w-full max-w-3xl space-y-6 rounded-lg bg-white p-6 shadow-lg">
-            <div class="flex items-center justify-between">
-                <h1 class="text-3xl font-bold">Hi <%= user.name %>
-                </h1>
-                <form action="/account/my-details/<%= user._id %>">
-                    <button
-                        class="flex cursor-pointer items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 transition-colors hover:bg-yellow-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-pencil">
-                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                            <path d="m15 5 4 4" />
-                        </svg>
-                        Edit
-                    </button>
-                </form>
-            </div>
+  <div class="w-full max-w-3xl space-y-6 rounded-lg bg-white p-6 shadow-lg">
+    <div class="flex items-center justify-between">
+      <h1 class="text-3xl font-bold">Hi <%= user.name %></h1>
+      <form action="/account/my-details/<%= user._id %>">
+        <button
+          class="flex cursor-pointer items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 transition-colors hover:bg-yellow-500"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-pencil"
+          >
+            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+            <path d="m15 5 4 4" />
+          </svg>
+          Edit
+        </button>
+      </form>
+    </div>
 
-            <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-500">Full Name</label>
-                        <p class="mt-1 text-lg font-medium"><%- user.name %></p>
-                        <div class="mt-2 h-[1px] bg-gray-200"></div>
-                    </div>
-
-                    <div>
-                        <label class="text-sm text-gray-500">Gender</label>
-                        <p class="mt-1 min-h-[24px] text-lg font-medium">
-                            <%- user.gender %>
-                        </p>
-                        <div class="mt-2 h-[1px] bg-gray-200"></div>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-500">Phone No</label>
-                        <p class="mt-1 min-h-[24px] text-lg font-medium">
-                            <%- user.number %>
-                        </p>
-                        <div class="mt-2 h-[1px] bg-gray-200"></div>
-                    </div>
-
-                    <div>
-                        <label class="text-sm text-gray-500">Email</label>
-                        <p class="mt-1 text-lg font-medium"><%- user.email %></p>
-                        <div class="mt-2 h-[1px] bg-gray-200"></div>
-                    </div>
-                </div>
-            </div>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-500">Full Name</label>
+          <p class="mt-1 text-lg font-medium"><%- user.name %></p>
+          <div class="mt-2 h-[1px] bg-gray-200"></div>
         </div>
+
+        <div>
+          <label class="text-sm text-gray-500">Gender</label>
+          <p class="mt-1 min-h-[24px] text-lg font-medium">
+            <%- user.gender %>
+          </p>
+          <div class="mt-2 h-[1px] bg-gray-200"></div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-500">Phone No</label>
+          <p class="mt-1 min-h-[24px] text-lg font-medium">
+            <%- user.number %>
+          </p>
+          <div class="mt-2 h-[1px] bg-gray-200"></div>
+        </div>
+
+        <div>
+          <label class="text-sm text-gray-500">Email</label>
+          <p class="mt-1 text-lg font-medium"><%- user.email %></p>
+          <div class="mt-2 h-[1px] bg-gray-200"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -2,7 +2,13 @@ import express from 'express';
 
 const router = express.Router();
 
+// import controllers
 import ordersController from '../../controllers/user/ordersController.js';
+
+// import middlewares
+import { auth } from '../../middlewares/user/auth.js';
+
+router.use(auth);
 
 router.get('/', ordersController.getAllOrders); // get all order page
 router.get('/:orderId', ordersController.getOrder); // get single order details

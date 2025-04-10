@@ -1,4 +1,5 @@
-import { Order } from '../../models/index.js';
+import { Order, Wallet } from '../../models/index.js';
+import WalletTransaction from '../../models/walletTransactionModel.js';
 
 // get all orders list page
 const getOrders = async (req, res) => {
@@ -115,12 +116,37 @@ const updateOrderStatus = async (req, res) => {
 // return action for return approve or reject
 const returnAction = async (req, res) => {
   let { orderId, action } = req.body;
+
   try {
+    let user = req.user;
     let order = await Order.findById(orderId);
+    let wallet = await Wallet.findOne({ userId: user._id });
+    let transaction = await WalletTransaction.findOne({ userId: user._id });
 
     if (action === 'approve') {
       order.orderStatus = 'Returned';
+
+      if (!wallet) {
+        wallet = await Wallet.create({
+          userId: user._id,
+        });
+      }
+
+      // wallet amount increasing
+      wallet.balance += order.totalAmount;
+
+      // transaction saving
+      transaction = await WalletTransaction.create({
+        userId: user._id,
+        type: 'credit',
+        thumbnail: order.orderThumbnail,
+        orderId: order._id,
+        amount: order.totalAmount,
+        description: order.productName,
+      });
+
       await order.save();
+      await wallet.save();
     } else if (action === 'reject') {
       order.orderStatus = 'Return Rejected';
       await order.save();

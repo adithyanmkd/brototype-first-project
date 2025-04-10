@@ -17,7 +17,7 @@ async function handleAddToWishlist(e) {
     showToast('toast-success', response.message);
   } else {
     // show error toast
-    showToast('toast-danger', response.message);
+    showToast('toast-danger', response.message || 'You are not logged');
   }
 }
 

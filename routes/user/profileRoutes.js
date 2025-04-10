@@ -10,6 +10,7 @@ import { auth } from '../../middlewares/user/auth.js';
 
 // import routes
 import orderRoutes from './orderRoutes.js';
+import walletRoutes from './walletRoutes.js';
 
 router.use(auth);
 
@@ -27,11 +28,12 @@ router.get('/address/edit/:id', profileController.getAddressEdit); // get addres
 router.post('/address/edit', profileController.postEditAddress); // post edit address
 router.post('/address/:id/delete', profileController.postDeleteAddress); // delete address
 
-// router.get('/orders', ordersController.getAllOrders); // get all orders
 router.use('/orders', orderRoutes); // order routes
 
 router.get('/wishlist', profileController.getWishlist); // get wishlist page
 router.post('/wishlist', profileController.postWishlist); // adding product into wishlist
 router.delete('/wishlist/delete/:productId', profileController.deleteWishlist); // delete wishlist item
+
+router.use('/wallet', walletRoutes); // all wallet routes
 
 export default router;
