@@ -1,0 +1,292 @@
+<div
+  class="max-w-2xl h-[700px] my-auto mx-auto bg-white rounded-2xl shadow-xl overflow-hidden"
+>
+  <!-- Header -->
+  <div
+    class="bg-gradient-to-r flex justify-between from-indigo-600 to-purple-600 py-6 px-8"
+  >
+    <div>
+      <h1 class="text-3xl font-bold text-white"></h1>
+
+      <h1 class="text-3xl font-bold text-white">Edit Coupon</h1>
+      <p class="text-indigo-100 mt-1">Update the coupon details below</p>
+    </div>
+    <!-- Close Button -->
+    <button
+      @click="closeEditModal"
+      type="button"
+      class="text-gray-100 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
+    >
+      <svg
+        class="w-4 h-4"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 14 14"
+      >
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M1 1l12 12M13 1L1 13"
+        />
+      </svg>
+      <span class="sr-only">Close modal</span>
+    </button>
+  </div>
+
+  <form id="couponEditForm" method="POST" class="p-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- coupon id -->
+      <div class="hidden">
+        <input id="couponId" type="text" :value="currentCoupon._id" hidden />
+      </div>
+
+      <!-- Coupon Code -->
+      <div class="col-span-1">
+        <label for="code" class="block text-sm font-medium text-gray-700 mb-1">
+          <i class="fas fa-tag text-indigo-500 mr-1"></i> Coupon Code*
+        </label>
+        <input
+          type="text"
+          id="code"
+          name="code"
+          required
+          x-model="currentCoupon.code"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          placeholder="SUMMER2025"
+        />
+        <p class="mt-1 text-xs text-gray-500">
+          Code will be converted to uppercase automatically
+        </p>
+      </div>
+
+      <!-- Discount Type -->
+      <div class="col-span-1">
+        <label
+          for="discountType"
+          class="block text-sm font-medium text-gray-700 mb-1"
+        >
+          <i class="fas fa-percentage text-indigo-500 mr-1"></i> Discount Type*
+        </label>
+        <select
+          id="discountType"
+          name="discountType"
+          required
+          x-model="currentCoupon.discountType"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white"
+        >
+          <option value="">Select discount type</option>
+          <option value="percentage">Percentage (%)</option>
+          <option value="fixed">Fixed Amount (₹)</option>
+        </select>
+      </div>
+
+      <!-- Discount Value -->
+      <div class="col-span-1">
+        <label
+          for="discountValue"
+          class="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Discount Value <span class="text-red-500">*</span>
+        </label>
+        <div class="relative mt-1 rounded-lg shadow-sm">
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          ></div>
+          <input
+            type="number"
+            id="discountValue"
+            name="discountValue"
+            required
+            min="0"
+            step="0.01"
+            x-model="currentCoupon.discountValue"
+            class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          />
+        </div>
+      </div>
+
+      <!-- Min Order Amount -->
+      <div class="col-span-1">
+        <label
+          for="minOrderAmount"
+          class="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Minimum Order Amount
+        </label>
+        <div class="relative mt-1 rounded-lg shadow-sm">
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          ></div>
+          <input
+            type="number"
+            id="minOrderAmount"
+            name="minOrderAmount"
+            min="0"
+            step="0.01"
+            value="0"
+            x-model="currentCoupon.minOrderAmount"
+            class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          />
+        </div>
+      </div>
+
+      <!-- Max Discount Amount -->
+      <div class="col-span-1">
+        <label
+          for="maxDiscountAmount"
+          class="block text-sm font-medium text-gray-700 mb-1"
+        >
+          <i class="fas fa-hand-holding-usd text-indigo-500 mr-1"></i> Maximum
+          Discount
+        </label>
+        <div class="relative mt-1 rounded-lg shadow-sm">
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          ></div>
+          <input
+            type="number"
+            id="maxDiscountAmount"
+            name="maxDiscountAmount"
+            min="0"
+            step="0.01"
+            x-model="currentCoupon.maxDiscountAmount"
+            class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          />
+          <p class="mt-1 text-xs text-gray-500">Leave empty for no maximum</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <!-- <div
+          id="date-range-picker"
+          date-rangepicker
+          class="flex justify-center items-center"
+        >
+          <div class="relative">
+            <div
+              class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+            >
+              <svg
+                class="w-4 h-4 text-gray-500"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"
+                />
+              </svg>
+            </div>
+            <input
+              id="datepicker-range-start"
+              name="start"
+              type="text"
+              x-model="currentCoupon.startDate"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+              placeholder="Select date start"
+            />
+          </div>
+          <span class="mx-4 text-gray-500">to</span>
+          <div class="relative">
+            <div
+              class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+            >
+              <svg
+                class="w-4 h-4 text-gray-500"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"
+                />
+              </svg>
+            </div>
+            <input
+              id="datepicker-range-end"
+              name="end"
+              type="text"
+              x-model="currentCoupon.endDate"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+              placeholder="Select date end"
+            />
+          </div>
+        </div> -->
+        <!-- Start Date -->
+        <div class="col-span-1">
+          <label
+            for="startDate"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >
+            <i class="fas fa-calendar-alt text-indigo-500 mr-1"></i> Start Date*
+          </label>
+          <input
+            type="date"
+            id="startDate"
+            name="startDate"
+            required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          />
+        </div>
+
+        <!-- End Date -->
+        <div class="col-span-1">
+          <label
+            for="endDate"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >
+            <i class="fas fa-calendar-alt text-indigo-500 mr-1"></i> End Date*
+          </label>
+          <input
+            type="date"
+            id="endDate"
+            x-model="currentCoupon.endDate"
+            name="endDate"
+            required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          />
+        </div>
+      </div>
+      <!-- Is Active -->
+      <div class="col-span-1 flex items-center">
+        <div
+          class="relative inline-block w-10 mr-2 align-middle select-none mt-2"
+        >
+          <input
+            type="checkbox"
+            name="isActive"
+            id="isActive"
+            x-model="currentCoupon.isActive"
+            class="checked:bg-indigo-500 outline-none focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+            style="transition: right 0.2s ease-in"
+          />
+          <label
+            for="isActive"
+            class="block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+            style="transition: background-color 0.2s ease-in"
+          ></label>
+        </div>
+        <div class="text-sm">
+          <label for="isActive" class="font-medium text-gray-700">Active</label>
+          <p class="text-gray-500">Coupon is ready to be used</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="mt-8">
+      <button
+        type="submit"
+        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-lg font-medium shadow-md hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all"
+      >
+        <i class="fas fa-save mr-2"></i> Update Coupon
+      </button>
+    </div>
+  </form>
+</div>
+
+<script type="module" src="/javascript/ajax/pages/adminCoupon.js"></script>

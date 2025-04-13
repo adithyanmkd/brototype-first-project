@@ -68,6 +68,12 @@ const adminSidebar = (req, res, next) => {
       href: '#',
       active: req.path === '/settings',
     },
+    {
+      id: 'coupons',
+      name: 'Coupons',
+      href: '/admin/coupons',
+      active: req.path === '/coupons',
+    },
   ];
   next();
 };

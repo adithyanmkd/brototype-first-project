@@ -1,10 +1,18 @@
 // imoprt models
-import { Cart, Product, Address } from '../../models/index.js';
+import { Cart, Product, Address, Coupon } from '../../models/index.js';
 
 // import config
 import redisClient from '../../config/redisConfig.js';
 
-const getEmptyCart = (req, res) => {
+const getEmptyCart = async (req, res) => {
+  let user = req.session.user;
+  let couponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
+
+  console.log(couponDiscount);
+
+  if (couponDiscount) {
+    await redisClient.del(`couponDiscount:${user._id}`);
+  }
   res.render('user/pages/cart/emptyCart.ejs');
 };
 
@@ -15,6 +23,11 @@ const getCart = async (req, res) => {
   if (!user) {
     return res.render('user/pages/cart/emptyCart.ejs');
   }
+
+  const availableCoupons = await Coupon.find({
+    isActive: true,
+    endDate: { $gte: new Date() },
+  }).lean();
 
   // let userCart = await Cart.findOne({ userId: user._id });
   const cartData = await redisClient.get(`cart:${user._id}`);
@@ -42,18 +55,25 @@ const getCart = async (req, res) => {
     })
   );
 
-  let totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0); // calculating total quantity
+  let totalItems = cartItems.reduce(
+    (acc, item) => acc + Number(item.quantity),
+    0
+  ); // calculating total quantity
 
   cartItems.forEach((item) => {
     totalSellingPrice += item._doc.price.sellingPrice * item.quantity;
     totalOriginalPrice += item._doc.price.originalPrice * item.quantity;
   });
 
+  let couponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
+
   res.render('user/pages/cart/cart.ejs', {
     cartItems,
     totalItems,
     totalSellingPrice,
     totalOriginalPrice,
+    availableCoupons,
+    couponDiscount,
   });
 };
 
@@ -167,7 +187,7 @@ const deleteItem = async (req, res) => {
 
 const postCart = async (req, res) => {
   let user = req.session.user;
-  let cartItems = req.body.cartItems;
+  let { cartItems, couponDiscount } = req.body;
 
   try {
     let userCart = await redisClient.get(`cart:${user._id}`);
@@ -195,6 +215,7 @@ const postCart = async (req, res) => {
     products.forEach((item, index) => {
       if (item._doc.quantity < cart.items[index].quantity) {
         flag = true;
+
         return res.status(404).json({
           success: false,
           message: 'Item out stock',
@@ -209,6 +230,11 @@ const postCart = async (req, res) => {
 
     // update quantity saving
     await redisClient.set(`cart:${user._id}`, JSON.stringify(cart));
+    await redisClient.set(
+      `couponDiscount:${user._id}`,
+      JSON.stringify(couponDiscount)
+    );
+
     res.status(200).json({ success: true, message: 'cart post' });
   } catch (error) {
     console.log(error);

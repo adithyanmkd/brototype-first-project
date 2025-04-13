@@ -18,14 +18,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <!-- Include Toastify.js for Popups -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+
+    <!-- font awesome cdn -->
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 
-<body class="flex h-screen bg-gray-50">
+<body
+    x-data="adminLayout"
+    :class="{'overflow-hidden': couponAdd.open}"
+    class="flex h-screen bg-gray-50">
     <!-- Sidebar started -->
     <%- include("../admin/partials/organisms/sidebar.ejs", { adminSidebar }) %>
-        <!-- sidebar ended -->
+    <!-- sidebar ended -->
 
+
+     <!-- modals -->
+      <div x-show="couponAdd.open" class="absolute w-full bg-black/75 h-screen overflow-hidden flex  z-10">
+          <%- include("../admin/partials/organisms/modals/couponCreateModal.ejs") %>
+      </div>
+
+      <div x-show="couponEdit.open" class="absolute w-full bg-black/75 h-screen overflow-hidden flex  z-10">
+        <%- include("../admin/partials/organisms/modals/couponEditModal.ejs") %>
+      </div>
+
+        <!-- modals ended -->
         <!-- Main Content -->
         <div class="flex flex-1 flex-col">
             <!-- Navbar -->
@@ -46,21 +66,19 @@
                 </div>
             </main>
         </div>
-        <!-- <div id="cropPopUp"
-            class="absolute  items-center gap-8 flex hidden justify-center  h-screen w-screen  bg-black/75">
-            <div class="w-2xl h-[672px] bg-white">
-                <img id="cropFrame" src="" alt="cropFrame" class="w-full h-full">
-            </div>
-            <div class="flex flex-col gap-y-4">
-                <button type="button" onclick="saveImage()"
-                    class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-10 py-4 text-center me-2 mb-2">save</button>
-                <button type="button"
-                    class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-10 py-4 text-center me-2 mb-2">Delete</button>
-            </div>
-        </div> -->
 
+        <!-- alpine script -->
+        <script src="/javascript/alpine/admin/adminLayout.js"></script>
+        
+
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+        <!-- flowbite date picker -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/datepicker.min.js"></script>
+        
         <!-- flowbite chart cdn -->
         <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
+
          <!-- flowbite chart cdn ended -->
         <script type="module" src="/javascript/layout/adminLayout.js"></script>
 </body>

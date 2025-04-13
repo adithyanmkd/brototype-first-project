@@ -13,6 +13,8 @@ let getCheckout = async (req, res) => {
   let addresses = await Address.find({ userId: user._id }); // finding user addresses
   // let userCart = await Cart.findOne({ userId: user._id });
   let cart = await redisClient.get(`cart:${user._id}`);
+  let couponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
+
   let userCart = JSON.parse(cart);
 
   // calcalated prices
@@ -41,11 +43,14 @@ let getCheckout = async (req, res) => {
     totalOriginalPrice += item._doc.price.originalPrice * item.quantity;
   });
 
+  console.log(totalSellingPrice, 'price');
+
   res.render('user/pages/checkout/checkout.ejs', {
     totalItems,
     totalSellingPrice,
     totalOriginalPrice,
     addresses,
+    couponDiscount,
   });
 };
 

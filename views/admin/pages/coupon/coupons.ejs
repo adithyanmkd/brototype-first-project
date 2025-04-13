@@ -1,0 +1,244 @@
+<div class="max-w-6xl mx-auto pb-[40px]">
+  <!-- Header section -->
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+    <div
+      class="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-6 flex justify-between items-center"
+    >
+      <div>
+        <h1 class="text-3xl font-bold text-white">Coupon Management</h1>
+        <p class="text-purple-100 mt-2">View and manage all discount coupons</p>
+      </div>
+      <a
+        href="#"
+        id="couponAddModal"
+        @click="openAddModal"
+        class="bg-white text-purple-700 hover:bg-purple-50 py-2 px-4 rounded-lg shadow-md font-medium transition-colors duration-300 flex items-center"
+      >
+        <i class="fas fa-plus mr-2"></i> New Coupon
+      </a>
+    </div>
+  </div>
+
+  <!-- Status Boxes - 4 columns -->
+  <div
+    x-data="getCouponSummery"
+    x-init="initData(<%= JSON.stringify(coupons) %>)"
+    class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+  >
+    <!-- All Coupons Box -->
+    <div class="bg-white rounded-xl shadow-md p-6 text-center">
+      <div
+        class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-100 text-purple-600 mb-4"
+      >
+        <i class="fas fa-tags text-lg"></i>
+      </div>
+      <h3 class="text-gray-500 font-medium">All Coupons</h3>
+      <p class="text-3xl font-bold text-purple-600 mt-1" x-text="all"></p>
+    </div>
+
+    <!-- Active Coupons Box -->
+    <div class="bg-white rounded-xl shadow-md p-6 text-center">
+      <div
+        class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-600 mb-4"
+      >
+        <i class="fas fa-check-circle text-lg"></i>
+      </div>
+      <h3 class="text-gray-500 font-medium">Active</h3>
+      <p class="text-3xl font-bold text-green-600 mt-1" x-text="active"></p>
+    </div>
+
+    <!-- Expired Coupons Box -->
+    <div class="bg-white rounded-xl shadow-md p-6 text-center">
+      <div
+        class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 text-red-600 mb-4"
+      >
+        <i class="fas fa-clock text-lg"></i>
+      </div>
+      <h3 class="text-gray-500 font-medium">Expired</h3>
+      <p class="text-3xl font-bold text-red-600 mt-1" x-text="expired"></p>
+    </div>
+
+    <!-- Inactive Coupons Box -->
+    <div class="bg-white rounded-xl shadow-md p-6 text-center">
+      <div
+        class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 text-gray-600 mb-4"
+      >
+        <i class="fas fa-pause-circle text-lg"></i>
+      </div>
+      <h3 class="text-gray-500 font-medium">Inactive</h3>
+      <p class="text-3xl font-bold text-gray-600 mt-1" x-text="inactive"></p>
+    </div>
+  </div>
+
+  <!-- Search and filter section -->
+  <div
+    x-data="listAllCoupons"
+    x-init="initData(<%= JSON.stringify(coupons) %>)"
+  >
+    <!-- <template x-for="coupon in coupons">
+      <p x-text="coupon.code"></p>
+    </template> -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+      <div class="p-6 border-b">
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-grow">
+            <div class="relative rounded-md shadow-sm">
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <i class="fas fa-search text-gray-400"></i>
+              </div>
+              <input
+                type="text"
+                placeholder="Search coupons..."
+                x-model="search"
+                class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              />
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            <select
+              x-model="status"
+              class="block pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            >
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="expired">Expired</option>
+            </select>
+            <select
+              x-model="type"
+              class="block pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            >
+              <option value="">All Types</option>
+              <option value="percentage">Percentage</option>
+              <option value="fixed">Fixed Amount</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Coupons Table Section -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <h2 class="text-xl font-bold text-gray-800">All Coupons</h2>
+      </div>
+
+      <!-- Table section -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Code
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Discount
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Minimum Order
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Max Discount
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Expiry Date
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Status
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <template x-for="coupon in filteredCoupons" :key="coupon._id">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap font-medium">
+                  <span
+                    class="text-purple-700 font-bold"
+                    x-text="coupon.code"
+                  ></span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    x-text="coupon.discountType === 'percentage' 
+                      ? coupon.discountValue + '% Off' 
+                      : '₹' + coupon.discountValue + ' Off'"
+                  >
+                  </span>
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap"
+                  x-text="'₹' + coupon.minOrderAmount.toFixed(2)"
+                ></td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap"
+                  x-text="coupon.maxDiscountAmount != null ? '₹' + coupon.maxDiscountAmount.toFixed(2) : '—'"
+                ></td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap"
+                  x-text="new Date(coupon.endDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })"
+                ></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    :class="coupon.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                    x-text="coupon.isActive ? 'Active' : 'Expired'"
+                  >
+                  </span>
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                >
+                  <!-- <a
+                    href="#"
+                    class="text-indigo-600 hover:text-indigo-900 mr-3"
+                  >
+                    <i class="far fa-eye"></i>
+                  </a> -->
+                  <a
+                    href="#"
+                    @click="openEditModal(coupon)"
+                    class="text-blue-600 hover:text-blue-900 mr-3"
+                  >
+                    <i class="far fa-edit"></i>
+                  </a>
+                  <a href="#" class="text-red-600 hover:text-red-900">
+                    <i class="far fa-trash-alt"></i>
+                  </a>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- alpine script -->
+<script src="/javascript/alpine/admin/coupon.js"></script>

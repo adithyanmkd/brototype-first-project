@@ -26,8 +26,9 @@
     <!-- flowbite cdn ended -->
   </head>
 
+  <!-- x-data="{returnOpen: false}" -->
   <body
-    x-data="{returnOpen: false}"
+    x-data="index"
     :class="{'overflow-hidden': returnOpen}"
     class="min-h-screen font-[Poppins] relative"
   >
@@ -41,19 +42,21 @@
     <%- include("../user/partials/molecules/returnModal.ejs") %>
     <!-- return modal ended -->
 
-    <!-- razorpay script started -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <!-- razorpay script ended -->
+    <script src="/javascript/alpine/user/index.js"></script>
 
-    <!-- lotti file animation cdn  -->
+    <!-- ============================ plugins ================================== -->
+    <!-- razorpay plugin -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- lotti plugin  -->
     <script
       src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
       type="module"
     ></script>
-    <!-- lotti file animation cdn ended -->
 
-    <!-- flowbite script started -->
+    <!-- flowbite plugin -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-    <!-- flowbite script ended -->
+
+    <!-- ============================ plugins ended ================================== -->
   </body>
 </html>

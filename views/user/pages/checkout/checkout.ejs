@@ -61,7 +61,8 @@
 
   <div class="grid grid-cols-2 gap-8">
     <!-- Order Summary -->
-    <div class="bg-white p-6 rounded-lg shadow-sm">
+    <div
+     class="bg-white p-6 rounded-lg shadow-sm">
       <div class="flex items-center space-x-2 mb-6">
         <svg
           class="w-6 h-6"
@@ -79,18 +80,31 @@
         <h2 class="text-lg font-medium">Order Summary (<%= totalItems %> items)</h2>
       </div>
 
-      <div class="space-y-4">
+      <div x-data="{
+        totalSellingPrice: <%= totalSellingPrice %>,
+        totalOriginalPrice: <%= totalOriginalPrice %>,
+        couponDiscount: <%= Number(JSON.parse(couponDiscount)) %>,
+      }"
+       class="space-y-4">
         <div class="flex justify-between">
           <span>Price</span>
-          <span>₹<%= totalSellingPrice %></span>
+          <span x-text="`₹${totalOriginalPrice}`"></span>
         </div>
         <div class="flex justify-between text-green-500">
           <span>Discount</span>
-          <span>-<%= totalOriginalPrice - totalSellingPrice %></span>
+          <span x-text="`-${totalOriginalPrice - totalSellingPrice}`"></span>
+        </div>
+        <div>
+          <template x-if="couponDiscount > 0 %>">
+            <div class="flex justify-between text-green-600">
+              <span>Coupon Discount</span>
+              <span id="couponDiscountValue" :data-coupon-discount="couponDiscount" x-text="'-₹' + couponDiscount"></span>
+            </div>
+          </template>
         </div>
         <div class="border-t pt-4 flex justify-between font-medium">
           <span>Total Amount</span>
-          <span><%= totalSellingPrice %></span>
+          <span x-text="`₹${totalSellingPrice}`"></span>
         </div>
       </div>
     </div>
@@ -112,7 +126,7 @@
               <span class="text-gray-600">Add new address</span>
             </div>
           </div>
-          
+
             <div x-data="{ selectedAddress: '', showError: false }">
               <!-- Error Message -->
               <p x-show="showError" class="text-red-500 mt-2">⚠️ Please select a delivery address.</p>

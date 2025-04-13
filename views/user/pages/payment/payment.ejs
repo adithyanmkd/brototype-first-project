@@ -79,6 +79,20 @@
           <span>Discount</span>
           <span>-<%= totalOriginalPrice - totalSellingPrice %></span>
         </div>
+        <div
+          x-data="{couponDiscount: <%= Number(JSON.parse(couponDiscount)) %>}"
+        >
+          <template x-if="couponDiscount > 0">
+            <div class="flex justify-between text-green-600">
+              <span>Coupon Discount</span>
+              <span
+                id="couponDiscountValue"
+                :data-coupon-discount="couponDiscount"
+                x-text="'-₹' + couponDiscount"
+              ></span>
+            </div>
+          </template>
+        </div>
         <div class="border-t pt-4 flex justify-between font-medium">
           <span>Total Amount</span>
           <span><%= totalSellingPrice %></span>

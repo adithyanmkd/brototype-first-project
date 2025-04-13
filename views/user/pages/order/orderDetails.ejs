@@ -185,17 +185,23 @@
               <span>Subtotal:</span>
               <span>₹<%= order.totalAmount %></span>
             </div>
-            <!-- <div class="flex justify-between">
-              <span>Discount:</span>
-              <span>100</span>
+
+            <div x-data="{couponDiscount: <%= order.discountAmount %>}" >
+              <template x-if="couponDiscount">
+                <div class="flex justify-between">
+                  <span>Coupon Discount:</span>
+                  <span x-text="`₹${couponDiscount}`"></span>
+                </div>
+              </template>
             </div>
-            <div class="flex justify-between">
-              <span>Tax:</span>
-              <span>$100.00</span>
-            </div> -->
             <div class="flex justify-between font-semibold">
               <span>Total:</span>
-              <span>₹<%= order.totalAmount %></span>
+              <% if(order.discountAmount){ %>
+                <span>₹<%= order.totalAmount - order.discountAmount %></span>
+              <% }else{ %>
+                <span>₹<%= order.totalAmount %></span>
+              <% } %>
+
             </div>
           </div>
         </div>

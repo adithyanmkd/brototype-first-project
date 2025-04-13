@@ -28,6 +28,8 @@ const getPayment = async (req, res) => {
     return res.redirect('/auth/login');
   }
   let cart = await redisClient.get(`cart:${user._id}`);
+  let couponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
+
   let userCart = JSON.parse(cart);
 
   // calcalated prices
@@ -61,6 +63,7 @@ const getPayment = async (req, res) => {
     totalSellingPrice,
     totalOriginalPrice,
     paymentMethods,
+    couponDiscount,
   });
 };
 
@@ -68,6 +71,9 @@ const postPayment = async (req, res) => {
   let user = req.session.user;
 
   let jsonCart = await redisClient.get(`cart:${user._id}`);
+  let jsonCouponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
+
+  let couponDiscount = JSON.parse(jsonCouponDiscount) || 0;
   let cartItems = JSON.parse(jsonCart); // converting json into javascript object
 
   let addressId = await redisClient.get(`address:${user._id}`);
@@ -129,6 +135,7 @@ const postPayment = async (req, res) => {
         totalAmount,
         paymentMethod,
         deliveryAddress,
+        discountAmount: Number(couponDiscount),
       });
 
       await newOrder.save();
@@ -141,7 +148,11 @@ const postPayment = async (req, res) => {
       });
 
       // remove cart items and address
-      await redisClient.del(`cart:${user._id}`, `address:${user._id}`);
+      await redisClient.del(
+        `cart:${user._id}`,
+        `address:${user._id}`,
+        `couponDiscount:${user._id}`
+      );
       res.status(200).json({
         success: true,
         message: 'Order placed throuch cash on delivery',
@@ -189,6 +200,9 @@ const successPage = async (req, res) => {
   }
 
   let jsonCart = await redisClient.get(`cart:${user._id}`);
+  let jsonCouponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
+
+  let couponDiscount = JSON.parse(jsonCouponDiscount) || 0;
   let cartItems = JSON.parse(jsonCart); // converting json into javascript object
 
   let addressId = await redisClient.get(`address:${user._id}`);
@@ -237,7 +251,8 @@ const successPage = async (req, res) => {
         orderedItems,
         orderThumbnail: cardImagePaths[0], // now displaying 1st card image thumnail or oder list page
         productName: orderedItems[0].productName,
-        totalAmount,
+        discountAmount: couponDiscount,
+        totalAmount: totalAmount - couponDiscount,
         paymentMethod,
         deliveryAddress,
       });
@@ -252,7 +267,11 @@ const successPage = async (req, res) => {
       });
 
       // remove cart items and address
-      await redisClient.del(`cart:${user._id}`, `address:${user._id}`);
+      await redisClient.del(
+        `cart:${user._id}`,
+        `address:${user._id}`,
+        `couponDiscount:${user._id}`
+      );
       return res.json({
         success: true,
         redirect: '/payment/success-view',

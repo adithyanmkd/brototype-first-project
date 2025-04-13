@@ -55,7 +55,63 @@
     </div>
   </div>
 
-<form action="/cart" id="cartForm" method="post">
+<form
+x-data="{
+    couponCode: '',
+    newDiscount: false,
+    availableCoupons: <%= JSON.stringify(availableCoupons || []) %>,
+    items: [
+      <% cartItems.forEach((item, index) => { %>
+        {
+          id: '<%= item._doc._id %>',
+          quantity: <%= item.quantity %>,
+          sellingPrice: <%= item._doc.price.sellingPrice %>,
+          originalPrice: <%= item._doc.price.originalPrice %>
+        },
+      <% }); %>
+    ],
+    updateQuantity(index, delta) {
+      const newQty = this.items[index].quantity + delta;
+      if (newQty >= 1 && newQty <= 3) {
+        this.items[index].quantity = newQty;
+      }
+    },
+    get totalSellingPrice() {
+      return this.items.reduce((acc, item) => acc + (item.quantity * item.sellingPrice), 0);
+    },
+    get totalOriginalPrice() {
+      return this.items.reduce((acc, item) => acc + (item.quantity * item.originalPrice), 0);
+    },
+    get matchedCoupon() {
+      return this.availableCoupons.find(c => c.code === this.couponCode);
+    },
+    get couponDiscount() {
+      let couponDiscount = <%= Number(JSON.parse(couponDiscount)) %>
+      if(couponDiscount){
+        return couponDiscount
+      }
+      if (!this.matchedCoupon) return 0;
+      if (!this.isCouponEligible(this.matchedCoupon)) {
+        this.couponCode = '';
+        return 0;
+      }
+
+      const baseDiscount = this.matchedCoupon.discountType === 'percentage'
+        ? Math.round((this.totalSellingPrice * this.matchedCoupon.discountValue) / 100)
+        : this.matchedCoupon.discountValue;
+
+      // Apply maxDiscountAmount if defined
+      const maxCap = this.matchedCoupon.maxDiscountAmount ?? Infinity;
+      return Math.min(baseDiscount, maxCap, this.totalSellingPrice);
+    },
+    get finalTotal() {
+      return this.totalSellingPrice - this.couponDiscount;
+    },
+    isCouponEligible(coupon) {
+      return this.totalSellingPrice >= coupon.minOrderAmount;
+    }
+  }"
+  action="/cart" id="cartForm" method="post">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Cart Items -->
     <div class="lg:col-span-2 space-y-4">
@@ -101,18 +157,19 @@
                   <!-- product prices ended -->
                   <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
                   <div class="flex items-center space-x-2">
-                      <button name="items[<%= index %>][decreaseBtn]" onclick="updateQuantity(-1, '<%= item._doc._id %>', event, '<%= index %>')"
+                      <button type="button" @click="updateQuantity(<%= index %>, -1)"
                           class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">-</button>
-                      <input name="items[<%= index %>][quantity]" disabled type="text" id="<%= item._doc._id %>" value="<%= item.quantity %>" data-quantity="<%= item.quantity %>"
+                      <input name="items[<%= index %>][quantity]" disabled type="text" id="<%= item._doc._id %>" :value="items[<%= index %>].quantity"
+                          data-quantity="<%= item.quantity %>"
                           class="w-12 cart-item text-center border border-gray-300 rounded-lg">
-                      <button onclick="updateQuantity(1, '<%= item._doc._id %>', event, '<%= index %>')"
+                      <button type="button" @click="updateQuantity(<%= index %>, 1)"
                           class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">+</button>
                   </div>
               </div>
                 </div>
                 <div class="text-right">
-                  <div name="items[<%= index %>][totalSellingPrice]" class="text-lg font-medium">₹<%= item._doc.price.sellingPrice * item.quantity %></div>
-                  <div name="items[<%= index %>][totalOriginalPrice]" class="text-sm text-gray-500 line-through">₹<%= item._doc.price.originalPrice * item.quantity %></div>
+                  <div name="items[<%= index %>][totalSellingPrice]" class="text-lg font-medium" x-text="'₹' + (items[<%= index %>].quantity * items[<%= index %>].sellingPrice)"></div>
+                  <div name="items[<%= index %>][totalOriginalPrice]" class="text-sm text-gray-500 line-through" x-text="'₹' + (items[<%= index %>].quantity * items[<%= index %>].originalPrice)"></div>
                 </div>
               </div>
             </div>
@@ -147,15 +204,31 @@
         <div class="space-y-4">
           <div class="flex justify-between">
             <span class="text-gray-600">Price</span>
-            <span id="grandOriginalPrice"><%= totalOriginalPrice %></span>
+            <span id="grandOriginalPrice" x-text="'₹' + totalOriginalPrice"><%= totalOriginalPrice %></span>
           </div>
           <div class="flex justify-between text-green-600">
             <span>Discount</span>
-            <span id="grandDiscount"><%= totalOriginalPrice - totalSellingPrice %></span>
+            <span id="grandDiscount" x-text="'₹' + (totalOriginalPrice - totalSellingPrice)"><%= totalOriginalPrice - totalSellingPrice %></span>
+          </div>
+          <div>
+            <template x-if="couponDiscount > 0 && newDiscount">
+              <div class="flex justify-between text-green-600">
+                <span>Coupon Discount</span>
+                <span id="couponDiscountValue" :data-coupon-discount="couponDiscount" x-text="'-₹' + couponDiscount"></span>
+              </div>
+            </template>
+          </div>
+          <div  x-data="{couponDiscount: <%= Number(JSON.parse(couponDiscount)) %>}">
+            <template x-if="<%= Number(JSON.parse(couponDiscount)) > 0 %> && !newDiscount">
+              <div class="flex justify-between text-green-600">
+                <span>Coupon Discount</span>
+                <span id="couponDiscountValue" :data-coupon-discount="couponDiscount" x-text="'-₹' + couponDiscount"></span>
+              </div>
+            </template>
           </div>
           <div class="border-t pt-4 flex justify-between font-medium">
             <span>Total Amount</span>
-            <span id="grandTotal"><%= totalSellingPrice %></span>
+            <span x-text="'₹' + finalTotal" id="grandTotal"><%= totalSellingPrice %></span>
           </div>
         </div>
         <!-- ====================error box started==================== -->
@@ -175,14 +248,47 @@
           <div class="flex gap-2">
             <input
               type="text"
-              placeholder="Enter Coupon/Gift Code"
+              disabled
+              name="coupon"
+              value="couponCode"
+              x-model="couponCode"
+              placeholder="Select coupon from below"
+
               class="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+          <!-- Available Coupons -->
+          <div x-data="{ showCouponList: false }">
             <button
-              class="px-4 py-2 text-blue-600 font-medium hover:bg-blue-50 rounded-lg transition-colors"
+              type="button"
+              class="mt-4 text-sm text-blue-600 hover:underline"
+              @click="showCouponList = !showCouponList"
             >
-              APPLY
+              <span x-show="!showCouponList">Show available coupons</span>
+              <span x-show="showCouponList">Hide available coupons</span>
             </button>
+            <ul x-show="showCouponList" class="mt-3 space-y-2 text-sm">
+              <% availableCoupons.forEach(coupon => { %>
+                <template x-if="isCouponEligible(<%= JSON.stringify(coupon) %>)">
+                  <li class="bg-gray-50 border rounded-md p-3 flex justify-between items-center">
+                    <div>
+                      <span class="font-semibold text-purple-700"><%= coupon.code %></span>
+                      <span class="ml-2 text-gray-500 text-xs">
+                        <%= coupon.discountType === 'percentage' ? coupon.discountValue + '% Off' : '₹' + coupon.discountValue + ' Off' %>
+                      </span>
+                      <p class="text-xs text-gray-400">Valid till <%= new Date(coupon.endDate).toLocaleDateString('en-IN') %></p>
+                    </div>
+                    <button
+                      type="button"
+                      class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded hover:bg-blue-200"
+                      @click="couponCode = '<%= coupon.code %>', newDiscount = true"
+                    >
+                      Apply
+                    </button>
+                  </li>
+                </template>
+              <% }) %>
+            </ul>
           </div>
         </div>
       </div>

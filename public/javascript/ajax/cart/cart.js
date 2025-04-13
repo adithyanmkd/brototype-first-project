@@ -47,64 +47,64 @@ async function deleteItem(productId, event) {
 }
 
 // update quantity needed elements ended
-function updateQuantity(change, id, event, index) {
-  event.preventDefault();
-  let qtyElm = document.querySelector(
-    `input[name='items[${index}][quantity]']`
-  );
+// function updateQuantity(change, id, event, index) {
+//   event.preventDefault();
+//   let qtyElm = document.querySelector(
+//     `input[name='items[${index}][quantity]']`
+//   );
 
-  let totalSellingPrice = document.querySelector(
-    `div[name='items[${index}][totalSellingPrice]']`
-  );
+//   let totalSellingPrice = document.querySelector(
+//     `div[name='items[${index}][totalSellingPrice]']`
+//   );
 
-  let totalOriginalPrice = document.querySelector(
-    `div[name='items[${index}][totalOriginalPrice]']`
-  );
+//   let totalOriginalPrice = document.querySelector(
+//     `div[name='items[${index}][totalOriginalPrice]']`
+//   );
 
-  let productSellingPrice = document.querySelector(
-    `input[name='items[${index}][sellingPrice]']`
-  ).value;
+//   let productSellingPrice = document.querySelector(
+//     `input[name='items[${index}][sellingPrice]']`
+//   ).value;
 
-  let productOriginalPrice = document.querySelector(
-    `input[name='items[${index}][originalPrice]']`
-  ).value;
-  let grandOriginal = document.querySelector('#grandOriginalPrice');
-  let grandTotal = document.querySelector('#grandTotal');
-  let grandDiscount = document.querySelector('#grandDiscount');
-  let totalItems = document.querySelector('#totalItems');
-  let decreaseBtn = document.querySelector(
-    `button[name='items[${index}][decreaseBtn]']`
-  );
+//   let productOriginalPrice = document.querySelector(
+//     `input[name='items[${index}][originalPrice]']`
+//   ).value;
+//   let grandOriginal = document.querySelector('#grandOriginalPrice');
+//   let grandTotal = document.querySelector('#grandTotal');
+//   let grandDiscount = document.querySelector('#grandDiscount');
+//   let totalItems = document.querySelector('#totalItems');
+//   let decreaseBtn = document.querySelector(
+//     `button[name='items[${index}][decreaseBtn]']`
+//   );
 
-  qtyElm.value = Math.max(1, Number(qtyElm.value) + change);
+//   qtyElm.value = Math.max(1, Number(qtyElm.value) + change);
 
-  if (Number(qtyElm.value) > 3) {
-    alert('purchase limit reached');
-    qtyElm.value = 3;
-  } else {
-    totalSellingPrice.innerHTML = `₹${Number(qtyElm.value) * Number(productSellingPrice)}`;
-    totalOriginalPrice.innerHTML = `₹${Number(qtyElm.value) * Number(productOriginalPrice)}`;
+//   if (Number(qtyElm.value) > 3) {
+//     alert('purchase limit reached');
+//     qtyElm.value = 3;
+//   } else {
+//     totalSellingPrice.innerHTML = `₹${Number(qtyElm.value) * Number(productSellingPrice)}`;
+//     totalOriginalPrice.innerHTML = `₹${Number(qtyElm.value) * Number(productOriginalPrice)}`;
 
-    // grand discount and grand original and grand total calculations
-    let curTotalItems = Number(totalItems.innerHTML);
-    let curDiscount = Number(grandDiscount.innerHTML.replace('₹', ''));
-    let curOrginalPrice = Number(grandOriginal.innerHTML.replace('₹', ''));
-    let curTotal = curOrginalPrice - curDiscount;
+//     // grand discount and grand original and grand total calculations
+//     let curTotalItems = Number(totalItems.innerHTML);
+//     let curDiscount = Number(grandDiscount.innerHTML.replace('₹', ''));
+//     let curOrginalPrice = Number(grandOriginal.innerHTML.replace('₹', ''));
+//     let curTotal = curOrginalPrice - curDiscount;
 
-    let discount = Number(productOriginalPrice) - Number(productSellingPrice);
-    if (change == 1) {
-      grandDiscount.innerHTML = `₹${curDiscount + discount}`;
-      grandOriginal.innerHTML = `₹${curOrginalPrice + Number(productOriginalPrice)}`;
-      grandTotal.innerHTML = `₹${curTotal + Number(productSellingPrice)}`;
-      totalItems.innerHTML = `${curTotalItems + 1}`;
-    } else if (change == -1) {
-      grandDiscount.innerHTML = `₹${curDiscount - discount}`;
-      grandOriginal.innerHTML = `₹${curOrginalPrice - Number(productOriginalPrice)}`;
-      grandTotal.innerHTML = `₹${curTotal - Number(productSellingPrice)}`;
-      totalItems.innerHTML = `${curTotalItems - 1}`;
-    }
-  }
-}
+//     let discount = Number(productOriginalPrice) - Number(productSellingPrice);
+//     if (change == 1) {
+//       grandDiscount.innerHTML = `₹${curDiscount + discount}`;
+//       grandOriginal.innerHTML = `₹${curOrginalPrice + Number(productOriginalPrice)}`;
+//       grandTotal.innerHTML = `₹${curTotal + Number(productSellingPrice)}`;
+//       totalItems.innerHTML = `${curTotalItems + 1}`;
+//     } else if (change == -1) {
+//       grandDiscount.innerHTML = `₹${curDiscount - discount}`;
+//       grandOriginal.innerHTML = `₹${curOrginalPrice - Number(productOriginalPrice)}`;
+//       grandTotal.innerHTML = `₹${curTotal - Number(productSellingPrice)}`;
+//       totalItems.innerHTML = `${curTotalItems - 1}`;
+//     }
+//   }
+// }
 
 // post form event listener
 cartForm.addEventListener('submit', postCartForm);
@@ -127,11 +127,16 @@ async function postCartForm(e) {
       cartItems[index].quantity = item.value;
     });
 
+  // fetching user selected coupon
+  let couponDiscount =
+    document.querySelector('#couponDiscountValue')?.dataset.couponDiscount ||
+    '';
+
   try {
     const response = await fetch('/cart', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cartItems }),
+      body: JSON.stringify({ cartItems, couponDiscount }),
     });
 
     let data = await response.json();
@@ -142,6 +147,6 @@ async function postCartForm(e) {
       console.error(data.message, 'error');
     }
   } catch (error) {
-    console.log('error catch block');
+    console.log('error catch block', error);
   }
 }

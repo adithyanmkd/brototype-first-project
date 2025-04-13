@@ -1,4 +1,4 @@
-import { Order, Wallet } from '../../models/index.js';
+import { Order, Product, Wallet } from '../../models/index.js';
 import WalletTransaction from '../../models/walletTransactionModel.js';
 
 // get all orders list page
@@ -125,6 +125,15 @@ const returnAction = async (req, res) => {
 
     if (action === 'approve') {
       order.orderStatus = 'Returned';
+
+      let items = order.orderedItems.forEach(async (item) => {
+        let product = await Product.findOne(item.productId);
+        product.quantity += item.quantity;
+        product.save();
+
+        // console.log(item.quantity, 'user qty');
+        // console.log(product.quantity, 'product qty');
+      });
 
       if (!wallet) {
         wallet = await Wallet.create({
