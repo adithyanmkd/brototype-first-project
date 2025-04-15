@@ -1,5 +1,6 @@
 <div
-  x-data="{isReturn: ['Returned', 'Return Requested', 'Return Rejected'].includes('<%= order.orderStatus %>')}"
+  x-data="{isReturn: ['Returned', 'Return Requested', 'Return Rejected'].includes('<%= order.orderStatus %>'),
+          isCancelled: 'Cancelled' === '<%= order.orderStatus %>'}"
  class="container mx-auto px-4 py-8">
     <div class="mb-6 flex justify-between">
         <a href="/account/orders" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 transition-colors">
@@ -42,6 +43,7 @@
                   'bg-red-50 text-red-600': status === 'Cancelled',
                   'bg-orange-50 text-orange-600': status === 'Return Requested',
                   'bg-red-50 text-red-600': status === 'Return Rejected',
+                  'bg-red-50 text-red-600': status === 'Cancelled',
                   'bg-green-50 text-green-600 ': status === 'Returned'
                 }" 
                 class="px-3 py-1 rounded-full text-sm font-medium"
@@ -53,7 +55,7 @@
           <div class="relative">
             <!-- Status Timeline -->
           <div class="absolute left-8 top-0 h-full w-0.5 bg-gray-200"></div>
-          <div x-show="!isReturn" x-data="{ status: '<%= order.orderStatus %>' }">
+          <div x-show="!isReturn && !isCancelled" x-data="{ status: '<%= order.orderStatus %>' }">
             <!-- Pending Status -->
             <div id="pending-div" :class="{ 'opacity-50' : status !== 'Pending' }" class="relative flex items-center mb-8">
               <div class="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full">

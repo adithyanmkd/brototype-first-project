@@ -10,8 +10,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // import models
-import menus from '../../datasets/profileMenus.js';
 import Order from '../../models/orderModel.js';
+import Product from '../../models/productModel.js';
+
+import menus from '../../datasets/profileMenus.js';
 
 // get all orders
 const getAllOrders = async (req, res) => {
@@ -234,12 +236,44 @@ const returnOrder = async (req, res) => {
   }
 };
 
+// cancel order
+const cancelOrder = async (req, res) => {
+  const { orderId, response } = req.body;
+
+  try {
+    let order = await Order.findById(orderId);
+
+    let items = order.orderedItems.forEach(async (item) => {
+      let product = await Product.findOne(item.productId);
+      product.quantity += item.quantity;
+      product.save();
+    });
+
+    order.orderStatus = 'Cancelled';
+    order.returnReason = response;
+    order.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'order cancelled succesfully',
+      redirect: `/account/orders/${orderId}`,
+      data: req.body,
+    });
+  } catch (error) {
+    console.log('error');
+    res
+      .status(500)
+      .json({ success: false, message: 'cancel order processing failed' });
+  }
+};
+
 const ordersController = {
   getAllOrders,
   getOrder,
   placeOrder,
   downloadInvoice,
   returnOrder,
+  cancelOrder,
 };
 
 export default ordersController;

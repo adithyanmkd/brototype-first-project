@@ -1,5 +1,5 @@
 // import APIs
-import { returnOrderApi } from '../api/userOrdersApi.js';
+import { cancelOrderApi, returnOrderApi } from '../api/userOrdersApi.js';
 
 // import utils
 import { displayError } from '../utils/messages.js';
@@ -38,4 +38,23 @@ async function submitResponse() {
   }
 }
 
-export { searchOrder, changeFilter, submitResponse };
+async function processCancel() {
+  let pathname = window.location.pathname;
+  let reason = document.querySelector('#cancelReason').value;
+
+  let splited = pathname.split('/');
+  let orderId = splited[splited.length - 1];
+
+  if (!(reason.length > 0)) {
+    displayError('Response is mandatory');
+    return;
+  }
+
+  let response = await cancelOrderApi(orderId, reason);
+
+  if (response.success) {
+    window.location.href = response.redirect;
+  }
+}
+
+export { searchOrder, changeFilter, submitResponse, processCancel };

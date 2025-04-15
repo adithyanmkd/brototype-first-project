@@ -59,6 +59,7 @@ const orderSchema = new mongoose.Schema(
       default: 'Pending',
     },
     returnReason: String,
+    cancelReason: String,
     deliveryAddress: {
       name: String,
       phone: String,
