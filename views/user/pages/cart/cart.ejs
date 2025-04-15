@@ -58,7 +58,8 @@
 <form
 x-data="{
     couponCode: '',
-    newDiscount: false,
+    isNew: false,
+    serverCouponDiscount: '<%= Number(JSON.parse(couponDiscount)) %>',
     availableCoupons: <%= JSON.stringify(availableCoupons || []) %>,
     items: [
       <% cartItems.forEach((item, index) => { %>
@@ -86,10 +87,6 @@ x-data="{
       return this.availableCoupons.find(c => c.code === this.couponCode);
     },
     get couponDiscount() {
-      let couponDiscount = <%= Number(JSON.parse(couponDiscount)) %>
-      if(couponDiscount){
-        return couponDiscount
-      }
       if (!this.matchedCoupon) return 0;
       if (!this.isCouponEligible(this.matchedCoupon)) {
         this.couponCode = '';
@@ -211,15 +208,16 @@ x-data="{
             <span id="grandDiscount" x-text="'₹' + (totalOriginalPrice - totalSellingPrice)"><%= totalOriginalPrice - totalSellingPrice %></span>
           </div>
           <div>
-            <template x-if="couponDiscount > 0 && newDiscount">
+            <template x-if="serverCouponDiscount > 0 && !isNew">
               <div class="flex justify-between text-green-600">
                 <span>Coupon Discount</span>
-                <span id="couponDiscountValue" :data-coupon-discount="couponDiscount" x-text="'-₹' + couponDiscount"></span>
+                <span id="couponDiscountValue" :data-coupon-discount="couponDiscount" x-text="'-₹' + serverCouponDiscount"></span>
               </div>
             </template>
           </div>
-          <div  x-data="{couponDiscount: <%= Number(JSON.parse(couponDiscount)) %>}">
-            <template x-if="<%= Number(JSON.parse(couponDiscount)) > 0 %> && !newDiscount">
+          <!-- x-data="{couponDiscount: <%= Number(JSON.parse(couponDiscount)) %>}" -->
+          <div x-model="couponDiscount">
+            <template x-if="couponDiscount > 0">
               <div class="flex justify-between text-green-600">
                 <span>Coupon Discount</span>
                 <span id="couponDiscountValue" :data-coupon-discount="couponDiscount" x-text="'-₹' + couponDiscount"></span>
@@ -281,7 +279,7 @@ x-data="{
                     <button
                       type="button"
                       class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded hover:bg-blue-200"
-                      @click="couponCode = '<%= coupon.code %>', newDiscount = true"
+                      @click="couponCode = '<%= coupon.code %>', isNew = true"
                     >
                       Apply
                     </button>

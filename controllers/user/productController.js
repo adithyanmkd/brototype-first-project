@@ -44,9 +44,9 @@ const products = async (req, res) => {
 
     if (user) {
       const wishlist = await Wishlist.findOne({ userId: user._id }).lean();
-      wishlistIds = wishlist
-        ? wishlist.items.map((item) => item.product.toString())
-        : [];
+      console.log(wishlist);
+
+      wishlistIds = wishlist ? wishlist.items.map((item) => item.product) : [];
     }
 
     res.render('user/pages/products/Products', {

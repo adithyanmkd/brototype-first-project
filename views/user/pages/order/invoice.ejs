@@ -155,10 +155,25 @@
         
       </tbody>
       <tfoot>
-        <tr class="semi-bold">
-          <td colspan="3" class="right">Total (rupees)</td>
-          <td class="right"><%= order.totalAmount %></td>
-        </tr>
+          <% if(order.discountAmount){ %>
+            <tr>
+              <td colspan="3" class="right">Coupon Discount</td>
+              <td class="right"><%= order.discountAmount %></td>
+            </tr>
+          <% } %>
+
+          <% if(order.discountAmount){ %>
+            <tr class="semi-bold">
+              <td colspan="3" class="right">Total (rupees)</td>
+              <td class="right"><%= order.totalAmount - order.discountAmount  %></td>
+            </tr>
+          <% }else{ %>
+            <tr class="semi-bold">
+              <td colspan="3" class="right">Total (rupees)</td>
+              <td class="right"><%= order.totalAmount  %></td>
+            </tr>
+          <% } %>
+
       </tfoot>
     </table>
   </div>

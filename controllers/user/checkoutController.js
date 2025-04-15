@@ -43,11 +43,12 @@ let getCheckout = async (req, res) => {
     totalOriginalPrice += item._doc.price.originalPrice * item.quantity;
   });
 
-  console.log(totalSellingPrice, 'price');
+  console.log(typeof couponDiscount, typeof Number(JSON.parse(couponDiscount)));
 
   res.render('user/pages/checkout/checkout.ejs', {
     totalItems,
-    totalSellingPrice,
+    totalSellingPrice:
+      totalSellingPrice - Number(JSON.parse(couponDiscount)) || 0,
     totalOriginalPrice,
     addresses,
     couponDiscount,
@@ -57,8 +58,10 @@ let getCheckout = async (req, res) => {
 // post checkout page
 let postCheckout = async (req, res) => {
   let user = req.session.user;
+
   try {
     await redisClient.set(`address:${user._id}`, req.body.addressId);
+
     res.status(200).json({
       success: true,
       message: 'successfully added address into redisClient',

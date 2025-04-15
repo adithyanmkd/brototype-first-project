@@ -8,11 +8,10 @@ const getEmptyCart = async (req, res) => {
   let user = req.session.user;
   let couponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
 
-  console.log(couponDiscount);
-
   if (couponDiscount) {
     await redisClient.del(`couponDiscount:${user._id}`);
   }
+
   res.render('user/pages/cart/emptyCart.ejs');
 };
 
@@ -24,9 +23,12 @@ const getCart = async (req, res) => {
     return res.render('user/pages/cart/emptyCart.ejs');
   }
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // sets time to 00:00:00
+
   const availableCoupons = await Coupon.find({
     isActive: true,
-    endDate: { $gte: new Date() },
+    endDate: { $gte: today },
   }).lean();
 
   // let userCart = await Cart.findOne({ userId: user._id });
@@ -66,11 +68,13 @@ const getCart = async (req, res) => {
   });
 
   let couponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
+  console.log(totalSellingPrice - Number(JSON.parse(couponDiscount)));
 
   res.render('user/pages/cart/cart.ejs', {
     cartItems,
     totalItems,
-    totalSellingPrice,
+    totalSellingPrice:
+      totalSellingPrice - Number(JSON.parse(couponDiscount)) || 0,
     totalOriginalPrice,
     availableCoupons,
     couponDiscount,
@@ -141,7 +145,7 @@ const addToCart = async (req, res) => {
       cart.items.push({ productId, quantity });
     }
 
-    // store updated car in Redis
+    // store updated cart in Redis
     await redisClient.set(`cart:${user._id}`, JSON.stringify(cart));
 
     res.json({ success: true, message: 'Item added succesfully', cart });

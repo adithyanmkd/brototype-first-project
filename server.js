@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import MongoStore from 'connect-mongo';
 import expressLayouts from 'express-ejs-layouts';
 import session from 'express-session';
+import cors from 'cors';
 
 // import config modules
 import connectDB from './config/database.js'; // database config
@@ -39,6 +40,13 @@ app.use(
       httpOnly: true, // Prevents client-side JavaScript from accessing the session cookie
       maxAge: 24 * 60 * 60 * 1000, // Cookie expiry in 24 hours
     },
+  })
+);
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // your React app URL
+    credentials: true, // only needed if you're using cookies/sessions
   })
 );
 

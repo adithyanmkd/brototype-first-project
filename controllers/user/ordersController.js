@@ -180,6 +180,7 @@ const downloadInvoice = async (req, res) => {
 
   let order = await Order.findById(orderId);
 
+  // console.log(order);
   // res.render('user/pages/order/invoice.ejs', { layout: false, order });
 
   ejs.renderFile(

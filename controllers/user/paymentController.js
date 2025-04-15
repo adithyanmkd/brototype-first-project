@@ -153,6 +153,12 @@ const postPayment = async (req, res) => {
         `address:${user._id}`,
         `couponDiscount:${user._id}`
       );
+
+      let coupon = await redisClient.get(`couponDiscount:${user._id}`);
+      let cart = await redisClient.get(`couponDiscount:${user._id}`);
+      console.log(coupon, '-------- coupon --------');
+      console.log(cart, '-------- cart --------');
+
       res.status(200).json({
         success: true,
         message: 'Order placed throuch cash on delivery',
@@ -201,11 +207,10 @@ const successPage = async (req, res) => {
 
   let jsonCart = await redisClient.get(`cart:${user._id}`);
   let jsonCouponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
+  let addressId = await redisClient.get(`address:${user._id}`);
 
   let couponDiscount = JSON.parse(jsonCouponDiscount) || 0;
   let cartItems = JSON.parse(jsonCart); // converting json into javascript object
-
-  let addressId = await redisClient.get(`address:${user._id}`);
 
   let totalAmount = 0;
 
@@ -272,6 +277,7 @@ const successPage = async (req, res) => {
         `address:${user._id}`,
         `couponDiscount:${user._id}`
       );
+
       return res.json({
         success: true,
         redirect: '/payment/success-view',

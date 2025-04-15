@@ -89,12 +89,18 @@ const allProduct = async (req, res) => {
     .skip(skip)
     .limit(limit);
 
-  res.render('admin/pages/products/listProducts.ejs', {
-    products,
-    page,
-    totalPages,
-    layout: 'layouts/admin-layout',
-  });
+  if (req.xhr || req.headers.accept.indexOf('application/json') > -1) {
+    // If the request is AJAX or accepts JSON (like axios)
+    res.status(200).json({ success: true, products });
+  } else {
+    // Normal page render
+    res.render('admin/pages/products/listProducts.ejs', {
+      products,
+      page,
+      totalPages,
+      layout: 'layouts/admin-layout',
+    });
+  }
 };
 
 // delete product

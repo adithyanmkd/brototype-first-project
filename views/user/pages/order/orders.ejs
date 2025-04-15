@@ -28,7 +28,7 @@
           }
        }"
       class="relative">
-        <!-- Button -->
+        <!-- filter dropdown Button -->
         <button
             @click="open = !open"
             class="w-full md:w-48 flex items-center justify-between px-4 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -118,119 +118,26 @@
         </div>
       </a>
      <% }) %>
+     
      <div class="flex justify-center space-x-2 mt-4">
-      <% if (page> 1) { %>
+          <% if (page > 1) { %>
           <a href="/account/orders?page=<%= page - 1 %>"
               class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Previous</a>
           <% } %>
 
-              <% for (let i=1; i <=totalPages; i++) { %>
-                  <a href="/account/orders?page=<%= i %>"
-                      class="px-3 py-2 rounded-lg <%= page === i ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300' %>">
-                      <%= i %>
-                  </a>
-                  <% } %>
+          <% for (let i=1; i <=totalPages; i++) { %>
+              <a href="/account/orders?page=<%= i %>"
+                  class="px-3 py-2 rounded-lg <%= page === i ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300' %>">
+                  <%= i %>
+              </a>
+          <% } %>
 
-                      <% if (page < totalPages) { %>
-                          <a href="/account/orders?page=<%= page + 1 %>"
-                              class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Next</a>
-                          <% } %>
+          <% if (page < totalPages) { %>
+              <a href="/account/orders?page=<%= page + 1 %>"
+                  class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Next</a>
+          <% } %>
         </div>
-    <!-- Delivered Order -->
-    <!-- <div class="bg-white rounded-2xl p-4 shadow-sm">
-      <div class="flex justify-between items-start mb-4">
-        <div class="flex items-center space-x-2">
-          <span
-            class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm font-medium"
-            >Delivered</span
-          >
-          <span class="text-gray-600">5 Jan 2025</span>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between">
-        <div class="flex space-x-4">
-          <div class="relative">
-            <img
-              src="https://placehold.co/80x80"
-              alt="Hybrid Mattress"
-              class="rounded-lg w-20 h-20 object-cover"
-            />
-          </div>
-          <div>
-            <p class="text-gray-800">Hybrid Mattress</p>
-            <p class="text-gray-600 text-sm mt-1">Delivered 13 January</p>
-          </div>
-        </div>
-        <button class="text-gray-400 hover:text-gray-600">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
-      </div>
-    </div> -->
-
-    <!-- Cancelled Order -->
-    <!-- <div class="bg-white rounded-2xl p-4 shadow-sm">
-      <div class="flex justify-between items-start mb-4">
-        <div class="flex items-center space-x-2">
-          <span
-            class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-sm font-medium"
-            >Cancelled</span
-          >
-          <span class="text-gray-600">5 Jan 2025</span>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between">
-        <div class="flex space-x-4">
-          <div class="relative">
-            <img
-              src="https://placehold.co/80x80"
-              alt="Hybrid Mattress"
-              class="rounded-lg w-20 h-20 object-cover"
-            />
-            <span
-              class="absolute bottom-0 right-0 bg-black bg-opacity-60 text-white text-xs px-1 rounded"
-              >+1</span
-            >
-          </div>
-          <div>
-            <p class="text-gray-800 font-medium">Order ID: 354654654526</p>
-            <p class="text-gray-800">
-              Hybrid Mattress & <span class="text-blue-600">1 more item</span>
-            </p>
-          </div>
-        </div>
-        <button class="text-gray-400 hover:text-gray-600">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
-      </div>
-    </div> -->
+  
   </div>
 </div>
 <script type="module" src="/javascript/ajax/pages/userOrders.js"></script>
