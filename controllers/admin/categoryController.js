@@ -93,7 +93,6 @@ const editCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
     const category = await Category.findById(categoryId);
-    console.log(category);
 
     if (!category) {
       return res.status(404).render('admin/pages/categories/EditCategory', {
@@ -115,10 +114,8 @@ const editCategory = async (req, res) => {
 
 // post edit category
 const postEditCategory = async (req, res) => {
-  console.log('here');
   try {
     const categoryId = req.params.id;
-    console.log(categoryId);
     const category = await Category.findById(categoryId);
 
     if (!category) {
@@ -126,7 +123,6 @@ const postEditCategory = async (req, res) => {
     }
 
     const { name, description } = req.body;
-    console.log(req.body);
     let imagePath = category.image.path.replace(/.*\/public\//, '/');
 
     if (req.file) {

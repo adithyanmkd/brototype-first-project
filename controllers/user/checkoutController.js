@@ -43,8 +43,6 @@ let getCheckout = async (req, res) => {
     totalOriginalPrice += item._doc.price.originalPrice * item.quantity;
   });
 
-  console.log(typeof couponDiscount, typeof Number(JSON.parse(couponDiscount)));
-
   res.render('user/pages/checkout/checkout.ejs', {
     totalItems,
     totalSellingPrice:

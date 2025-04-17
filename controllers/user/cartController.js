@@ -4,6 +4,9 @@ import { Cart, Product, Address, Coupon } from '../../models/index.js';
 // import config
 import redisClient from '../../config/redisConfig.js';
 
+// import services
+import { CartService } from '../../services/user/cartService.js';
+
 const getEmptyCart = async (req, res) => {
   let user = req.session.user;
   let couponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
@@ -68,7 +71,6 @@ const getCart = async (req, res) => {
   });
 
   let couponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
-  console.log(totalSellingPrice - Number(JSON.parse(couponDiscount)));
 
   res.render('user/pages/cart/cart.ejs', {
     cartItems,
@@ -161,6 +163,7 @@ const addToCart = async (req, res) => {
   }
 };
 
+// delete cart item
 const deleteItem = async (req, res) => {
   let user = req.session.user;
   let { productId } = req.body;
@@ -194,50 +197,15 @@ const postCart = async (req, res) => {
   let { cartItems, couponDiscount } = req.body;
 
   try {
-    let userCart = await redisClient.get(`cart:${user._id}`);
-    let cart = JSON.parse(userCart);
-
-    cartItems.forEach((item) => {
-      let existingItemIndex = cart.items.findIndex(
-        (existItem) => item.productId === existItem.productId
-      );
-
-      cart.items[existingItemIndex].quantity = Number(item.quantity);
-    });
-
-    let products = await Promise.all(
-      cart.items.map(async (item) => {
-        let product = await Product.findById(item.productId);
-        return {
-          ...product,
-        };
-      })
+    let result = await CartService.updateCart(
+      user._id,
+      cartItems,
+      couponDiscount
     );
 
-    let flag = false;
-
-    products.forEach((item, index) => {
-      if (item._doc.quantity < cart.items[index].quantity) {
-        flag = true;
-
-        return res.status(404).json({
-          success: false,
-          message: 'Item out stock',
-          product: item._doc.productName,
-        });
-      }
-    });
-
-    if (flag) {
-      return;
+    if (!result.success) {
+      return res.status(404).json(result);
     }
-
-    // update quantity saving
-    await redisClient.set(`cart:${user._id}`, JSON.stringify(cart));
-    await redisClient.set(
-      `couponDiscount:${user._id}`,
-      JSON.stringify(couponDiscount)
-    );
 
     res.status(200).json({ success: true, message: 'cart post' });
   } catch (error) {

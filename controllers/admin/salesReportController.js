@@ -1,5 +1,7 @@
-import SalesReportService from '../../services/salesReportService.js';
 import { generatePDF, generateExcel } from '../../utils/reportGenerator.js';
+
+// sevices
+import SalesReportService from '../../services/admin/salesReportService.js';
 
 // Controller to fetch sales report based on filters
 const getSalesReport = async (req, res) => {
