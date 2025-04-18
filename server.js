@@ -43,12 +43,7 @@ app.use(
   })
 );
 
-app.use(
-  cors({
-    origin: 'http://localhost:5173', // your React app URL
-    credentials: true, // only needed if you're using cookies/sessions
-  })
-);
+app.use(cors());
 
 // cache management
 app.use((req, res, next) => {

@@ -48,7 +48,7 @@ const products = async (req, res) => {
       wishlistIds = wishlist ? wishlist.items.map((item) => item.product) : [];
     }
 
-    res.render('user/pages/products/Products', {
+    res.render('user/pages/products/products', {
       products,
       category,
       categories,
@@ -70,7 +70,7 @@ const productDetails = async (req, res) => {
     if (!product) {
       return res.status(404).send('Product not found');
     }
-    res.render('user/pages/products/ProductDetails', {
+    res.render('user/pages/products/productDetails', {
       product,
     });
   } catch (error) {

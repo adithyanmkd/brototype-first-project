@@ -8,22 +8,15 @@ const adminSidebar = (req, res, next) => {
     },
     {
       id: 'customer-menu',
-      toggleId: 'customer-icon',
       name: 'Customers',
-      nestedItems: [
-        {
-          name: 'All Customers',
-          href: '/admin/customers',
-          linkId: 'all-customer',
-          active: req.path === '/customers',
-        },
-        {
-          name: 'Customer Details',
-          href: '#',
-          linkId: 'single-customer',
-          active: req.path === '/customers/details',
-        },
-      ],
+      href: '/admin/customers',
+      active: req.path === '/customers',
+    },
+    {
+      id: 'sales-report',
+      name: 'Sales Report',
+      href: '/admin/sales-report',
+      active: req.path === '/sales-report',
     },
     {
       id: 'products',
@@ -35,12 +28,6 @@ const adminSidebar = (req, res, next) => {
           href: '/admin/products',
           linkId: 'all-product',
           active: req.path === '/products',
-        },
-        {
-          name: 'Add Product',
-          href: '/admin/products/add',
-          linkId: 'add-product',
-          active: req.path === '/products/add',
         },
         {
           name: 'Category List',

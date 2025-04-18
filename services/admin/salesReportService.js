@@ -1,7 +1,7 @@
 import Order from '../../models/orderModel.js';
 
 const SalesReportService = {
-  getSalesData: async ({ range, startDate, endDate }) => {
+  getSalesData: async ({ range = '1w', startDate, endDate }) => {
     try {
       let salesData;
 
@@ -22,7 +22,6 @@ const SalesReportService = {
           orderDate: { $gte: startDate },
           orderStatus: 'Delivered',
         });
-        console.log(salesData);
       } else if (startDate && endDate) {
         salesData = await Order.find({
           orderDate: { $gte: new Date(startDate), $lte: new Date(endDate) },

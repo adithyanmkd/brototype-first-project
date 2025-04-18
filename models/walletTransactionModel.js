@@ -12,11 +12,18 @@ const transactionSchema = new mongoose.Schema({
     required: true,
   },
   thumbnail: String,
-  orderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Order',
+  transactionId: {
+    type: String,
+    unique: true,
     required: true,
   },
+  transactionNote: String,
+  // orderId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'Order',
+  //   required: null,
+  // },
+  orderId: String,
   amount: {
     type: Number,
     required: true,

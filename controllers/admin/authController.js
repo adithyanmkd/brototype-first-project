@@ -17,7 +17,7 @@ const authenticateAdmin = (req, res) => {
     username == process.env.ADMIN_NAME &&
     password == process.env.ADMIN_PASS
   ) {
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true, message: 'Admin login successfull' });
   } else {
     res.status(401).json({ message: 'Invalid credentials' });
   }

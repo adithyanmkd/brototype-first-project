@@ -64,7 +64,7 @@ const getCategoryList = async (req, res) => {
     .skip(skip)
     .limit(limit);
 
-  res.render('admin/pages/categories/ListCategory', {
+  res.render('admin/pages/categories/listCategory', {
     layout: 'layouts/admin-layout.ejs',
     categories,
     page,
@@ -95,14 +95,14 @@ const editCategory = async (req, res) => {
     const category = await Category.findById(categoryId);
 
     if (!category) {
-      return res.status(404).render('admin/pages/categories/EditCategory', {
+      return res.status(404).render('admin/pages/categories/editCategory', {
         layout: 'layouts/admin-layout',
         title: 'Edit Category',
         errorMessage: 'Category not found',
       });
     }
 
-    res.render('admin/pages/categories/EditCategory', {
+    res.render('admin/pages/categories/editCategory', {
       layout: 'layouts/admin-layout',
       title: 'Edit Category',
       category,

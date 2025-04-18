@@ -27,7 +27,7 @@ const getCustomers = async (req, res) => {
     // Fetch filtered and paginated customers
     const users = await User.find(filter).skip(skip).limit(limit);
 
-    res.render('admin/pages/customers/Customers', {
+    res.render('admin/pages/customers/customers', {
       users,
       page,
       totalPages,

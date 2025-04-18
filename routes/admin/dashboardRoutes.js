@@ -14,7 +14,7 @@ router.use(adminSidebar);
 
 router.get('/', dashboardController.getDashboard); // get dashboard
 router.get('/user-chart', dashboardController.getUserChartData); // get user chart
-router.get('/sales-report', salesReportController.getSalesReport); // get sales report
+// router.get('/sales-report', salesReportController.getSalesReport); // get sales report
 
 // export router
 export default router;

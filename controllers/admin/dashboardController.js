@@ -22,7 +22,7 @@ const getDashboard = async (req, res) => {
       { title: 'Total Orders', value: orders.length },
     ];
 
-    res.render('admin/pages/dashboard/Dashboard', {
+    res.render('admin/pages/dashboard/dashboard', {
       layout: 'layouts/admin-layout.ejs',
       stats,
     });

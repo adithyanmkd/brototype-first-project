@@ -2,20 +2,20 @@
   <!-- heading block and hero image -->
 
   <!-- auth image passing -->
-  <%- include("../../partials/atoms/AuthImage.ejs", authData.authImage) %>
+  <%- include("../../partials/atoms/authImage.ejs", authData.authImage) %>
 
     <!-- heading block and hero image ended -->
 
     <!-- login form started -->
     <form class="w-96" id="user-login-form" action="/auth/login" method="post"
       enctype="application/x-www-form-urlencoded">
-      <%- include("../../partials/atoms/AuthHeading.ejs", authData.loginAuthHeading) %>
+      <%- include("../../partials/atoms/authHeading.ejs", authData.loginAuthHeading) %>
         <ul class="space-y-6">
           <li id="success-box" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 hidden">
           </li>
 
           <% authData.loginInputFields.forEach((field)=> { %>
-            <%- include("../../partials/atoms/InputField.ejs", {...field}) %>
+            <%- include("../../partials/atoms/inputField.ejs", {...field}) %>
               <% }) %>
                 <p>
                   <a class="pl-1 text-[#0F3DDE]" href="/auth/forget-password">Forgot your

@@ -7,6 +7,7 @@ import Cart from './cartModel.js';
 import Order from './orderModel.js';
 import Wishlist from './wishlistModel.js';
 import Wallet from './walletModel.js';
+import WalletTransaction from './walletTransactionModel.js';
 import Coupon from './couponModel.js';
 
 export {
@@ -18,5 +19,6 @@ export {
   Order,
   Wishlist,
   Wallet,
+  WalletTransaction,
   Coupon,
 };

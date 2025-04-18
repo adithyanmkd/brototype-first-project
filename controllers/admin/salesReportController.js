@@ -15,12 +15,27 @@ const getSalesReport = async (req, res) => {
       endDate,
     });
 
-    // Return data in JSON format if no download is requested
-    if (!format) {
+    if (req.xhr || req.headers.accept.indexOf('application/json') > -1) {
+      // If the request is AJAX or accepts JSON (like axios)
       return res.status(200).json({
         message: 'Sales report fetched successfully',
         data: salesData,
       });
+    }
+
+    // Return data in JSON format if no download is requested
+    if (!format) {
+      // If the request is AJAX or accepts JSON (like axios)
+      if (req.xhr || req.headers.accept.indexOf('application/json') > -1) {
+        return res.status(200).json({
+          message: 'Sales report fetched successfully',
+          data: salesData,
+        });
+      } else {
+        return res.render('admin/pages/salesReport/salesReport.ejs', {
+          layout: 'layouts/admin-layout.ejs',
+        });
+      }
     }
 
     // Generate and send the report in the requested format

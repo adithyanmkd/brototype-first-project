@@ -1,5 +1,5 @@
 <div class="flex w-full space-x-30 pb-20">
-  <%- include("../../partials/organisms/ProfileSidebar.ejs") %>
+  <%- include("../../partials/organisms/profileSidebar.ejs") %>
   <div class="max-w-4xl w-full p-6">
     <!-- Balance Section -->
     <div class="mb-12">
@@ -55,32 +55,38 @@
       <h2 class="text-2xl font-bold text-gray-900 mb-6">Recent Transactions</h2>
       <div class="space-y-6">
         <!-- Transaction Item -->
-        <div x-data="{ transactions : <%= JSON.stringify(transactions) %>}">
+        <div
+          x-data="{ transactions : <%= JSON.stringify(transactions) %>}"
+          class="space-y-4"
+        >
           <template x-for="txn in transactions">
             <div
-              class="flex items-center justify-between bg-white p-4 rounded-lg shadow"
+              class="flex hover:cursor-pointer hover:bg-gray-100 border border-gray-300 items-center justify-between bg-white p-4 rounded-lg shadow"
             >
-              <div class="flex items-center gap-4">
-                <div
-                  class="w-18 h-18 bg-gray-200 rounded-lg flex items-center justify-center"
-                >
-                  <img :src="txn.thumbnail" alt="txn.productName" />
-                </div>
-                <div class="space-y-2">
-                  <h3 x-text="txn.description" class="font-semibold"></h3>
-                  <p
-                    class="text-sm text-gray-500"
-                    x-text="new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(txn.createdAt)) 
+              <div class="space-y-2">
+                <h4 class="font-semibold">
+                  Transaction ID:
+                  <span class="font-normal" x-text="txn.transactionId"></span>
+                </h4>
+                <p class="font-medium">
+                  Note:
+                  <span
+                    x-text="`${txn.transactionNote} order(#${txn.orderId.slice(0, 4)}...)`"
+                    class="font-normal"
+                  ></span>
+                </p>
+                <p
+                  class="text-sm text-gray-500"
+                  x-text="new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(txn.createdAt)) 
                     + ' • ' + 
                     new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).format(new Date(txn.createdAt))"
-                  ></p>
-                  <span
-                    x-text="txn.type"
-                    :class="{'bg-red-100 text-red-600' : txn.type === 'debit',
+                ></p>
+                <span
+                  x-text="txn.type"
+                  :class="{'bg-red-100 text-red-600' : txn.type === 'debit',
                               'bg-green-100 text-green-600': txn.type === 'credit'}"
-                    class="text-xs font-medium px-2 py-1 rounded-full"
-                  ></span>
-                </div>
+                  class="text-xs font-medium px-2 py-1 rounded-full"
+                ></span>
               </div>
               <p
                 :class="{'text-red-600' : txn.type === 'debit',

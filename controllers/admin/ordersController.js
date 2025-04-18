@@ -1,5 +1,12 @@
-import { Order, Product, Wallet } from '../../models/index.js';
-import WalletTransaction from '../../models/walletTransactionModel.js';
+import { v4 as uuidv4 } from 'uuid';
+
+// import model
+import {
+  Order,
+  Product,
+  Wallet,
+  WalletTransaction,
+} from '../../models/index.js';
 
 // get all orders list page
 const getOrders = async (req, res) => {
@@ -91,7 +98,7 @@ const getOrder = async (req, res) => {
   });
 };
 
-// update payment status
+// update order status
 const updateOrderStatus = async (req, res) => {
   let { btnName, orderId } = req.body;
 
@@ -99,6 +106,7 @@ const updateOrderStatus = async (req, res) => {
     let order = await Order.findById(orderId);
     order.orderStatus = btnName;
     await order.save();
+
     res.status(200).json({
       success: true,
       message: 'updated successfully',
@@ -119,6 +127,7 @@ const returnAction = async (req, res) => {
 
   try {
     let user = req.user;
+
     let order = await Order.findById(orderId);
     let wallet = await Wallet.findOne({ userId: user._id });
     let transaction = await WalletTransaction.findOne({ userId: user._id });
@@ -149,7 +158,9 @@ const returnAction = async (req, res) => {
         userId: user._id,
         type: 'credit',
         thumbnail: order.orderThumbnail,
-        orderId: order._id,
+        transactionId: uuidv4(), // generate transaction id
+        transactionNote: 'Refund for returned',
+        orderId: order.orderId,
         amount: order.totalAmount,
         description: order.productName,
       });

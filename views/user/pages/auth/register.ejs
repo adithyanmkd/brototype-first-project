@@ -12,7 +12,7 @@
   <!-- login form started -->
   <form class="w-96" id="user-register-form" action="/auth/register" method="post"
     enctype="application/x-www-form-urlencoded">
-    <%- include("../../partials/atoms/AuthHeading", authData.registerAuthHeading) %>
+    <%- include("../../partials/atoms/authHeading", authData.registerAuthHeading) %>
       <ul class="space-y-6">
         <% authData.registerInputFields.forEach((field)=> { %>
           <%- include("../../partials/atoms/inputField.ejs", { ...field }) %>

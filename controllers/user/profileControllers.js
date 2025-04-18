@@ -25,7 +25,7 @@ const userDetails = (req, res) => {
     });
   }
 
-  res.render('user/pages/profile/UserDetails', { user, menus: userMenus });
+  res.render('user/pages/profile/userDetails', { user, menus: userMenus });
 };
 
 // get edit profile page

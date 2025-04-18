@@ -27,7 +27,7 @@ const orderSchema = new mongoose.Schema(
         productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
         productName: String,
         thumbnail: String,
-        quantity: Number,
+        quantity: { type: Number, default: 1 },
         price: Number,
       },
     ],
@@ -37,12 +37,18 @@ const orderSchema = new mongoose.Schema(
     productName: {
       type: String,
     },
+    couponCode: { type: String, default: null },
     discountAmount: Number,
     totalAmount: { type: Number, required: true },
     paymentMethod: {
       type: String,
       enum: ['cash_on_delivery', 'wallet', 'razorpay'],
       required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'failed', 'refunded'],
+      default: 'pending',
     },
     orderStatus: {
       type: String,
@@ -70,7 +76,14 @@ const orderSchema = new mongoose.Schema(
       pincode: String,
     },
     orderDate: { type: Date, default: Date.now },
-    expectedDeliveryDate: { type: Date },
+    expectedDeliveryDate: {
+      type: Date,
+      default: () => {
+        const delivery = new Date();
+        delivery.setDate(delivery.getDate() + 7); // 7 days from order
+        return delivery;
+      },
+    },
   },
   { timestamps: true }
 );

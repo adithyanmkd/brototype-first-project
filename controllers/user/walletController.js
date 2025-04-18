@@ -1,26 +1,18 @@
 import mongoose from 'mongoose';
 
-// import models
-import { Wallet } from '../../models/index.js';
-
 // import profile side menus
 import menus from '../../datasets/profileMenus.js';
-import WalletTransaction from '../../models/walletTransactionModel.js';
+
+// import services
+import { walletService } from '../../services/user/walletServie.js';
 
 // get wallet page
 const getWallet = async (req, res) => {
   const user = req.session.user;
-  let userId = req.user._id;
+  let userId = user._id;
 
   try {
-    let wallet = await Wallet.findOne({ userId });
-    let transactions = await WalletTransaction.find({ userId });
-
-    if (!wallet) {
-      wallet = await Wallet.create({
-        userId,
-      });
-    }
+    let { wallet, transactions } = await walletService.find(userId);
 
     const userMenus = [...menus]; // profile menus accessing
 
@@ -31,8 +23,6 @@ const getWallet = async (req, res) => {
         href: '/account/change-password',
       });
     }
-
-    console.log(transactions);
 
     res.render('user/pages/profile/wallet.ejs', {
       user,
