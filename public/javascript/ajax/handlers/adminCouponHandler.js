@@ -2,8 +2,10 @@
 import {
   sendCouponToServer,
   sendEditCouponToServer,
+  deleteCoupon,
 } from '../api/adminCouponApi.js';
 
+// add coupon
 const processAddCoupon = async (data) => {
   const {
     code,
@@ -73,6 +75,7 @@ const processAddCoupon = async (data) => {
   }
 };
 
+// edit coupon
 const processEditCoupon = async (data) => {
   const {
     couponId,
@@ -160,4 +163,23 @@ const processEditCoupon = async (data) => {
   }
 };
 
-export { processAddCoupon, processEditCoupon };
+// delete coupon
+const processdeleteCoupon = async (couponId) => {
+  try {
+    const response = await deleteCoupon(couponId);
+
+    // handle the response
+    if (!response.success) {
+      alert(response.message || 'coupon delete failed');
+      return;
+    }
+
+    // redirect if success
+    window.location.href = response.redirect;
+  } catch {
+    console.error('Coupon update error:', error);
+    alert('An unexpected error occurred while deleting the coupon.');
+  }
+};
+
+export { processAddCoupon, processEditCoupon, processdeleteCoupon };

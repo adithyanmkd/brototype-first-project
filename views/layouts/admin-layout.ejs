@@ -41,9 +41,14 @@
           <%- include("../admin/partials/organisms/modals/couponCreateModal.ejs") %>
       </div>
 
-      <div x-show="couponEdit.open" class="absolute w-full bg-black/75 h-screen overflow-hidden flex  z-10">
+      <div x-show="couponEdit.open" class="absolute w-full bg-black/75 h-screen overflow-hidden flex z-10">
         <%- include("../admin/partials/organisms/modals/couponEditModal.ejs") %>
       </div>
+
+      <div x-show="confirmModal.open" @click="confirmModal.open = false" class="absolute w-full bg-black/75 h-screen overflow-hidden flex z-10">
+          <span><%- include("../common/modal/confirmModal.ejs") %></span>
+      </div>
+
 
         <!-- modals ended -->
         <!-- Main Content -->

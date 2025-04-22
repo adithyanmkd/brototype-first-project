@@ -3,6 +3,15 @@ import Coupon from '../../models/couponModel.js'; // Import the Coupon model
 // get all coupons
 const coupons = async (req, res) => {
   try {
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // updating isActive state
+    await Coupon.updateMany(
+      { endDate: { $lt: today }, isActive: true },
+      { $set: { isActive: false } }
+    );
+
     const availableCoupons = await Coupon.find().lean();
 
     res.render('admin/pages/coupon/coupons.ejs', {
@@ -67,6 +76,7 @@ const addCoupon = async (req, res) => {
   }
 };
 
+// edit coupon
 const editCoupon = async (req, res) => {
   try {
     const {
@@ -122,10 +132,32 @@ const editCoupon = async (req, res) => {
   }
 };
 
+// delete coupon
+const deleteCoupon = async (req, res) => {
+  let couponId = req.params.couponId;
+
+  try {
+    await Coupon.deleteOne({ _id: couponId });
+
+    res.status(200).json({
+      success: true,
+      message: 'coupon deleted successfully',
+      redirect: '/admin/coupons',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'coupon delete failed',
+      error: error,
+    });
+  }
+};
+
 const couponController = {
   coupons,
   addCoupon,
   editCoupon,
+  deleteCoupon,
 };
 
 export default couponController;

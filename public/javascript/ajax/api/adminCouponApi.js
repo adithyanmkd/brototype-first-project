@@ -46,4 +46,24 @@ async function sendEditCouponToServer(formData) {
   }
 }
 
-export { sendCouponToServer, sendEditCouponToServer };
+// delete coupon
+async function deleteCoupon(couponId) {
+  try {
+    let res = await fetch(`/admin/coupons/delete/${couponId}`, {
+      method: 'DELETE',
+    });
+
+    let data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'coupon deleting failed');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('coupon delete error', error);
+    return { success: false };
+  }
+}
+
+export { sendCouponToServer, sendEditCouponToServer, deleteCoupon };

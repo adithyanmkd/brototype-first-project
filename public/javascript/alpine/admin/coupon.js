@@ -41,11 +41,13 @@ function listAllCoupons() {
     search: '',
     status: '',
     type: '',
+
     get filteredCoupons() {
       return this.coupons.filter((c) => {
         const matchSearch =
           this.search === '' ||
           c.code.toLowerCase().includes(this.search.toLowerCase());
+
         const matchStatus =
           this.status === '' ||
           (this.status === 'active' && c.isActive) ||
@@ -64,6 +66,7 @@ function listAllCoupons() {
         return matchSearch && matchStatus && matchType;
       });
     },
+
     initData(data) {
       this.coupons = data;
     },

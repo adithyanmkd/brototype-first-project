@@ -14,6 +14,9 @@ document.addEventListener('alpine:init', () => {
     couponAdd: { open: false },
     couponEdit: { open: false },
 
+    // confirm modal state
+    confirmModal: { open: false },
+
     // Method to open the add modal
     openAddModal() {
       this.couponAdd.open = true;

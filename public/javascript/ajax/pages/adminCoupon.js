@@ -1,6 +1,7 @@
 import {
   processAddCoupon,
   processEditCoupon,
+  processdeleteCoupon,
 } from '../handlers/adminCouponHandler.js';
 
 document.addEventListener('DOMContentLoaded', loadScript);
@@ -8,9 +9,11 @@ document.addEventListener('DOMContentLoaded', loadScript);
 function loadScript() {
   let couponAddForm = document.querySelector('#couponAddForm');
   let couponEditForm = document.querySelector('#couponEditForm');
+  let delBtns = document.querySelectorAll('.coupon-del-btn');
 
   if (!couponAddForm) return;
 
+  // coupon creating
   couponAddForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -90,4 +93,15 @@ function loadScript() {
       await processEditCoupon(couponData);
     });
   }
+
+  // coupon deleting
+  delBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      let confirm = document.querySelector('#confirm');
+
+      confirm.addEventListener('click', async () => {
+        await processdeleteCoupon(btn.dataset.couponId);
+      });
+    });
+  });
 }

@@ -227,7 +227,14 @@
                   >
                     <i class="far fa-edit"></i>
                   </a>
-                  <a href="#" class="text-red-600 hover:text-red-900">
+                  <a
+                    @click="confirmModal.open = true"
+                    :data-coupon-id="coupon._id"
+                    data-modal-target="popup-modal"
+                    data-modal-toggle="popup-modal"
+                    href="#"
+                    class="text-red-600 coupon-del-btn hover:text-red-900"
+                  >
                     <i class="far fa-trash-alt"></i>
                   </a>
                 </td>
@@ -242,3 +249,6 @@
 
 <!-- alpine script -->
 <script src="/javascript/alpine/admin/coupon.js"></script>
+
+<!-- ajax script -->
+<script type="module" src="/javascript/ajax/pages/adminCoupon.js"></script>
