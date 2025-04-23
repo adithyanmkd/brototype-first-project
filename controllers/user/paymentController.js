@@ -4,6 +4,9 @@ import razorpay from '../../config/razorpay.js';
 
 import { Product, Order, Address } from '../../models/index.js';
 
+// services
+import { prepareOrderData } from '../../services/user/orderService.js';
+
 let paymentMethods = [
   {
     name: 'Cash On delivery',
@@ -169,6 +172,7 @@ const postPayment = async (req, res) => {
         currency: 'INR',
         payment_capture: 1,
       };
+
       const order = await razorpay.orders.create(options);
 
       let razorpayOptions = {
@@ -295,11 +299,38 @@ const successView = (req, res) => {
   return res.render('user/pages/payment/success.ejs');
 };
 
+const paymentFailed = async (req, res) => {
+  let user = req.session.user;
+
+  try {
+    // creating new order
+    let newOrder = await prepareOrderData(user._id);
+
+    // find the most recent order with pending status
+    let lastPendingOrder = await Order.findOne({
+      userId: user._id,
+      orderStatus: 'Pending',
+    }).sort({ createdAt: -1 });
+
+    // change the payment status of the new order
+    if (lastPendingOrder) {
+      lastPendingOrder.orderStatus = 'Order Failed';
+      lastPendingOrder.paymentStatus = 'failed';
+      lastPendingOrder.save();
+    }
+
+    return res.render('common/error/paymentFailed.ejs');
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const paymentController = {
   getPayment,
   postPayment,
   successPage,
   successView,
+  paymentFailed,
 };
 
 export default paymentController;

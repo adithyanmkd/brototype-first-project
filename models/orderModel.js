@@ -61,6 +61,7 @@ const orderSchema = new mongoose.Schema(
         'Return Requested',
         'Return Rejected',
         'Returned',
+        'Order Failed',
       ],
       default: 'Pending',
     },

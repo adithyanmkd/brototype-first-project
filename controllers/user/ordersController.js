@@ -15,6 +15,22 @@ import Product from '../../models/productModel.js';
 
 import menus from '../../datasets/profileMenus.js';
 
+// empty order page
+const emptyOrderPage = (req, res) => {
+  let user = req.session.user;
+  let userMenus = [...menus];
+
+  // google user no need of password change
+  if (!user.isGoogleUser) {
+    userMenus.splice(1, 0, {
+      name: 'Password',
+      href: '/account/change-password',
+    });
+  }
+
+  res.render('shared/empty/emptyOrder.ejs', { menus: userMenus });
+};
+
 // get all orders
 const getAllOrders = async (req, res) => {
   let userMenus = [...menus];
@@ -53,10 +69,6 @@ const getAllOrders = async (req, res) => {
   }
 
   try {
-    // let orders = await Order.find({ userId: user._id })
-    //   .sort({ orderDate: -1 })
-    //   .skip(skip)
-    //   .limit(limit);
     let orders = await Order.aggregate([
       {
         $match: { ...matchQuery },
@@ -81,8 +93,8 @@ const getAllOrders = async (req, res) => {
       },
     ]);
 
-    if (!user) {
-      return res.redirect('/auth/login');
+    if (!orders.length > 0) {
+      return res.redirect('/account/orders/empty-order');
     }
 
     // google user no need of password change
@@ -274,6 +286,7 @@ const ordersController = {
   downloadInvoice,
   returnOrder,
   cancelOrder,
+  emptyOrderPage,
 };
 
 export default ordersController;

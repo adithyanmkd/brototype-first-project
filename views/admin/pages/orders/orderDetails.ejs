@@ -242,11 +242,35 @@
           <%= order.deliveryAddress.pincode %>
         </address>
       </div>
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold">Payment method</h2>
+      <div x-data="{paymentMethod: '<%= order.paymentMethod %>',
+                    paymentStatus: '<%= order.paymentStatus %>',
+                get formattedMethod() {
+                  switch (this.paymentMethod) {
+                    case 'cash_on_delivery': return 'Cash on Delivery';
+                    case 'razorpay': return 'Razorpay';
+                    case 'wallet': return 'Wallet';
+                    default: return this.paymentMethod;
+                  }
+                }
+              }" 
+          class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex text-gray-700 justify-between items-center mb-2">
+          <h2 class="text-lg font-semibold">Payment Method</h2>
         </div>
-        <p class="text-gray-600"><%= order.paymentMethod %></p>
+        <p class="text-gray-600" x-text="formattedMethod"></p>
+        <div class="flex  text-gray-700 justify-between items-center mb-2 mt-4">
+          <h2 class="text-lg font-semibold">Payment Status</h2>
+        </div>
+        <div
+         :class="{'text-[#ffb400]': paymentStatus === 'pending',
+                  'text-[#ff4c51]': paymentStatus === 'failed'}"
+         class="flex gap-x-2 items-center font-medium">
+            <span
+              :class="{'bg-[#ffb400]': paymentStatus === 'pending',
+                        'bg-[#ff4c51]': paymentStatus === 'failed'}"
+             class="size-2 block rounded-full"></span>
+            <p x-text="paymentStatus"></p>
+        </div>
       </div>
     </div>
   </div>

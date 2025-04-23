@@ -45,9 +45,24 @@ async function handlePayment(e) {
         name: response.user.name,
         email: response.user.email,
       },
+      modal: {
+        ondismiss: function () {
+          window.location.href = '/payment/payment-failed';
+        },
+      },
     };
 
     const rzp = new Razorpay(options);
+
+    rzp.on('payment.failed', function (response) {
+      console.error('Payment Failed:', response.error);
+
+      // Optional: Send this to backend to log failed payment details
+      // await fetch('/payment/failed', { method: 'POST', body: JSON.stringify(response) });
+
+      window.location.href = '/payment/payment-failed';
+    });
+
     rzp.open();
   } else if (response.success && method.value === 'cash_on_delivery') {
     window.location.href = '/payment/success?payment_method=cash_on_delivery';

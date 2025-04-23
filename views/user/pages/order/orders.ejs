@@ -1,4 +1,5 @@
-<div class="flex pb-20">
+<div
+ class="flex pb-20">
   <%- include("../../partials/organisms/profileSidebar.ejs") %>
   
   <div class="max-w-6xl w-full mx-auto p-4 space-y-4">
@@ -14,7 +15,10 @@
         placeholder="Search orders..."
         class="pl-10 pr-4 py-2 w-full md:w-64 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
       />
-      <a  href="/account/orders?search=" class="px-4 pr-4 py-2 bg-blue-50 border border-blue-400 hover:bg-blue-100 text-blue-600 font-semibold rounded-[8px]">clear</a>
+      <a  href="/account/orders?search=" 
+          class="px-4 pr-4 py-2 bg-blue-50 border border-blue-400 hover:bg-blue-100 text-blue-600 font-semibold rounded-[8px]">
+          clear
+      </a>
       </div>
 
      <!-- Status Filter Dropdown -->
@@ -57,21 +61,22 @@
       <a href="/account/orders/<%= item._id  %>">
         <div class="rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start mb-4">
-            <div x-data="{ status: '<%= item.orderStatus %>' }" class="flex items-center space-x-2">
+            <div x-data="{ status: '<%= item.orderStatus %>',
+                          paymentStatus: '<%= item.paymentStatus %>',
+                          paymentMethod: '<%= item.paymentMethod %>', 
+                        }"
+                   class="flex items-center space-x-2">
               <span
                 :class="{
-                  'bg-yellow-100 text-yellow-800': status === 'Pending',
+                  'bg-yellow-100 text-yellow-800' : status === 'Pending',
                   'text-indigo-600 bg-indigo-50' : status === 'Confirmed',
                   'bg-purple-100 text-purple-500' : status === 'Shipped',
-                  'bg-green-50 text-green-600': status === 'Delivered',
-                  'bg-red-50 text-red-600 ': status === 'Cancelled',
-                  'bg-orange-50 text-orange-600': status === 'Return Requested',
-                  'bg-red-50 text-red-600': status === 'Return Rejected',
-                  'bg-green-50 text-green-600 ': status === 'Returned'
+                  'bg-green-50 text-green-600' : ['Delivered', 'Returned'].includes(status),
+                  'bg-red-50 text-red-600' : ['Cancelled', 'Return Rejected'].includes(status),
+                  'bg-orange-50 text-orange-600' : ['Return Requested', 'Order Failed'].includes(status),
                 }" 
                 class="px-3 py-1 rounded-full text-sm font-medium"
-                ><%= item.orderStatus %></span
-              >
+                ><%= item.orderStatus %></span>
               <span class="text-gray-600"><%= new Date(item.orderDate).toLocaleDateString("en-GB") %></span>
             </div>
           </div>
