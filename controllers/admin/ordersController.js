@@ -105,6 +105,11 @@ const updateOrderStatus = async (req, res) => {
   try {
     let order = await Order.findById(orderId);
     order.orderStatus = btnName;
+
+    if (btnName === 'Delivered') {
+      order.paymentStatus = 'paid';
+    }
+
     await order.save();
 
     res.status(200).json({

@@ -1,5 +1,11 @@
-  
-  <div x-data="{isReturn: ['Returned', 'Return Requested', 'Return Rejected'].includes('<%= order.orderStatus %>')}" class="container mx-auto px-4 py-8">
+  <div x-data="{isReturn: ['Returned', 'Return Requested', 'Return Rejected'].includes('<%= order.orderStatus %>'),
+                status: '<%= order.orderStatus %>',
+                isCancelled: 'Cancelled' === '<%= order.orderStatus %>',
+                paymentStatus: '<%= order.paymentStatus %>',
+                paymentMethod: '<%= order.paymentMethod %>',
+              }"
+
+       class="container mx-auto px-4 py-8">
   <div class="mb-6">
       <a href="/admin/orders" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 transition-colors">
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -15,17 +21,15 @@
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-semibold">Order Status</h2>
-          <div x-data="{ status: '<%= order.orderStatus %>' }" class="flex items-center space-x-2">
+          <div class="flex items-center space-x-2">
             <span
             :class="{
-              'bg-yellow-100 text-yellow-800': status === 'Pending',
+              'bg-yellow-100 text-yellow-800' : status === 'Pending',
               'text-indigo-600 bg-indigo-50' : status === 'Confirmed',
               'bg-purple-100 text-purple-500' : status === 'Shipped',
-              'bg-green-50 text-green-600': status === 'Delivered',
-              'bg-red-50 text-red-600': status === 'Cancelled',
-              'bg-orange-50 text-orange-600': status === 'Return Requested',
-              'bg-red-50 text-red-600': status === 'Return Rejected',
-              'bg-green-50 text-green-600 ': status === 'Returned'
+              'bg-green-50 text-green-600' : ['Delivered', 'Returned'].includes(status),
+              'bg-red-50 text-red-600' : ['Cancelled', 'Return Rejected'].includes(status),
+              'bg-orange-50 text-orange-600' : ['Return Requested', 'Order Failed'].includes(status),
               }" 
               class="px-3 py-1 rounded-full text-sm font-medium"
               ><%= order.orderStatus %></span
@@ -35,64 +39,93 @@
         
         <div class="relative">
         <!-- Status Timeline -->
-        <div class="absolute left-8 top-0 h-full w-0.5 bg-gray-200"></div>
-          
-        <div x-show="!isReturn"  x-data="{ status: '<%= order.orderStatus %>' }">
-          <!-- Pending Status -->
-          <div id="pending-div" :class="{ 'opacity-50' : status !== 'Pending' }" class="relative flex items-center mb-8">
-            <div class="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full">
-              <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-lg font-medium">Order Placed</h3>
-              <p class="text-gray-500">Waiting for admin confirmation</p>
-              <button value="Confirmed" id="confirm-btn" :class="{ 'hidden' : status !== 'Pending' }" data-order-id="<%= order._id %>" class="change-btn mt-2 cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Confirm Order</button>
-            </div>
-          </div>
+         <template x-if="paymentStatus !== 'failed'">
+          <div>
+            <div class="absolute left-8 top-0 h-full w-0.5 bg-gray-200"></div>
+            
+            <div x-show="!isReturn"  x-data="{ status: '<%= order.orderStatus %>' }">
+              <!-- Pending Status -->
+              <div id="pending-div" :class="{ 'opacity-50' : status !== 'Pending' }" class="relative flex items-center mb-8">
+                <div class="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full">
+                  <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium">Order Placed</h3>
+                  <p class="text-gray-500">Waiting for admin confirmation</p>
+                  <button value="Confirmed" id="confirm-btn" :class="{ 'hidden' : status !== 'Pending' }" data-order-id="<%= order._id %>" class="change-btn mt-2 cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Confirm Order</button>
+                </div>
+              </div>
+        
+              <!-- Confirmed Status -->
+              <div id="confirm-div" :class="{ 'opacity-50' : status !== 'Confirmed' }" class="relative flex items-center mb-8">
+                <div class="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full">
+                  <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium">Order Confirmed</h3>
+                  <p class="text-gray-500">Ready to be shipped</p>
+                  <button value="Shipped" :class="{ 'hidden' : status !== 'Confirmed' }" data-order-id="<%= order._id %>" id="ship-btn" class="change-btn mt-2 cursor-pointer  px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Ship Order</button>
+                </div> 
+              </div>
     
-          <!-- Confirmed Status -->
-          <div id="confirm-div" :class="{ 'opacity-50' : status !== 'Confirmed' }" class="relative flex items-center mb-8">
-            <div class="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full">
-              <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
+              <!-- Shipped Status -->
+              <div class="relative flex items-center mb-8" :class="{ 'opacity-50' : status !== 'Shipped' }">
+                <div class="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full">
+                  <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium">Order Shipped</h3>
+                  <p class="text-gray-500">On the way to delivery</p>
+                  <button value="Delivered" :class="{ 'hidden' : status !== 'Shipped' }" data-order-id="<%= order._id %>" class="change-btn mt-2 cursor-pointer  px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Deliver Order</button>
+                </div>
+              </div>
+    
+              <!-- Delivered Status -->
+              <div :class="{ 'opacity-50' : status !== 'Delivered' }" class="relative flex items-center">
+                <div class="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
+                  <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium">Order Delivered</h3>
+                  <p class="text-gray-500">Successfully delivered</p>
+                </div>
+              </div>
             </div>
-            <div class="ml-4">
-              <h3 class="text-lg font-medium">Order Confirmed</h3>
-              <p class="text-gray-500">Ready to be shipped</p>
-              <button value="Shipped" :class="{ 'hidden' : status !== 'Confirmed' }" data-order-id="<%= order._id %>" id="ship-btn" class="change-btn mt-2 cursor-pointer  px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Ship Order</button>
-            </div> 
+           </div>
+         </template>
+         <template x-if="paymentStatus === 'failed'">
+          <div class="flex flex-col items-center justify-center text-center py-16 px-4 bg-white">
+            <div class="max-w-md">
+              <div class="mb-6">
+                <svg
+                  class="w-16 h-16 text-red-500 mx-auto"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+                <h1 class="text-2xl font-semibold text-gray-900 mt-4">Payment Failed</h1>
+                <p class="text-gray-600 mt-2">
+                  A payment attempt by <span>user</span> has failed.
+                </p>
+              </div>
+            </div>
           </div>
-
-          <!-- Shipped Status -->
-          <div class="relative flex items-center mb-8" :class="{ 'opacity-50' : status !== 'Shipped' }">
-            <div class="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full">
-              <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-              </svg>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-lg font-medium">Order Shipped</h3>
-              <p class="text-gray-500">On the way to delivery</p>
-              <button value="Delivered" :class="{ 'hidden' : status !== 'Shipped' }" data-order-id="<%= order._id %>" class="change-btn mt-2 cursor-pointer  px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Deliver Order</button>
-            </div>
-          </div>
-
-          <!-- Delivered Status -->
-          <div :class="{ 'opacity-50' : status !== 'Delivered' }" class="relative flex items-center">
-            <div class="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
-              <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-lg font-medium">Order Delivered</h3>
-              <p class="text-gray-500">Successfully delivered</p>
-            </div>
-          </div>
-        </div>
+        </template>
         </div>
 
         <!-- Return section -->
@@ -120,7 +153,9 @@
            </div>
          </div>
          <!-- rejected status -->
-         <div x-show="status == 'Return Rejected'" :class="{ 'opacity-50' : status !== 'Return Rejected' }" class="relative flex items-center mb-8">
+         <div x-show="status == 'Return Rejected'" 
+              :class="{ 'opacity-50' : status !== 'Return Rejected' }" 
+              class="relative flex items-center mb-8">
           <div class="flex items-center justify-center w-16 h-16 bg-red-200 rounded-full">
             <svg class="text-red-500" width="24" height="25" viewBox="0 0 24 25" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
              <path d="M6.4 19.5L5 18.1L10.6 12.5L5 6.9L6.4 5.5L12 11.1L17.6 5.5L19 6.9L13.4 12.5L19 18.1L17.6 19.5L12 13.9L6.4 19.5Z" fill="red"/>
@@ -242,8 +277,7 @@
           <%= order.deliveryAddress.pincode %>
         </address>
       </div>
-      <div x-data="{paymentMethod: '<%= order.paymentMethod %>',
-                    paymentStatus: '<%= order.paymentStatus %>',
+      <div x-data="{
                 get formattedMethod() {
                   switch (this.paymentMethod) {
                     case 'cash_on_delivery': return 'Cash on Delivery';
@@ -263,10 +297,12 @@
         </div>
         <div
          :class="{'text-[#ffb400]': paymentStatus === 'pending',
+                  'text-[#5ccc0a]': ['paid', 'refunded'].includes(paymentStatus),
                   'text-[#ff4c51]': paymentStatus === 'failed'}"
          class="flex gap-x-2 items-center font-medium">
             <span
               :class="{'bg-[#ffb400]': paymentStatus === 'pending',
+                        'bg-[#5ccc0a]': ['paid', 'refunded'].includes(paymentStatus),
                         'bg-[#ff4c51]': paymentStatus === 'failed'}"
              class="size-2 block rounded-full"></span>
             <p x-text="paymentStatus"></p>

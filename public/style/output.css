@@ -545,6 +545,10 @@
     width: calc(var(--spacing) * 2);
     height: calc(var(--spacing) * 2);
   }
+  .size-5 {
+    width: calc(var(--spacing) * 5);
+    height: calc(var(--spacing) * 5);
+  }
   .h-2\.5 {
     height: calc(var(--spacing) * 2.5);
   }
@@ -1193,6 +1197,9 @@
   .bg-\[\#3B4784\] {
     background-color: #3B4784;
   }
+  .bg-\[\#5ccc0a\] {
+    background-color: #5ccc0a;
+  }
   .bg-\[\#9C9C9C\] {
     background-color: #9C9C9C;
   }
@@ -1702,6 +1709,9 @@
   }
   .text-\[\#4A4A4A\] {
     color: #4A4A4A;
+  }
+  .text-\[\#5ccc0a\] {
+    color: #5ccc0a;
   }
   .text-\[\#7C8DB5\] {
     color: #7C8DB5;

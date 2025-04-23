@@ -2,9 +2,10 @@
 import redisClient from '../../config/redisConfig.js';
 import razorpay from '../../config/razorpay.js';
 
+// import models
 import { Product, Order, Address } from '../../models/index.js';
 
-// services
+// import services
 import { prepareOrderData } from '../../services/user/orderService.js';
 
 let paymentMethods = [
@@ -83,10 +84,6 @@ const postPayment = async (req, res) => {
   let paymentMethod = req.body.method;
 
   let totalAmount = 0;
-
-  // let orderedItemsFullDetails = await Promise.all(
-  //   cartItems.items.map(async (item) => await Product.findById(item.productId))
-  // );
 
   if (!cartItems) {
     return res.status(404).json({ success: false, message: 'cart is empty!' });
@@ -264,6 +261,7 @@ const successPage = async (req, res) => {
         totalAmount: totalAmount - couponDiscount,
         paymentMethod,
         deliveryAddress,
+        paymentStatus: 'paid',
       });
 
       await newOrder.save();

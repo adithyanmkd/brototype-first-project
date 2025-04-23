@@ -90,14 +90,12 @@
               <div x-data="{ status: '<%= order.orderStatus %>' }" class="flex items-center space-x-2">
                 <span
                   :class="{
-                    'bg-yellow-100 text-yellow-800': status === 'Pending',
+                    'bg-yellow-100 text-yellow-800' : status === 'Pending',
                     'text-indigo-600 bg-indigo-50' : status === 'Confirmed',
                     'bg-purple-100 text-purple-500' : status === 'Shipped',
-                    'bg-green-50 text-green-600': status === 'Delivered',
-                    'bg-red-50 text-red-600': status === 'Cancelled',
-                    'bg-orange-50 text-orange-600': status === 'Return Requested',
-                    'bg-red-50 text-red-600': status === 'Return Rejected',
-                    'bg-green-50 text-green-600': status === 'Returned'
+                    'bg-green-50 text-green-600' : ['Delivered', 'Returned'].includes(status),
+                    'bg-red-50 text-red-600' : ['Cancelled', 'Return Rejected'].includes(status),
+                    'bg-orange-50 text-orange-600' : ['Return Requested', 'Order Failed'].includes(status),
                   }"
                   class="px-3 py-1 rounded-full text-sm font-medium"
                 >
@@ -286,7 +284,7 @@
           </div>
 
           <div x-data="{ couponDiscount: '<%= order.discountAmount %>' }">
-            <template x-if="couponDiscount">
+            <template x-if="couponDiscount > 0">
               <div class="flex justify-between">
                 <span>Coupon Discount:</span>
                 <span x-text="`₹${couponDiscount}`"></span>
@@ -333,6 +331,7 @@
         <div
           :class="{
             'text-[#ffb400]': paymentStatus === 'pending',
+            'text-[#5ccc0a]': ['paid', 'refunded'].includes(paymentStatus),
             'text-[#ff4c51]': paymentStatus === 'failed'
           }"
           class="flex gap-x-2 items-center font-medium"
@@ -340,6 +339,7 @@
           <span
             :class="{
               'bg-[#ffb400]': paymentStatus === 'pending',
+              'bg-[#5ccc0a]': ['paid', 'refunded'].includes(paymentStatus),
               'bg-[#ff4c51]': paymentStatus === 'failed'
             }"
             class="size-2 block rounded-full"
