@@ -1,0 +1,96 @@
+<div class="container mx-auto mt-8 max-w-2xl bg-white p-6 rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">
+    <%= offer ? 'Edit Category Offer' : 'Create Category Offer' %>
+  </h2>
+  <form
+    action="<%= offer ? `/admin/offers/category/edit/${offer._id}` : '/admin/offers/category' %>"
+    method="POST"
+    class="space-y-4"
+  >
+    <!-- Category Selection -->
+    <div>
+      <label for="categoryId" class="block text-sm font-medium text-gray-700 mb-1">
+        Category
+      </label>
+      <% if (offer) { %>
+        <!-- Show category name if editing -->
+        <input
+          type="text"
+          value="<%= offer.categoryId?.name || 'N/A' %>"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none"
+          readonly
+        />
+        <input type="hidden" name="categoryId" value="<%= offer.categoryId?._id %>" />
+      <% } else { %>
+        <!-- Show dropdown if creating -->
+        <select
+          id="categoryId"
+          name="categoryId"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          required
+        >
+          <option value="" disabled selected>Select a category</option>
+          <% categories.forEach((category) => { %>
+            <option value="<%= category._id %>"><%= category.name %></option>
+          <% }); %>
+        </select>
+      <% } %>
+    </div>
+
+    <!-- Discount Percentage -->
+    <div>
+      <label for="discountPercentage" class="block text-sm font-medium text-gray-700 mb-1">
+        Discount Percentage
+      </label>
+      <input
+        type="number"
+        id="discountPercentage"
+        name="discountPercentage"
+        value="<%= offer ? offer.discountPercentage : '' %>"
+        placeholder="Enter Discount Percentage"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        required
+      />
+    </div>
+
+    <!-- Start Date -->
+    <div>
+      <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">
+        Start Date
+      </label>
+      <input
+        type="date"
+        id="startDate"
+        name="startDate"
+        value="<%= offer ? offer.startDate.toISOString().split('T')[0] : '' %>"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        required
+      />
+    </div>
+
+    <!-- End Date -->
+    <div>
+      <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">
+        End Date
+      </label>
+      <input
+        type="date"
+        id="endDate"
+        name="endDate"
+        value="<%= offer ? offer.endDate.toISOString().split('T')[0] : '' %>"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        required
+      />
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-right">
+      <button
+        type="submit"
+        class="px-6 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        <%= offer ? 'Update Offer' : 'Create Offer' %>
+      </button>
+    </div>
+  </form>
+</div>

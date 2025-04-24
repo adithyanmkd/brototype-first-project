@@ -61,6 +61,25 @@ const adminSidebar = (req, res, next) => {
       href: '/admin/coupons',
       active: req.path === '/coupons',
     },
+    {
+      id: 'offers',
+      toggleId: 'offers-icon',
+      name: 'Offers',
+      nestedItems: [
+        {
+          name: 'Product Offer',
+          href: '/admin/offers/product',
+          linkId: 'all-product',
+          active: req.path === '/offers/product',
+        },
+        {
+          name: 'Category Offer',
+          href: '/admin/offers/category',
+          linkId: 'all-category',
+          active: req.path === '/offers/category',
+        },
+      ],
+    },
   ];
   next();
 };

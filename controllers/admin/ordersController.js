@@ -138,6 +138,7 @@ const returnAction = async (req, res) => {
     let transaction = await WalletTransaction.findOne({ userId: user._id });
 
     if (action === 'approve') {
+      order.paymentStatus = 'refunded';
       order.orderStatus = 'Returned';
 
       let items = order.orderedItems.forEach(async (item) => {

@@ -1,6 +1,10 @@
 import Category from '../../models/categoryModel.js';
 import Product from '../../models/productModel.js';
 import Wishlist from '../../models/wishlistModel.js';
+import {
+  getProductOfferByProductId,
+  getCategoryOfferByCategoryId,
+} from '../../services/admin/offerService.js'; // Import the services to fetch offers
 
 // get all products
 const products = async (req, res) => {
@@ -66,15 +70,39 @@ const products = async (req, res) => {
 // get product (single product)
 const productDetails = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate('category');
     if (!product) {
       return res.status(404).send('Product not found');
     }
+
+    // Fetch the product offer
+    const productOffer = await getProductOfferByProductId(req.params.id);
+
+    // Fetch the category offer
+    const categoryOffer = await getCategoryOfferByCategoryId(product.category);
+
+    // Determine the best offer
+    let bestOffer = null;
+    if (productOffer && categoryOffer) {
+      bestOffer =
+        productOffer.discountPercentage > categoryOffer.discountPercentage
+          ? productOffer
+          : categoryOffer;
+    } else if (productOffer) {
+      bestOffer = productOffer;
+    } else if (categoryOffer) {
+      bestOffer = categoryOffer;
+    }
+
+    // Render the product details page with the product and offer data
     res.render('user/pages/products/productDetails', {
       product,
+      productOffer,
+      categoryOffer,
+      bestOffer, // Pass the best offer to the template
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching product details:', error);
     res.status(500).send('Server Error');
   }
 };

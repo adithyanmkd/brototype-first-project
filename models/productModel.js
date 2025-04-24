@@ -33,7 +33,7 @@ const productSchema = new mongoose.Schema(
   { timestamps: true } // adds createdAt & updatedAt
 );
 
-const Product = mongoose.model('Products', productSchema);
+const Product = mongoose.model('Product', productSchema);
 
 // export model
 export default Product;
