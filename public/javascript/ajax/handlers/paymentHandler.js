@@ -57,9 +57,6 @@ async function handlePayment(e) {
     rzp.on('payment.failed', function (response) {
       console.error('Payment Failed:', response.error);
 
-      // Optional: Send this to backend to log failed payment details
-      // await fetch('/payment/failed', { method: 'POST', body: JSON.stringify(response) });
-
       window.location.href = '/payment/payment-failed';
     });
 

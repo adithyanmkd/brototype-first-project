@@ -11,18 +11,12 @@ const transactionSchema = new mongoose.Schema({
     enum: ['credit', 'debit'],
     required: true,
   },
-  thumbnail: String,
   transactionId: {
     type: String,
     unique: true,
     required: true,
   },
   transactionNote: String,
-  // orderId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'Order',
-  //   required: null,
-  // },
   orderId: String,
   amount: {
     type: Number,

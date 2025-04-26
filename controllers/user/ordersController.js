@@ -13,32 +13,22 @@ const __dirname = path.dirname(__filename);
 import Order from '../../models/orderModel.js';
 import Product from '../../models/productModel.js';
 
-import menus from '../../datasets/profileMenus.js';
+// import utils
+import getUserMenus from '../../utils/getSidebarMenus.js';
 
 // empty order page
 const emptyOrderPage = (req, res) => {
   let user = req.session.user;
-  let userMenus = [...menus];
 
-  // google user no need of password change
-  if (!user.isGoogleUser) {
-    userMenus.splice(1, 0, {
-      name: 'Password',
-      href: '/account/change-password',
-    });
-  }
+  let menus = getUserMenus(user); // fetching user menus
 
-  res.render('shared/empty/emptyOrder.ejs', { menus: userMenus });
+  res.render('common/empty/emptyOrder.ejs', { menus });
 };
 
 // get all orders
 const getAllOrders = async (req, res) => {
-  let userMenus = [...menus];
   let user = req.session.user;
-
-  if (!user) {
-    return res.redirect('/auth/login');
-  }
+  let menus = getUserMenus(user); // fetching user menus
 
   let search = req.query.search || '';
   let category = req.query.category || '';
@@ -97,16 +87,8 @@ const getAllOrders = async (req, res) => {
       return res.redirect('/account/orders/empty-order');
     }
 
-    // google user no need of password change
-    if (!user.isGoogleUser) {
-      userMenus.splice(1, 0, {
-        name: 'Password',
-        href: '/account/change-password',
-      });
-    }
-
     res.render('user/pages/order/orders.ejs', {
-      menus: userMenus,
+      menus,
       orders,
       page,
       totalPages,

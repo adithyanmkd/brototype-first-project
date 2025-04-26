@@ -297,6 +297,7 @@ const successView = (req, res) => {
   return res.render('user/pages/payment/success.ejs');
 };
 
+// payment failed page
 const paymentFailed = async (req, res) => {
   let user = req.session.user;
 
@@ -323,6 +324,7 @@ const paymentFailed = async (req, res) => {
   }
 };
 
+// exporting all controllers
 const paymentController = {
   getPayment,
   postPayment,

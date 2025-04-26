@@ -1,4 +1,7 @@
-<div class="flex w-full space-x-30 pb-20">
+<div
+  x-data="{showTopupModal: false, amount: ''}"
+  class="flex w-full space-x-30 pb-20"
+>
   <%- include("../../partials/organisms/profileSidebar.ejs") %>
   <div class="max-w-4xl w-full p-6">
     <!-- Balance Section -->
@@ -13,7 +16,8 @@
     <!-- Actions -->
     <div class="flex gap-4 mb-12">
       <button
-        class="flex items-center gap-2 bg-gray-800 text-white px-6 py-3 rounded-lg"
+        @click="showTopupModal = true"
+        class="flex hover:cursor-pointer items-center gap-2 bg-gray-800 text-white px-6 py-3 rounded-lg"
       >
         <svg
           class="w-5 h-5"
@@ -31,7 +35,7 @@
         Top Up
       </button>
       <button
-        class="flex items-center gap-2 bg-gray-800 text-white px-6 py-3 rounded-lg"
+        class="flex hover:cursor-pointer items-center gap-2 bg-gray-800 text-white px-6 py-3 rounded-lg"
       >
         <svg
           class="w-5 h-5"
@@ -71,7 +75,7 @@
                 <p class="font-medium">
                   Note:
                   <span
-                    x-text="`${txn.transactionNote} order(#${txn.orderId.slice(0, 4)}...)`"
+                    x-text="`${txn.transactionNote}`"
                     class="font-normal"
                   ></span>
                 </p>
@@ -101,5 +105,54 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal -->
+    <div
+      x-show="showTopupModal"
+      x-cloak
+      x-transition
+      class="fixed flex inset-0 z-50 bg-black/60 items-center justify-center"
+    >
+      <div
+        @click.away="showTopupModal = false"
+        class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-5 transition-all transform scale-95"
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-90"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-90"
+      >
+        <h2 class="text-xl font-semibold text-gray-800">💰 Top Up Wallet</h2>
+
+        <div class="space-y-2">
+          <label class="text-sm text-gray-600 block">Amount (INR)</label>
+          <input
+            type="number"
+            x-model="amount"
+            placeholder="Enter amount"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4">
+          <button
+            @click="showTopupModal = false"
+            class="px-4 py-2 text-sm hover:cursor-pointer text-gray-600 hover:text-gray-800"
+          >
+            Cancel
+          </button>
+          <button
+            @click="topupWallet(amount)"
+            class="px-5 py-2 text-sm hover:cursor-pointer font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition duration-200"
+          >
+            Proceed
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<!-- ajax script -->
+<script type="module" src="/javascript/ajax/pages/wallet.js"></script>

@@ -1,3 +1,8 @@
 @import 'tailwindcss';
 
 @source "../../node_modules/flowbite-datepicker";
+
+/* preventing alpine blinking popup */
+[x-cloak] {
+  display: none !important;
+}

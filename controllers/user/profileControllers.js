@@ -5,42 +5,24 @@ import mongoose from 'mongoose';
 // import models
 import { Address, Cart, Product, User, Wishlist } from '../../models/index.js';
 
-import menus from '../../datasets/profileMenus.js';
+// import utils
+import getUserMenus from '../../utils/getSidebarMenus.js';
 
 // get user details page
 const userDetails = (req, res) => {
   const user = req.session.user;
-  const userMenus = [...menus]; // profile menus accessing
 
-  // if user not registerd
-  if (!user) {
-    return res.redirect('/auth/login');
-  }
+  let menus = getUserMenus(user); // fetching user menus
 
-  // google user no need of password change
-  if (!user.isGoogleUser) {
-    userMenus.splice(1, 0, {
-      name: 'Password',
-      href: '/account/change-password',
-    });
-  }
-
-  res.render('user/pages/profile/userDetails', { user, menus: userMenus });
+  res.render('user/pages/profile/userDetails', { user, menus });
 };
 
 // get edit profile page
 const getEditProfile = (req, res) => {
   const user = req.session.user;
-  const userMenus = [...menus]; // profile menus accessing
+  let menus = getUserMenus(user); // fetching user menus
 
-  // google user no need of password change
-  if (!user.isGoogleUser) {
-    userMenus.splice(1, 0, {
-      name: 'Password',
-      href: '/account/change-password',
-    });
-  }
-  res.render('user/pages/profile/editProfile', { user, menus: userMenus });
+  res.render('user/pages/profile/editProfile', { user, menus });
 };
 
 // post edit profile page
@@ -85,19 +67,12 @@ const postEditProfile = async (req, res) => {
 // get password change page
 const getPasswordChange = (req, res) => {
   let user = req.session.user;
-  const userMenus = [...menus]; // profile menus accessing
 
-  // google user no need of password change
-  if (!user.isGoogleUser) {
-    userMenus.splice(1, 0, {
-      name: 'Password',
-      href: '/account/change-password',
-    });
-  }
+  let menus = getUserMenus(user); // fetching user menus
 
   res.render('user/pages/profile/changePassword', {
     layout: 'layouts/user-layout.ejs',
-    menus: userMenus,
+    menus,
   });
 };
 
@@ -132,19 +107,11 @@ const getAddress = async (req, res) => {
 
   let addresses = await Address.find({ userId: user._id }); // finding user addresses
 
-  let userMenus = [...menus];
-
-  // google user no need of password change
-  if (!user.isGoogleUser) {
-    userMenus.splice(1, 0, {
-      name: 'Password',
-      href: '/account/change-password',
-    });
-  }
+  let menus = getUserMenus(user); // fetching user menus
 
   res.render('user/pages/profile/address', {
     layout: 'layouts/user-layout.ejs',
-    menus: userMenus,
+    menus,
     addresses,
   });
 };
@@ -208,11 +175,6 @@ const postDeleteAddress = async (req, res) => {
 // get wishlist page
 const getWishlist = async (req, res) => {
   const user = req.session.user;
-  const userMenus = [...menus]; // profile menus accessing
-
-  if (!user) {
-    return res.redirect('/auth/login');
-  }
 
   const wishlist = await Wishlist.aggregate([
     {
@@ -246,24 +208,18 @@ const getWishlist = async (req, res) => {
     },
   ]);
 
-  // google user no need of password change
-  if (!user.isGoogleUser) {
-    userMenus.splice(1, 0, {
-      name: 'Password',
-      href: '/account/change-password',
-    });
-  }
+  let menus = getUserMenus(user); // fetching user menus
 
   if (!wishlist[0]) {
     return res.render('user/pages/profile/emptyWishlist', {
       user,
-      menus: userMenus,
+      menus,
     });
   }
 
   res.render('user/pages/profile/wishlist.ejs', {
     user,
-    menus: userMenus,
+    menus,
     wishlist: wishlist[0],
   });
 };
@@ -272,13 +228,6 @@ const getWishlist = async (req, res) => {
 const postWishlist = async (req, res) => {
   const user = req.session.user;
   const { productId } = req.body;
-
-  if (!user) {
-    return res.status(400).json({
-      success: false,
-      message: 'You are not logged in',
-    });
-  }
 
   try {
     let wishlist = await Wishlist.findOne({ userId: user._id });
