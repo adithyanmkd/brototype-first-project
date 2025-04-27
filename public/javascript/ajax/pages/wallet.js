@@ -45,9 +45,15 @@ window.topupWallet = async function (amount) {
             .then(async (res) => {
               let result = await res.json();
 
+              if (!result.success) {
+                console.error(result.message);
+                return;
+              }
+
               window.location.href = result.redirect;
             })
             .catch((err) => {
+              alert(err);
               console.error(err);
             });
         } catch (error) {

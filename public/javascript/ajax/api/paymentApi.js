@@ -15,7 +15,7 @@ async function processPayment(method) {
     return data;
   } catch (error) {
     console.error('Payment Error: ', error);
-    return { success: false };
+    return { success: false, error };
   }
 }
 

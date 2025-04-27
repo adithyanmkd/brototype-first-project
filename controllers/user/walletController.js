@@ -16,8 +16,8 @@ const getWallet = async (req, res) => {
   let userId = user._id;
 
   try {
-    let wallet = await walletService.getWallet(userId);
-    let transactions = await walletService.getTransactions(userId);
+    let wallet = await walletService.getWallet({ userId });
+    let transactions = await walletService.getTransactions({ userId });
 
     let menus = getUserMenus(user); // fetching user menus
 
@@ -88,6 +88,8 @@ const verifyTopup = async (req, res) => {
       signature: razorpay_signature,
       amount,
     });
+
+    console.log(result);
 
     if (!result) {
       return res.status(500).json(result);

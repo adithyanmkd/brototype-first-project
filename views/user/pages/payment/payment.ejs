@@ -104,8 +104,8 @@
       <h2 class="text-lg font-medium mb-4">Payment Methods</h2>
 
       <!-- Wallet Payment (Disabled) -->
-
-      <!-- <button
+      <!-- 
+      <button
         disabled
         class="w-full p-4 bg-gray-100 rounded-lg text-left cursor-not-allowed"
       >
@@ -133,16 +133,7 @@
                 }"
       >
         <template x-for="method in paymentMethods">
-          <div class="flex">
-            <label
-              @click="selectedMethod = method.value"
-              x-text="method.name"
-              :for="method.value"
-              :class="selectedMethod === method.value 
-                      ? 'text-white bg-black font-medium hover:bg-gray-900'
-                      : 'bg-gray-100 font-medium'"
-              class="p-4 w-full rounded-lg text-left transition cursor-pointer"
-            ></label>
+          <div class="flex items-center justify-between">
             <input
               type="radio"
               name="paymentMethod"
@@ -150,6 +141,35 @@
               :value="method.value"
               class="hidden"
             />
+            <template x-if="method.value !== 'wallet'">
+              <label
+                @click="selectedMethod = method.value"
+                x-text="method.name"
+                :for="method.value"
+                :class="selectedMethod === method.value 
+                        ? 'text-white bg-black font-medium hover:bg-gray-900'
+                        : 'bg-gray-100 font-medium'"
+                class="p-4 w-full rounded-lg text-left transition cursor-pointer"
+              ></label>
+            </template>
+            <template x-if="method.value === 'wallet'">
+              <label
+                @click="selectedMethod = method.value"
+                :for="method.value"
+                :class="selectedMethod === method.value 
+                ? 'text-white bg-black font-medium hover:bg-gray-900'
+                : 'bg-gray-100 font-medium'"
+                class="p-4 w-full rounded-lg text-left transition cursor-pointer"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="font-medium" x-text="method.name"></span>
+                  <span
+                    class="text-sm text-gray-500"
+                    x-text="'Balance: ₹' + method.balance"
+                  ></span>
+                </div>
+              </label>
+            </template>
           </div>
         </template>
       </div>
