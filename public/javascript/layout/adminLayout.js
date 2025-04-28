@@ -1,3 +1,5 @@
+const adminLogoutBtn = document.querySelector('#admin-logout');
+
 // for dropdown
 export function toggleDropdown(menuId, arrowId) {
   const menu = document.getElementById(menuId);
@@ -12,7 +14,7 @@ export function toggleDropdown(menuId, arrowId) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const pathname = window.location.pathname;
 
   if (pathname.includes('/admin/customer')) customersDropdown();
@@ -33,6 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function categoryDropdown() {
     toggleDropdown('products', 'product-icon');
   }
+});
+
+// admin logout
+adminLogoutBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+  localStorage.removeItem('adminToken');
+
+  window.location.href = 'admin/auth/login';
 });
 
 window.toggleDropdown = toggleDropdown;

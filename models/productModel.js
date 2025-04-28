@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema(
       originalPrice: { type: Number, required: true },
     },
     quantity: { type: Number, required: true },
-    // wishlistStatus: { type: Boolean, default: false },
+    salesCount: { type: Number, default: 0 },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',

@@ -8,6 +8,9 @@ import {
   WalletTransaction,
 } from '../../models/index.js';
 
+// import services
+import salesService from '../../services/admin/salesService.js';
+
 // get all orders list page
 const getOrders = async (req, res) => {
   let search = req.query.search || '';
@@ -107,6 +110,14 @@ const updateOrderStatus = async (req, res) => {
     order.orderStatus = btnName;
 
     if (btnName === 'Delivered') {
+      let result = await salesService.updateSalesCounts({
+        orderedItems: order.orderedItems,
+      });
+
+      if (!result.success) {
+        return res.status(500).json(result);
+      }
+
       order.paymentStatus = 'paid';
     }
 
@@ -118,6 +129,7 @@ const updateOrderStatus = async (req, res) => {
       orderStatus: order.orderStatus,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
       message: 'Error while changing order status',
@@ -134,8 +146,10 @@ const returnAction = async (req, res) => {
     let user = req.user;
 
     let order = await Order.findById(orderId);
-    let wallet = await Wallet.findOne({ userId: user._id });
-    let transaction = await WalletTransaction.findOne({ userId: user._id });
+    let wallet = await Wallet.findOne({ userId: order.userId });
+    let transaction = await WalletTransaction.findOne({
+      userId: order.userId,
+    });
 
     if (action === 'approve') {
       order.paymentStatus = 'refunded';
@@ -161,7 +175,7 @@ const returnAction = async (req, res) => {
 
       // transaction saving
       transaction = await WalletTransaction.create({
-        userId: user._id,
+        userId: order.userId,
         type: 'credit',
         thumbnail: order.orderThumbnail,
         transactionId: uuidv4(), // generate transaction id

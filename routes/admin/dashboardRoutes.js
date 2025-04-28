@@ -8,13 +8,13 @@ import salesReportController from '../../controllers/admin/salesReportController
 
 // import middlewares
 import adminSidebar from '../../middlewares/admin/sidemenu.js';
+// import { authenticateToken } from '../../middlewares/admin/adminAuth.js';
 
 // adding app level middleware
 router.use(adminSidebar);
 
 router.get('/', dashboardController.getDashboard); // get dashboard
 router.get('/user-chart', dashboardController.getUserChartData); // get user chart
-// router.get('/sales-report', salesReportController.getSalesReport); // get sales report
 
 // export router
 export default router;

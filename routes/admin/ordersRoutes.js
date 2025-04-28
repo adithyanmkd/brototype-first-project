@@ -6,9 +6,6 @@ import ordersController from '../../controllers/admin/ordersController.js';
 const router = express.Router();
 
 // import middlewares
-import { auth } from '../../middlewares/user/auth.js';
-
-router.use(auth);
 
 router.get('/', ordersController.getOrders); // get orders list page
 router.get('/:orderId', ordersController.getOrder); // get single order details page

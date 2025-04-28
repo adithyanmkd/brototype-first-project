@@ -2,6 +2,7 @@
 import moment from 'moment';
 
 import { User, Order } from '../../models/index.js';
+import salesService from '../../services/admin/salesService.js';
 
 //get dashboard
 const getDashboard = async (req, res) => {
@@ -22,9 +23,18 @@ const getDashboard = async (req, res) => {
       { title: 'Total Orders', value: orders.length },
     ];
 
+    let productFetchResult = await salesService.getTop10Products();
+    let categoryFetchResult = await salesService.getTop10Category();
+
+    if (!productFetchResult.success) {
+      return res.status(500).json(productFetchResult);
+    }
+
     res.render('admin/pages/dashboard/dashboard', {
       layout: 'layouts/admin-layout.ejs',
       stats,
+      top10Products: productFetchResult.top10Products,
+      top10Category: categoryFetchResult.top10Category,
     });
   } catch (error) {
     console.error({ Error: error });

@@ -426,6 +426,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
 
         if (response.ok) {
+          // storing token
+          localStorage.setItem('adminToken', data.token);
+          console.log('from here');
+
+          let token = localStorage.getItem('adminToken');
+
+          // await fetch('/admin', {
+          //   method: 'GET',
+          //   headers: {
+          //     Authorization: `Bearer ${token}`, // Send token as Bearer token
+          //     'Content-Type': 'application/json',
+          //   },
+          // });
           window.location.href = '/admin';
         } else {
           displayError(data.message);

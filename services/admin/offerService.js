@@ -60,7 +60,7 @@ export const deleteCategoryOffer = async (id) => {
 
 export const getCategoryOfferById = async (id) => {
   try {
-    return await CategoryOffer.findById(id).populate('category'); // Populate category details
+    return await CategoryOffer.findById(id).populate('categoryId'); // Populate category details
   } catch (error) {
     console.error('Error fetching category offer by ID:', error);
     throw error;

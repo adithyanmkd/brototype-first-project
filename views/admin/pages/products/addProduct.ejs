@@ -1,111 +1,169 @@
-<form action="/admin/products/add" class="pb-20" method="POST" enctype="multipart/form-data" x-data="{
-  images: [],
-  cardImage: null,
-  selectedSize: '',
-  errors: {},
-  productName: '',
-  quantity: 1,
-  description: '',
-  category: '',
-  sellingPrice: '',
-  originalPrice: '',
+<form 
+  action="/admin/products/add" 
+  class="pb-20" 
+  method="POST" 
+  enctype="multipart/form-data" 
+  x-data="{
+    images: [],
+    cardImage: null,
+    selectedSize: '',
+    errors: {},
+    productName: '',
+    quantity: 1,
+    description: '',
+    category: '',
+    sellingPrice: '',
+    originalPrice: '',
+    croppingImage: null,
+    cropper: null,
+    cropType: null, // 'card' or 'product'
+    cropFileInput: null,
 
-  addImage(event) {
-    const files = event.target.files;
-    for (let file of files) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.images.push(e.target.result);
-      };
-      reader.readAsDataURL(file);
+    openCropper(event, type) {
+      this.cropType = type;
+      this.cropFileInput = event.target;
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.croppingImage = e.target.result;
+          const modal = document.getElementById('cropper-modal');
+          modal.classList.remove('hidden');
+          
+          // Initialize Cropper.js
+          this.$nextTick(() => {
+            const image = document.getElementById('cropper-image');
+            this.cropper = new Cropper(image, {
+              aspectRatio: type === 'card' ? 340 / 180 : 1, // Card: 340x180, Product: square
+              viewMode: 1,
+              autoCropArea: 0.8,
+              responsive: true,
+            });
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+
+    cropImage() {
+      if (this.cropper) {
+        const canvas = this.cropper.getCroppedCanvas();
+        const croppedDataUrl = canvas.toDataURL('image/jpeg');
+
+        if (this.cropType === 'card') {
+          this.cardImage = croppedDataUrl;
+        } else if (this.cropType === 'product') {
+          this.images.push(croppedDataUrl);
+        }
+
+        // Convert data URL to Blob for form submission
+        canvas.toBlob((blob) => {
+          const file = new File([blob], `cropped-${Date.now()}.jpg`, { type: 'image/jpeg' });
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          
+          if (this.cropType === 'card') {
+            this.cropFileInput.files = dataTransfer.files;
+          } else {
+            // For product images, append to existing files
+            const existingFiles = this.cropFileInput.files;
+            const newFiles = new DataTransfer();
+            for (let f of existingFiles) {
+              newFiles.items.add(f);
+            }
+            newFiles.items.add(file);
+            this.cropFileInput.files = newFiles.files;
+          }
+        }, 'image/jpeg');
+
+        this.closeCropper();
+      }
+    },
+
+    closeCropper() {
+      if (this.cropper) {
+        this.cropper.destroy();
+        this.cropper = null;
+      }
+      this.croppingImage = null;
+      this.cropType = null;
+      this.cropFileInput = null;
+      const modal = document.getElementById('cropper-modal');
+      modal.classList.add('hidden');
+    },
+
+    addImage(event) {
+      this.openCropper(event, 'product');
+    },
+
+    addCardImage(event) {
+      this.openCropper(event, 'card');
+    },
+
+    clearCardImage() {
+      this.cardImage = null;
+      document.getElementById('cardImageUpload').value = ''; // Reset file input
+    },
+
+    validateForm() {
+      this.errors = {}; // Reset errors
+
+      if (!this.productName) {
+        this.errors.productName = 'Product name is required.';
+      }
+
+      if (!this.quantity || this.quantity < 1) {
+        this.errors.quantity = 'Quantity must be at least 1.';
+      }
+
+      if (!this.description) {
+        this.errors.description = 'Description is required.';
+      }
+
+      if (!this.category) {
+        this.errors.category = 'Category is required.';
+      }
+
+      if (this.category === 'mattress' && !this.selectedSize) {
+        this.errors.selectedSize = 'Size category is required.';
+      }
+
+      if (!this.sellingPrice || this.sellingPrice < 0) {
+        this.errors.sellingPrice = 'Selling price must be a positive number.';
+      }
+
+      if (!this.originalPrice || this.originalPrice < 0) {
+        this.errors.originalPrice = 'Original price must be a positive number.';
+      }
+
+      if (!this.cardImage) {
+        this.errors.cardImage = 'Card image is required.';
+      }
+
+      if (this.images.length === 0) {
+        this.errors.productImages = 'At least one product image is required.';
+      }
+
+      return Object.keys(this.errors).length === 0;
+    },
+
+    submitForm() {
+      if (this.validateForm()) {
+        this.$el.submit();
+      } else {
+        console.log('Form validation failed:', this.errors);
+      }
     }
-  },
-
-  addCardImage(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.cardImage = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  },
-
-  clearCardImage() {
-    this.cardImage = null;
-  },
-
-  validateForm() {
-    this.errors = {}; // Reset errors
-
-    // Validate product name
-    if (!this.productName) {
-      this.errors.productName = 'Product name is required.';
-    }
-
-    // Validate quantity
-    if (!this.quantity || this.quantity < 1) {
-      this.errors.quantity = 'Quantity must be at least 1.';
-    }
-
-    // Validate description
-    if (!this.description) {
-      this.errors.description = 'Description is required.';
-    }
-
-    // Validate category
-    if (!this.category) {
-      this.errors.category = 'Category is required.';
-    }
-
-    // Validate size category (only if category is 'mattress')
-    if (this.category === 'mattress' && !this.selectedSize) {
-      this.errors.selectedSize = 'Size category is required.';
-    }
-
-    // Validate selling price
-    if (!this.sellingPrice || this.sellingPrice < 0) {
-      this.errors.sellingPrice = 'Selling price must be a positive number.';
-    }
-
-    // Validate original price
-    if (!this.originalPrice || this.originalPrice < 0) {
-      this.errors.originalPrice = 'Original price must be a positive number.';
-    }
-
-    // Validate card image
-    if (!this.cardImage) {
-      this.errors.cardImage = 'Card image is required.';
-    }
-
-    // Validate product images
-    if (this.images.length === 0) {
-      this.errors.productImages = 'At least one product image is required.';
-    }
-
-    // Return true if no errors
-    return Object.keys(this.errors).length === 0;
-  },
-
-  submitForm() {
-    if (this.validateForm()) {
-      // If validation passes, submit the form
-      this.$el.submit();
-    } else {
-      // If validation fails, log errors (or display them)
-      console.log('Form validation failed:', this.errors);
-    }
-  }
-}" @submit.prevent="submitForm">
+  }" 
+  @submit.prevent="submitForm">
   <div class="flex h-auto w-full">
     <!-- Left Section -->
     <div class="pl-20">
       <h2 class="pb-8 text-[26px] font-semibold">Card Information</h2>
       <ul class="max-w-[340px] space-y-2 rounded-t-4xl border border-[#D8DEE6]">
-        <!-- ================== Card Image Upload ================= -->
+        <!-- Card Image Upload -->
         <li class="mb-4">
-          <input type="file" name="cardImage" class="hidden" id="cardImageUpload" @change="addCardImage" />
+          <input type="file" name="cardImage" class="hidden" id="cardImageUpload" accept="image/*" @change="addCardImage" />
           <label for="cardImageUpload">
             <template x-if="cardImage">
               <div class="relative h-[180px] w-[340px] cursor-pointer">
@@ -117,7 +175,6 @@
                 </button>
               </div>
             </template>
-
             <template x-if="!cardImage">
               <div
                 class="flex h-[180px] w-[340px] cursor-pointer flex-col items-center justify-center space-y-3 rounded-t-4xl bg-[#D8DEE6]">
@@ -133,7 +190,7 @@
           </template>
         </li>
 
-        <!-- ================== Item and Quantity ================= -->
+        <!-- Item and Quantity -->
         <li class="flex min-h-[60px] w-full justify-between px-2">
           <div class="flex flex-col gap-1.5 pt-4">
             <label for="productName">Item</label>
@@ -157,7 +214,7 @@
           </div>
         </li>
 
-        <!-- ================== Description ================= -->
+        <!-- Description -->
         <li class="min-h-[60px] w-full justify-between px-2">
           <div class="flex flex-col gap-3 pt-4">
             <label for="description">Description</label>
@@ -171,7 +228,7 @@
           </div>
         </li>
 
-        <!-- ================== Category ================= -->
+        <!-- Category -->
         <li class="px-2">
           <div class="flex flex-col gap-y-3 pt-4">
             <label for="category">Category</label>
@@ -183,7 +240,7 @@
                 <option value="<%= category._id %>">
                   <%- category.name %>
                 </option>
-                <% }) %>
+              <% }) %>
             </select>
             <template x-if="errors.category">
               <p class="text-sm text-red-500" x-text="errors.category"></p>
@@ -191,7 +248,7 @@
           </div>
         </li>
 
-        <!-- ================== Size Category (Conditional) ================= -->
+        <!-- Size Category (Conditional) -->
         <template x-if="category === 'mattress'">
           <li class="px-2">
             <div class="flex flex-col gap-1.5 pt-4">
@@ -217,7 +274,7 @@
           </li>
         </template>
 
-        <!-- ================== Price ================= -->
+        <!-- Price -->
         <li class="flex min-h-[60px] w-full justify-between px-2">
           <div class="flex flex-col gap-1.5 pt-4">
             <label for="sellingPrice">Selling price</label>
@@ -256,12 +313,10 @@
           </div>
         </template>
         <div>
-          <div>
-            <input type="file" name="productImages" id="product-images" multiple class="hidden" @change="addImage" />
-            <label for="product-images">
-              <img class="cursor-pointer" id="add-img" src="/images/icons/add-img-frame.svg" alt="add-img-frame" />
-            </label>
-          </div>
+          <input type="file" name="productImages" id="product-images" multiple class="hidden" accept="image/*" @change="addImage" />
+          <label for="product-images">
+            <img class="cursor-pointer" id="add-img" src="/images/icons/add-img-frame.svg" alt="add-img-frame" />
+          </label>
         </div>
       </div>
       <template x-if="errors.productImages">
@@ -277,4 +332,23 @@
       Save <img src="/images/icons/arrow.svg" alt="arrow icon" />
     </button>
   </div>
+
+  <!-- Cropper Modal -->
+  <div id="cropper-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+      <h3 class="text-lg font-semibold mb-4">Crop Image</h3>
+      <div class="mb-4">
+        <img id="cropper-image" :src="croppingImage" alt="Image to crop" class="max-w-full h-auto">
+      </div>
+      <div class="flex justify-end gap-2">
+        <button @click="closeCropper" class="px-4 py-2 bg-gray-300 rounded-lg text-gray-800 hover:bg-gray-400">
+          Cancel
+        </button>
+        <button @click="cropImage" class="px-4 py-2 bg-[#4470E2] rounded-lg text-white hover:bg-blue-600">
+          Crop
+        </button>
+      </div>
+    </div>
+  </div>
 </form>
+

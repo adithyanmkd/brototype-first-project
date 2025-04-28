@@ -80,7 +80,7 @@ const allProduct = async (req, res) => {
   }
 
   // Count total matching users
-  const totalProducts = await Product.countDocuments();
+  const totalProducts = await Product.countDocuments({ isDeleted: false });
   const totalPages = Math.ceil(totalProducts / limit);
 
   // Fetch filtered and paginated product

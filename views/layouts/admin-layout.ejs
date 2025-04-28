@@ -58,7 +58,9 @@
                 <h1 class="text-xl font-semibold">Admin Dashboard</h1>
                 <div class="flex items-center space-x-4">
                     <span class="text-gray-700">Welcome, Admin</span>
-                    <a class="rounded-lg bg-red-500 px-4 py-2 text-white" href="/admin/auth/login">
+                    <a class="rounded-lg bg-red-500 px-4 py-2 text-white" 
+                       id="admin-logout"
+                       href="/admin/auth/login">
                         Logout
                     </a>
                 </div>
@@ -77,6 +79,10 @@
         
 
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
         <!-- flowbite date picker -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/datepicker.min.js"></script>

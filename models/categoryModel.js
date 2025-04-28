@@ -12,6 +12,7 @@ const categorySchema = mongoose.Schema(
       alt: { type: String, default: 'category image' },
     },
     isDeleted: { type: Boolean, default: false },
+    salesCount: { type: Number, default: 0 },
   },
   { timestamps: true } // adds createdAt & updatedAt
 );

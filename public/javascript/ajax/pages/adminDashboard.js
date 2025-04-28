@@ -1,5 +1,7 @@
 import { userChart } from '../handlers/adminChartHandler.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+const token = localStorage.getItem('adminToken');
+
+document.addEventListener('DOMContentLoaded', async () => {
   userChart();
 });
