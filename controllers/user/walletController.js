@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import razorpay from '../../config/razorpay.js';
 
 // import services
-import { walletService } from '../../services/user/walletServie.js';
+import { walletService } from '../../services/user/walletService.js';
 
 // import utils
 import getUserMenus from '../../utils/getSidebarMenus.js';

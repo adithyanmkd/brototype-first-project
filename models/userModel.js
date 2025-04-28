@@ -12,6 +12,14 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String, // optional for google user
     },
+    referralCode: {
+      type: String,
+      unique: true, // Each user has a unique referral code
+    },
+    referredBy: {
+      type: String, // Stores the referral code of the referrer
+      default: null,
+    },
     number: { type: Number },
     gender: { type: String },
     role: {

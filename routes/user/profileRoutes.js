@@ -36,4 +36,7 @@ router.delete('/wishlist/delete/:productId', profileController.deleteWishlist); 
 
 router.use('/wallet', walletRoutes); // all wallet routes
 
+router.get('/referral', profileController.getReferralLink); // Get referral link
+router.post('/referral/apply', profileController.applyReferralCode); // Apply referral code
+
 export default router;

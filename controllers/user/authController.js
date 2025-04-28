@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import validator from 'validator';
+import crypto from 'crypto';
 
 import authData from '../../datasets/authData.js';
 
@@ -18,7 +19,7 @@ const getRegister = (req, res) => {
 
 // register new user
 const postRegister = async (req, res) => {
-  const { fullname, email, password } = req.body; // accessing values from form
+  const { fullname, email, password, referralCode } = req.body; // accessing values from form
 
   const errors = {};
 
@@ -42,28 +43,74 @@ const postRegister = async (req, res) => {
   const otp = generateOTP();
   const otpExpiry = Date.now() + 10 * 60 * 100; // OTP expires in 10 minutes
 
-  // check is the user already exists
+  // check if the user already exists
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return res.status(409).json({ error: 'User already exists!' });
   }
 
   try {
-    //creating user
+    // Check if the referral code exists
+    let referredBy = null;
+    if (referralCode) {
+      const referrer = await User.findOne({ referralCode });
+      if (!referrer) {
+        return res.status(400).json({ error: 'Invalid referral code' });
+      }
+      referredBy = referralCode;
+    }
+
+    // Generate a unique referral code for the new user
+    const newReferralCode = crypto.randomBytes(4).toString('hex');
+
+    // Create the user
     const newUser = new User({
       name: fullname,
       email,
       otp,
       otpExpires: otpExpiry,
       password: hashedPassword,
+      referralCode: newReferralCode,
+      referredBy,
     });
 
     await newUser.save(); // save new user
     await sendOTP(email, otp); // send OTP to mail
+
+    // Reward the referrer and referred user
+    if (referredBy) {
+      await rewardReferral(referredBy, newUser._id);
+    }
+
     req.session.tempEmail = email;
     res.status(200).json({ success: true });
   } catch (error) {
+    console.error('Error registering user:', error);
     res.json({ Error: error });
+  }
+};
+
+// Reward referral function
+const rewardReferral = async (referralCode, referredUserId) => {
+  try {
+    const referrer = await User.findOne({ referralCode });
+    const referredUser = await User.findById(referredUserId);
+
+    if (!referrer || !referredUser) {
+      throw new Error('Invalid referral details');
+    }
+
+    // Reward both users
+    const rewardAmount = 100;
+    referrer.walletBalance += rewardAmount;
+    referredUser.walletBalance += rewardAmount;
+
+    // Save the updates
+    await referrer.save();
+    await referredUser.save();
+  } catch (error) {
+    console.error('Error rewarding referral:', error);
+    throw error;
   }
 };
 

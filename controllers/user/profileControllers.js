@@ -293,6 +293,121 @@ const deleteWishlist = async (req, res) => {
   }
 };
 
+export const getReferralLink = async (req, res) => {
+  const user = req.user;
+
+  let menus = getUserMenus(user); // fetching user menus
+
+  try {
+    if (!user || !user.referralCode) {
+      return res.status(404).json({ error: 'Referral code not found' });
+    }
+
+    // Generate the referral link
+    const referralLink = `${req.protocol}://${req.get('host')}/register?referralCode=${user.referralCode}`;
+
+    // Render the referral page with the referral link
+    res.render('user/pages/profile/referral', {
+      layout: 'layouts/user-layout',
+      title: 'Referral Program',
+      referralLink,
+      referralCode: user.referralCode,
+      menus,
+      successMessage: null,
+      errorMessage: null,
+    });
+  } catch (error) {
+    console.error('Error generating referral link:', error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+import { walletService } from '../../services/user/walletService.js';
+
+export const applyReferralCode = async (req, res) => {
+  let user = req.user;
+  let menus = getUserMenus(user); // fetching user menus
+
+  try {
+    const { referralCode } = req.body;
+    const userId = req.user._id;
+
+    // Check if the referral code exists
+    const referrer = await User.findOne({ referralCode });
+    if (!referrer) {
+      return res.render('user/pages/profile/referral', {
+        layout: 'layouts/user-layout',
+        menus,
+        referralLink,
+        referralCode: user.referralCode,
+        successMessage: null,
+        errorMessage: 'Invalid referral code',
+      });
+    }
+    // Check if the user has already applied a referral code
+    const user = await User.findById(userId);
+
+    // Generate the referral link
+    const referralLink = `${req.protocol}://${req.get('host')}/register?referralCode=${user.referralCode}`;
+
+    if (user.referredBy) {
+      return res.render('user/pages/profile/referral', {
+        layout: 'layouts/user-layout',
+        menus,
+        referralLink,
+        referralCode: user.referralCode,
+        successMessage: null,
+        errorMessage: 'You have already applied a referral code',
+      });
+    }
+
+    // Apply the referral code
+    user.referredBy = referralCode;
+
+    // Reward both users
+    const rewardAmount = 100; // Example reward amount
+
+    // Add money to the referrer's wallet
+    await walletService.topup({
+      userId: referrer._id,
+      paymentId: `REFERRAL_${userId}_${Date.now()}`, // Unique transaction ID
+      orderId: null, // No order associated with this transaction
+      signature: null, // No signature required for referral rewards
+      amount: rewardAmount,
+    });
+
+    // Add money to the referred user's wallet
+    await walletService.topup({
+      userId: userId,
+      paymentId: `REFERRAL_${referrer._id}_${Date.now()}`, // Unique transaction ID
+      orderId: null, // No order associated with this transaction
+      signature: null, // No signature required for referral rewards
+      amount: rewardAmount,
+    });
+
+    // Save the updates
+    await user.save();
+
+    res.render('user/pages/profile/referral', {
+      layout: 'layouts/user-layout',
+      menus,
+      successMessage:
+        'Referral code applied successfully! Rewards have been added to your wallet.',
+      referralLink: `${req.protocol}://${req.get('host')}/register?referralCode=${user.referralCode}`,
+      referralCode: user.referralCode,
+      errorMessage: null,
+    });
+  } catch (error) {
+    console.error('Error applying referral code:', error);
+    res.render('user/pages/profile/referral', {
+      layout: 'layouts/user-layout',
+      menus,
+      successMessage: null,
+      errorMessage: 'Server Error. Please try again later.',
+    });
+  }
+};
+
 // export profile controller
 const profileController = {
   userDetails,
@@ -308,6 +423,8 @@ const profileController = {
   getWishlist,
   postWishlist,
   deleteWishlist,
+  getReferralLink,
+  applyReferralCode,
 };
 
 export default profileController;

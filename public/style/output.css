@@ -899,6 +899,9 @@
   .resize {
     resize: both;
   }
+  .list-disc {
+    list-style-type: disc;
+  }
   .appearance-none {
     appearance: none;
   }
@@ -1642,6 +1645,9 @@
   .pl-4 {
     padding-left: calc(var(--spacing) * 4);
   }
+  .pl-5 {
+    padding-left: calc(var(--spacing) * 5);
+  }
   .pl-6 {
     padding-left: calc(var(--spacing) * 6);
   }
@@ -1795,6 +1801,9 @@
   }
   .text-pretty {
     text-wrap: pretty;
+  }
+  .break-all {
+    word-break: break-all;
   }
   .whitespace-nowrap {
     white-space: nowrap;

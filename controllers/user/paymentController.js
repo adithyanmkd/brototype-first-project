@@ -7,7 +7,7 @@ import { Product, Order, Address } from '../../models/index.js';
 
 // import services
 import orderService from '../../services/user/orderService.js';
-import { walletService } from '../../services/user/walletServie.js';
+import { walletService } from '../../services/user/walletService.js';
 
 // get payment page
 const getPayment = async (req, res) => {

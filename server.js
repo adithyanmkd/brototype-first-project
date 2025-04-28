@@ -69,14 +69,14 @@ app.use('/', userRouter);
 app.use('/admin', adminRouter);
 
 // catching 404 and sent to error handler
-app.use((req, res, next) => {
-  let error = new Error('Page not found');
-  error.status = 404;
-  next(error);
-});
+// app.use((req, res, next) => {
+//   let error = new Error('Page not found');
+//   error.status = 404;
+//   next(error);
+// });
 
-// using error handler
-app.use(errorHandler);
+// // using error handler
+// app.use(errorHandler);
 
 connectDB(); // connect mongoDB
 

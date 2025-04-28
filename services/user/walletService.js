@@ -64,15 +64,18 @@ let walletService = {
     try {
       let wallet = await walletService.getWallet({ userId });
 
-      let isVerified = verifyRazorpaySignature({
-        orderId,
-        paymentId,
-        signature,
-      });
+      // Skip signature verification for internal transactions (e.g., referral rewards)
+      if (signature) {
+        let isVerified = verifyRazorpaySignature({
+          orderId,
+          paymentId,
+          signature,
+        });
 
-      // checking signature
-      if (!isVerified) {
-        throw new Error('Invalid razaorpay signature. verification failed');
+        // checking signature
+        if (!isVerified) {
+          throw new Error('Invalid Razorpay signature. verification failed');
+        }
       }
 
       // update wallet balance
