@@ -13,6 +13,9 @@ import connectDB from './config/database.js'; // database config
 import userRouter from './routes/user/index.js';
 import adminRouter from './routes/admin/index.js';
 
+// middleware
+import errorHandler from './middlewares/common/errorHandler.js';
+
 const app = express();
 
 //fix __dirname && __filename for module
@@ -64,6 +67,16 @@ app.use(express.static(path.join(__dirname, 'public'))); //serve static files (i
 //router
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
+
+// catching 404 and sent to error handler
+app.use((req, res, next) => {
+  let error = new Error('Page not found');
+  error.status = 404;
+  next(error);
+});
+
+// using error handler
+app.use(errorHandler);
 
 connectDB(); // connect mongoDB
 
