@@ -16,32 +16,52 @@ const authenticateAdmin = (req, res) => {
   const { username, password } = req.body;
   try {
     if (
-      username == process.env.ADMIN_NAME &&
-      password == process.env.ADMIN_PASS
+      username === process.env.ADMIN_NAME &&
+      password === process.env.ADMIN_PASS
     ) {
-      const payload = { username: process.env.ADMIN_NAME };
+      // Set admin session
+      req.session.isAdmin = true;
 
-      // generate token
-      const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-        expiresIn: '1h',
+      res.status(200).json({
+        success: true,
+        message: 'Admin login successful',
+        redirect: '/admin/dashboard', // Redirect to admin dashboard
       });
-
-      res
-        .status(200)
-        .json({ success: true, message: 'Admin login successfull', token });
     } else {
-      res.status(401).json({ success: false, message: 'Invalid credentials' });
+      res.status(401).json({
+        success: false,
+        message: 'Invalid credentials',
+      });
     }
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Authenticate side server error',
+      message: 'Server error during authentication',
       error,
     });
   }
 };
 
+//admin logout
+const adminLogout = (req, res) => {
+  // Destroy the session
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        message: 'Error logging out',
+        error: err,
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: 'Admin logged out successfully',
+    });
+  });
+};
+
 export default {
   getLogin,
   authenticateAdmin,
+  adminLogout,
 };

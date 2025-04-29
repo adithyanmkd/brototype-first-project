@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Report</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sales Report</h1>
+    <p>Total Sales: ₹<%= totalSales %></p>
+    <p>Total Discounts: ₹<%= totalDiscounts %></p>
+    <p>Total Orders: <%= totalOrders %></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Amount</th>
+          <th>Discount</th>
+          <th>Date</th>
+          <th>Delivery Address</th>
+          <th>Ordered Items</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% salesDetails.forEach(sale => { %>
+        <tr>
+          <td><%= sale.orderId %></td>
+          <td>₹<%= sale.totalAmount %></td>
+          <td>₹<%= sale.discountAmount || 0 %></td>
+          <td><%= new Date(sale.orderDate).toLocaleDateString() %></td>
+          <td>
+            <%= sale.deliveryAddress.name %>, <%= sale.deliveryAddress.address
+            %>, <%= sale.deliveryAddress.locality %>, <%=
+            sale.deliveryAddress.district %>, <%= sale.deliveryAddress.state %>,
+            <%= sale.deliveryAddress.pincode %>
+          </td>
+          <td>
+            <% sale.orderedItems.forEach(item => { %> <%= item.productName %>
+            (x<%= item.quantity %>)<br />
+            <% }) %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </body>
+</html>

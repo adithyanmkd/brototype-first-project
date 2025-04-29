@@ -40,9 +40,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 // admin logout
 adminLogoutBtn.addEventListener('click', async (e) => {
   e.preventDefault();
-  localStorage.removeItem('adminToken');
 
-  window.location.href = 'admin/auth/login';
+  let response = await fetch('/admin/auth/logout');
+  let data = await response.json();
+
+  if (data.success) {
+    // Redirect to login page
+    window.location.href = '/admin/auth/login';
+  } else {
+    // Handle error
+    console.error('Logout failed:', data.message);
+  }
 });
 
 window.toggleDropdown = toggleDropdown;

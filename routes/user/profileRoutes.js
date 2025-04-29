@@ -12,8 +12,6 @@ import { auth } from '../../middlewares/user/auth.js';
 import orderRoutes from './orderRoutes.js';
 import walletRoutes from './walletRoutes.js';
 
-router.use(auth); // apply auth middleware to all
-
 router.get('/my-details', profileController.userDetails); // get user detail page
 router.get('/my-details/:id', profileController.getEditProfile); // get edit profile page
 router.post('/my-details/:id', profileController.postEditProfile); // post edit profile

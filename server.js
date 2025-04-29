@@ -65,8 +65,8 @@ app.use(expressLayouts); // Use express-ejs-layouts
 app.use(express.static(path.join(__dirname, 'public'))); //serve static files (images, js, CSS)
 
 //router
-app.use('/', userRouter);
 app.use('/admin', adminRouter);
+app.use('/', userRouter);
 
 // catching 404 and sent to error handler
 // app.use((req, res, next) => {

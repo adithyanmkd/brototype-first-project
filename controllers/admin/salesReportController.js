@@ -1,4 +1,5 @@
 import { generatePDF, generateExcel } from '../../utils/reportGenerator.js';
+import fs from 'fs';
 
 // sevices
 import SalesReportService from '../../services/admin/salesReportService.js';
@@ -40,8 +41,11 @@ const getSalesReport = async (req, res) => {
 
     // Generate and send the report in the requested format
     if (format === 'pdf') {
-      // console.log('Generating PDF with sales data:', salesData);
+      // console.log(salesData, 'salesData');
       const pdfBuffer = await generatePDF(salesData);
+      // console.log('PDF buffer:', pdfBuffer);
+      fs.writeFileSync('sales-report.pdf', pdfBuffer);
+
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader(
         'Content-Disposition',

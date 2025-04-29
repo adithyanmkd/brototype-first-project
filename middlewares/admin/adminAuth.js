@@ -1,22 +1,9 @@
-import jwt from 'jsonwebtoken';
-
-const authenticateToken = (req, res, next) => {
-  const token = req.header('Authorization')?.split(' ')[1];
-  console.log(token);
-
-  if (!token) {
-    return res.redirect('/admin/auth/login');
+const adminAuth = (req, res, next) => {
+  if (req.session.isAdmin) {
+    next(); // Admin is authenticated, proceed to the next middleware
+  } else {
+    res.redirect('/admin/auth/login'); // Redirect to login page if not authenticated
   }
-
-  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
-    if (err) {
-      console.log(err);
-      return res.redirect('/admin/auth/login');
-    }
-
-    req.admin = decoded; // Attach admin info to request
-    next();
-  });
 };
 
-export { authenticateToken };
+export default adminAuth;

@@ -13,7 +13,13 @@ import coupons from './couponRoutes.js';
 import offerRoutes from './offerRoutes.js';
 import salesReportRoutes from './salesReportRoutes.js';
 
+// import middlewares
+import adminAuth from '../../middlewares/admin/adminAuth.js';
+
 router.use('/auth', authRoutes); // auth routes
+
+router.use(adminAuth); // protect all routes with admin auth middleware
+
 router.use('/', dashboardRoutes); // dashboard routes
 router.use('/customers', customerRoutes); // customer controller routes
 router.use('/categories', categoryRoutes); // category routes
