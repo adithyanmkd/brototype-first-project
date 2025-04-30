@@ -17,7 +17,9 @@ const postAddCategory = async (req, res) => {
   const imgObj = req.files.categoryImage[0];
   imgObj.path = req.files.categoryImage[0].path.replace(/.*\/public\//, '/');
 
-  const category = await Category.findOne({ name: categoryName });
+  const category = await Category.findOne({
+    name: { $regex: categoryName, $options: 'i' },
+  });
 
   if (category) {
     return res.status(409).json({ error: 'Category already exists' });
@@ -116,13 +118,19 @@ const editCategory = async (req, res) => {
 const postEditCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
-    const category = await Category.findById(categoryId);
-
-    if (!category) {
-      return res.status(404).json({ error: 'Category not found' });
-    }
 
     const { name, description } = req.body;
+
+    const category = await Category.findOne({
+      name: { $regex: name, $options: 'i' },
+    });
+
+    // console.log('Category log: ', category);
+
+    if (!category) {
+      return res.status(404).json({ error: 'category already exists' });
+    }
+
     let imagePath = category.image.path.replace(/.*\/public\//, '/');
 
     if (req.file) {

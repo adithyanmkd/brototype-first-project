@@ -8,7 +8,6 @@ import { walletService } from '../../services/user/walletService.js';
 
 // import utils
 import getUserMenus from '../../utils/getSidebarMenus.js';
-import verifyRazorpaySignature from '../../utils/verifyRazorpaySignature.js';
 
 // get wallet page
 const getWallet = async (req, res) => {
