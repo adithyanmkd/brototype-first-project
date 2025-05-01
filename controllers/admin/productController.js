@@ -125,8 +125,7 @@ const getEdit = async (req, res) => {
   const categories = await Category.find({ isDeleted: false });
   const product = await Product.findById(id);
   console.log(categories);
-  res.render('admin/pages/products/EditPage', {
-    layout: false,
+  res.render('admin/pages/products/editPage', {
     categories,
     product,
     layout: 'layouts/admin-layout',

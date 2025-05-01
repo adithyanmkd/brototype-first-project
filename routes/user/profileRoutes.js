@@ -11,6 +11,7 @@ import { auth } from '../../middlewares/user/auth.js';
 // import routes
 import orderRoutes from './orderRoutes.js';
 import walletRoutes from './walletRoutes.js';
+import addressRoutes from './addressRoutes.js';
 
 router.get('/my-details', profileController.userDetails); // get user detail page
 router.get('/my-details/:id', profileController.getEditProfile); // get edit profile page
@@ -19,12 +20,7 @@ router.post('/my-details/:id', profileController.postEditProfile); // post edit 
 router.get('/change-password', profileController.getPasswordChange); // get password change page
 router.post('/change-password', profileController.postChangePassword); // post change password
 
-// address routes
-router.get('/address', profileController.getAddress); // address page
-router.post('/address', profileController.postAddAddress); // post add address
-router.get('/address/edit/:id', profileController.getAddressEdit); // get address edit page
-router.post('/address/edit', profileController.postEditAddress); // post edit address
-router.post('/address/:id/delete', profileController.postDeleteAddress); // delete address
+router.use('/address', addressRoutes); // all address routes
 
 router.use('/orders', orderRoutes); // all order routes
 
