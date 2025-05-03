@@ -27,35 +27,42 @@ const postProduct = async (req, res) => {
     const sellingPrice = parseFloat(price.sellingPrice) || 0;
     const originalPrice = parseFloat(price.originalPrice) || 0;
 
-    // Create new product
-    const newProduct = new Product({
-      productName,
-      images: {
-        // Ensure cardImage is processed properly
-        cardImage: req.files['cardImage']
-          ? {
-              path: req.files['cardImage'][0].path.replace(/.*\/public\//, '/'),
-              alt: `${productName} card image`,
-            }
-          : null,
-        productImages: req.files['productImages']
-          ? req.files['productImages'].map((file, index) => ({
-              path: file.path.replace(/.*\/public\//, '/'),
-              alt: `${productName} product image ${index + 1}`,
-            }))
-          : [],
-      },
-      description,
-      sizeCategory,
-      price: {
-        sellingPrice,
-        originalPrice,
-      },
-      category,
-      quantity,
-    });
+    let images = {
+      cardImage: req.files['cardImage'],
+    };
 
-    await newProduct.save();
+    // console.log(images, 'card image');
+    console.log('Files log: ', req.files);
+
+    // Create new product
+    // const newProduct = new Product({
+    //   productName,
+    //   images: {
+    //     // Ensure cardImage is processed properly
+    //     cardImage: req.files['cardImage']
+    //       ? {
+    //           path: req.files['cardImage'][0].path.replace(/.*\/public\//, '/'),
+    //           alt: `${productName} card image`,
+    //         }
+    //       : null,
+    //     productImages: req.files['productImages']
+    //       ? req.files['productImages'].map((file, index) => ({
+    //           path: file.path.replace(/.*\/public\//, '/'),
+    //           alt: `${productName} product image ${index + 1}`,
+    //         }))
+    //       : [],
+    //   },
+    //   description,
+    //   sizeCategory,
+    //   price: {
+    //     sellingPrice,
+    //     originalPrice,
+    //   },
+    //   category,
+    //   quantity,
+    // });
+
+    // await newProduct.save();
     res.redirect('/admin/products');
   } catch (error) {
     console.error('Error:', error);
