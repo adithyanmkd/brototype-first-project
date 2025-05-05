@@ -29,15 +29,6 @@ function changeImage(img) {
   document.querySelector('.main-image').src = img;
 }
 
-// update quantity needed elements
-let sellingPriceEl = document.querySelector('#sellingPrice'); // selling price element accessing
-let originalPriceEl = document.querySelector('#originalPrice');
-let saveAmountEl = document.querySelector('#saveAmount');
-
-let sellingPrice = sellingPriceEl.innerHTML.replace('₹', '') || 0;
-let originalPrice = originalPriceEl.innerHTML.replace('₹', '') || 0;
-let saveAmount = saveAmountEl.innerHTML.replace('Save ₹', '') || 0;
-
 // Zoom functionality
 document.addEventListener('DOMContentLoaded', function () {
   const mainImage = document.querySelector('.main-image');
@@ -54,6 +45,15 @@ document.addEventListener('DOMContentLoaded', function () {
     this.style.transform = 'scale(1)';
   });
 });
+
+// update quantity needed elements
+let sellingPriceEl = document.querySelector('#sellingPrice'); // selling price element accessing
+let originalPriceEl = document.querySelector('#originalPrice');
+let saveAmountEl = document.querySelector('#saveAmount');
+
+let sellingPrice = sellingPriceEl.innerHTML.replace('₹', '') || 0;
+let originalPrice = originalPriceEl.innerHTML.replace('₹', '') || 0;
+let saveAmount = saveAmountEl.innerHTML.replace('Save ₹', '') || 0;
 
 // update quantity needed elements ended
 function updateQuantity(change, event) {

@@ -1,6 +1,7 @@
 // import models
 import Category from '../../models/categoryModel.js';
 import Product from '../../models/productModel.js';
+import adminProductService from '../../services/admin/adminProductService.js';
 
 // get add product page
 const getProduct = async (req, res) => {
@@ -17,56 +18,44 @@ const postProduct = async (req, res) => {
     const {
       productName,
       description,
-      price,
+      sellingPrice,
+      originalPrice,
       category,
       quantity,
-      sizeCategory,
     } = req.body;
 
-    // Convert price values to numbers
-    const sellingPrice = parseFloat(price.sellingPrice) || 0;
-    const originalPrice = parseFloat(price.originalPrice) || 0;
-
-    let images = {
-      cardImage: req.files['cardImage'],
+    // building product data for service
+    let productData = {
+      productName,
+      description,
+      price: {
+        sellingPrice: Number(sellingPrice),
+        originalPrice: Number(originalPrice),
+      },
+      category,
+      quantity: Number(quantity),
     };
 
-    // console.log(images, 'card image');
-    console.log('Files log: ', req.files);
+    let files = req.files;
 
-    // Create new product
-    // const newProduct = new Product({
-    //   productName,
-    //   images: {
-    //     // Ensure cardImage is processed properly
-    //     cardImage: req.files['cardImage']
-    //       ? {
-    //           path: req.files['cardImage'][0].path.replace(/.*\/public\//, '/'),
-    //           alt: `${productName} card image`,
-    //         }
-    //       : null,
-    //     productImages: req.files['productImages']
-    //       ? req.files['productImages'].map((file, index) => ({
-    //           path: file.path.replace(/.*\/public\//, '/'),
-    //           alt: `${productName} product image ${index + 1}`,
-    //         }))
-    //       : [],
-    //   },
-    //   description,
-    //   sizeCategory,
-    //   price: {
-    //     sellingPrice,
-    //     originalPrice,
-    //   },
-    //   category,
-    //   quantity,
-    // });
+    let serviceResponse = await adminProductService.addProduct({
+      ...productData,
+      files,
+    });
 
-    // await newProduct.save();
-    res.redirect('/admin/products');
+    // if failed
+    if (!serviceResponse.success) {
+      return res.status(500).json(serviceResponse);
+    }
+
+    return res.status(200).json(serviceResponse);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error, DeveloperNote: 'error from postProduct' });
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Adding product failed',
+      error,
+    });
   }
 };
 
