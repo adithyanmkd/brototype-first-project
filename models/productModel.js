@@ -1,19 +1,19 @@
 import mongoose from 'mongoose';
 
+const imageSchema = new mongoose.Schema(
+  {
+    path: { type: String, required: true },
+    alt: { type: String, required: true },
+  },
+  { _id: true }
+);
+
 const productSchema = new mongoose.Schema(
   {
     productName: { type: String, required: true },
     images: {
-      cardImage: {
-        path: { type: String, required: true },
-        alt: { type: String, required: true },
-      },
-      productImages: [
-        {
-          path: { type: String, required: true },
-          alt: { type: String, required: true },
-        },
-      ],
+      cardImage: imageSchema,
+      productImages: [imageSchema],
     },
     description: { type: String, required: true },
     price: {

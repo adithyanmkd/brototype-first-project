@@ -1,5 +1,4 @@
-// import APIs
-import adminProductAPIs from '../api/adminProductAPI.js';
+// import handler
 import adminProductHandler from '../handlers/adminProductHandler.js';
 
 let submitBtn = document.querySelector('#submit-btn');

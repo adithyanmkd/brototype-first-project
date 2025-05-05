@@ -2,6 +2,7 @@
 import { Category, Product } from '../../models/index.js';
 
 const adminProductService = {
+  // add product service
   addProduct: async ({
     productName,
     description,
@@ -9,14 +10,13 @@ const adminProductService = {
     category,
     quantity,
     files,
+    removeImgIds = [],
   }) => {
     try {
       let product = await Product.findOne({
         productName: { $regex: `^${productName}$`, $options: 'i' },
+        isDeleted: false,
       });
-
-      //   console.log('product name: ', product);
-      //   console.log('files: ', files);
 
       // if product already exists then return with message
       if (product) {
@@ -25,12 +25,6 @@ const adminProductService = {
           message: 'Product already exists',
         };
       }
-
-      console.log('Debug log: test', files['productImages']);
-
-      files['productImages'].forEach((file, index) => {
-        console.log('Debug log: ', file.path);
-      });
 
       // create new product
       let newProduct = new Product({
@@ -66,6 +60,201 @@ const adminProductService = {
         success: false,
         message: 'Product adding failed.',
         error,
+      };
+    }
+  },
+
+  // edit product service
+  // editProduct: async ({
+  //   id,
+  //   productName,
+  //   description,
+  //   price,
+  //   category,
+  //   quantity,
+  //   files,
+  //   removeImgIds = [],
+  // }) => {
+  //   try {
+  //     let product = await Product.findOne({
+  //       _id: id,
+  //       isDeleted: false,
+  //     });
+
+  //     if (!product) {
+  //       return {
+  //         success: false,
+  //         message: 'Product not found',
+  //       };
+  //     }
+
+  //     // Check if another product with the same name exists
+  //     let existingProduct = await Product.findOne({
+  //       _id: { $ne: id },
+  //       productName: { $regex: `^${productName}$`, $options: 'i' },
+  //       isDeleted: false,
+  //     });
+
+  //     if (existingProduct) {
+  //       return {
+  //         success: false,
+  //         message: 'Another product with this name already exists',
+  //       };
+  //     }
+
+  //     product.productName = productName;
+  //     product.description = description;
+  //     product.price = price;
+  //     product.category = category;
+  //     product.quantity = quantity;
+
+  //     if (files?.cardImage?.length > 0) {
+  //       product.images.cardImage = {
+  //         path: files['cardImage'][0].path.replace(/.*\/public\//, '/'),
+  //         alt: `${productName} card image.`,
+  //       };
+  //     }
+
+  //     if (files?.productImages?.length > 0) {
+  //       product.images.productImages = files['productImages'].map(
+  //         (file, index) => ({
+  //           path: file.path.replace(/.*\/public\//, '/'),
+  //           alt: `${productName} product image ${index + 1}`,
+  //         })
+  //       );
+  //     }
+
+  //     if (removeImgIds.length > 0) {
+  //       product.images.productImages = product.images.productImages.filter(
+  //         (img) => !removeImgIds.includes(String(img._id))
+  //       );
+  //     }
+
+  //     await product.save();
+
+  //     return {
+  //       success: true,
+  //       message: 'Product updated successfully',
+  //       product,
+  //       redirect: '/admin/products',
+  //     };
+  //   } catch (error) {
+  //     console.error(error);
+  //     return {
+  //       success: false,
+  //       message: 'Product updating failed.',
+  //       error,
+  //     };
+  //   }
+  // },
+
+  editProduct: async ({
+    id,
+    productName,
+    description,
+    price,
+    category,
+    quantity,
+    files,
+    removeImgIds = [],
+  }) => {
+    try {
+      let product = await Product.findOne({
+        _id: id,
+        isDeleted: false,
+      });
+
+      if (!product) {
+        return {
+          success: false,
+          message: 'Product not found',
+        };
+      }
+
+      // Check if another product with the same name exists
+      let existingProduct = await Product.findOne({
+        _id: { $ne: id },
+        productName: { $regex: `^${productName}$`, $options: 'i' },
+        isDeleted: false,
+      });
+
+      if (existingProduct) {
+        return {
+          success: false,
+          message: 'Another product with this name already exists',
+        };
+      }
+
+      product.productName = productName;
+      product.description = description;
+      product.price = price;
+      product.category = category;
+      product.quantity = quantity;
+
+      // Remove cardImage if its ID is in removeImgIds
+      if (
+        product.images.cardImage &&
+        removeImgIds.includes(String(product.images.cardImage._id))
+      ) {
+        product.images.cardImage = undefined;
+      }
+
+      // Filter out productImages whose _id is in removeImgIds
+      product.images.productImages = product.images.productImages.filter(
+        (img) => !removeImgIds.includes(String(img._id))
+      );
+
+      // Handle new uploads
+      if (files?.cardImage?.length > 0) {
+        product.images.cardImage = {
+          path: files['cardImage'][0].path.replace(/.*\/public\//, '/'),
+          alt: `${productName} card image.`,
+        };
+      }
+
+      if (files?.productImages?.length > 0) {
+        const newImages = files['productImages'].map((file, index) => ({
+          path: file.path.replace(/.*\/public\//, '/'),
+          alt: `${productName} product image ${index + 1}`,
+        }));
+        product.images.productImages.push(...newImages);
+      }
+
+      await product.save();
+
+      return {
+        success: true,
+        message: 'Product updated successfully',
+        product,
+        redirect: '/admin/products',
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: 'Product updating failed.',
+        error,
+      };
+    }
+  },
+
+  // get product details
+  getProduct: async ({ id }) => {
+    try {
+      let product = await Product.findOne({
+        _id: id,
+        isDeleted: false,
+      }).populate('category', 'name');
+      return {
+        success: true,
+        message: 'Product fetched',
+        product,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: 'Something went wrong while product fetching.',
       };
     }
   },

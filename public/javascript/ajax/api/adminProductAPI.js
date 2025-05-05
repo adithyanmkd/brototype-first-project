@@ -1,4 +1,5 @@
 const adminProductAPI = {
+  // add product api
   addProduct: async ({ formData }) => {
     let url = '/admin/products/add';
 
@@ -15,6 +16,21 @@ const adminProductAPI = {
         success: false,
         message: 'Something went wrong. Try again.',
       };
+    }
+  },
+
+  // edit product api
+  editProduct: async ({ formData, productId }) => {
+    try {
+      let url = `/admin/products/edit/${productId}`;
+      let res = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      return res;
+    } catch (error) {
+      console.error(error);
     }
   },
 };

@@ -117,86 +117,162 @@ const deleteProduct = async (req, res) => {
 
 // get edit page
 const getEdit = async (req, res) => {
-  const id = req.params.id;
-  const categories = await Category.find({ isDeleted: false });
-  const product = await Product.findById(id);
-  console.log(categories);
-  res.render('admin/pages/products/editPage', {
-    categories,
-    product,
-    layout: 'layouts/admin-layout',
-  });
-};
+  try {
+    const id = req.params.id;
+    const categories = await Category.find({ isDeleted: false });
+    const product = await Product.findById(id);
 
+    return res.render('admin/pages/products/editPage', {
+      categories,
+      product,
+      layout: 'layouts/admin-layout',
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Get edit page error',
+    });
+  }
+};
+// try {
+
+//   // Convert price values to numbers
+//   const sellingPrice = parseFloat(updates.price.sellingPrice) || 0;
+//   const originalPrice = parseFloat(updates.price.originalPrice) || 0;
+
+//   // Prepare update object
+//   const updateData = {
+//     productName: updates.productName,
+//     description: updates.description,
+//     price: {
+//       sellingPrice,
+//       originalPrice,
+//     },
+//     category: updates.category,
+//     quantity: updates.quantity,
+//     sizeCategory: updates.sizeCategory,
+//   };
+
+//   // Handle card image update
+//   if (files?.cardImage) {
+//     updateData.images = {
+//       cardImage: {
+//         path: files.cardImage[0].path.replace(/.*\/public\//, '/'),
+//         alt: `${updates.productName} card image`,
+//       },
+//       productImages: updates.images?.productImages || [],
+//     };
+//   }
+
+//   // Handle product images update
+//   if (files?.productImages) {
+//     const newProductImages = files.productImages.map((file, index) => ({
+//       path: file.path.replace(/.*\/public\//, '/'),
+//       alt: `${updates.productName} product image ${index + 1}`,
+//     }));
+
+//     updateData.images = {
+//       ...updateData.images,
+//       productImages: [
+//         ...(updateData.images?.productImages || []),
+//         ...newProductImages,
+//       ],
+//     };
+//   }
+
+//   // Update the product
+//   const updatedProduct = await Product.findByIdAndUpdate(
+//     productId,
+//     updateData,
+//     { new: true }
+//   );
+
+//   if (!updatedProduct) {
+//     return res.status(404).json({ error: 'Product not found' });
+//   }
+
+//   res.redirect('/admin/products');
+// } catch (error) {
+//   console.error('Update error:', error);
+//   res.status(500).json({
+//     error: 'Failed to update product',
+//     DeveloperNote: 'Error from updateProduct controller',
+//   });
+// }
 // Update product
 const updateProduct = async (req, res) => {
   const productId = req.params.id;
-  const updates = req.body;
-  const files = req.files;
+  console.log(req.body);
 
   try {
-    // Convert price values to numbers
-    const sellingPrice = parseFloat(updates.price.sellingPrice) || 0;
-    const originalPrice = parseFloat(updates.price.originalPrice) || 0;
+    const {
+      productName,
+      description,
+      sellingPrice,
+      originalPrice,
+      category,
+      quantity,
+      removedImageIds = [], // destructure from req.body
+    } = req.body;
 
-    // Prepare update object
-    const updateData = {
-      productName: updates.productName,
-      description: updates.description,
+    // Ensure removedImageIds is an array (in case it comes as string)
+    const removeImgIds = Array.isArray(removedImageIds)
+      ? removedImageIds
+      : [removedImageIds];
+
+    // Build product data for service
+    let productData = {
+      productName,
+      description,
       price: {
-        sellingPrice,
-        originalPrice,
+        sellingPrice: Number(sellingPrice),
+        originalPrice: Number(originalPrice),
       },
-      category: updates.category,
-      quantity: updates.quantity,
-      sizeCategory: updates.sizeCategory,
+      category,
+      quantity: Number(quantity),
     };
 
-    // Handle card image update
-    if (files?.cardImage) {
-      updateData.images = {
-        cardImage: {
-          path: files.cardImage[0].path.replace(/.*\/public\//, '/'),
-          alt: `${updates.productName} card image`,
-        },
-        productImages: updates.images?.productImages || [],
-      };
-    }
+    let files = req.files;
 
-    // Handle product images update
-    if (files?.productImages) {
-      const newProductImages = files.productImages.map((file, index) => ({
-        path: file.path.replace(/.*\/public\//, '/'),
-        alt: `${updates.productName} product image ${index + 1}`,
-      }));
-
-      updateData.images = {
-        ...updateData.images,
-        productImages: [
-          ...(updateData.images?.productImages || []),
-          ...newProductImages,
-        ],
-      };
-    }
-
-    // Update the product
-    const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
-      updateData,
-      { new: true }
-    );
-
-    if (!updatedProduct) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
-    res.redirect('/admin/products');
-  } catch (error) {
-    console.error('Update error:', error);
-    res.status(500).json({
-      error: 'Failed to update product',
-      DeveloperNote: 'Error from updateProduct controller',
+    let serviceResponse = await adminProductService.editProduct({
+      id: productId,
+      ...productData,
+      files,
+      removeImgIds,
     });
+
+    // If failed
+    if (!serviceResponse.success) {
+      return res.status(500).json(serviceResponse);
+    }
+
+    return res.status(200).json(serviceResponse);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'update product failed',
+      error,
+    });
+  }
+};
+
+const getProductDetails = async (req, res) => {
+  let productId = req.params.id;
+
+  try {
+    let result = await adminProductService.getProduct({
+      id: productId,
+    });
+
+    if (!result.success) {
+      return res.status(500).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -207,6 +283,7 @@ const productController = {
   deleteProduct,
   getEdit,
   updateProduct,
+  getProductDetails,
 };
 
 // export product controller
