@@ -56,6 +56,7 @@ let walletService = {
       return transaction;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   },
 

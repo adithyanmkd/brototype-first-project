@@ -1,5 +1,9 @@
 import redisClient from '../../config/redisConfig.js';
 import { Product, Order, Address } from '../../models/index.js';
+import { walletService } from './walletService.js';
+
+// import utils
+import { generateTransactionId } from '../../utils/generateTxnID.js';
 
 let orderService = {
   getCartSummery: async ({ userId }) => {
@@ -48,6 +52,8 @@ let orderService = {
       cardImagePaths,
     };
   },
+
+  // order creating
   createOrder: async ({ userId, paymentMethod }) => {
     try {
       // fetching raw data from redis for create order
@@ -109,6 +115,59 @@ let orderService = {
         success: false,
         message: 'order creation failed!',
         error,
+      };
+    }
+  },
+
+  // cancel order
+  cancelOrder: async ({ userId, orderId, response }) => {
+    try {
+      let wallet = await walletService.getWallet({ userId });
+      let order = await Order.findOne({ _id: orderId, userId });
+
+      let items = order.orderedItems.forEach(async (item) => {
+        let product = await Product.findOne({ _id: item.productId });
+        product.quantity += item.quantity;
+        await product.save();
+      });
+
+      let paymentMethods = ['wallet', 'razorpay'];
+
+      // if user paid then return give money back
+      if (paymentMethods.includes(order.paymentMethod)) {
+        let calculatedRefund = order.totalAmount - order.discountAmount;
+        wallet.balance += calculatedRefund;
+        await wallet.save();
+
+        // creating new transaction for refund
+        let description = 'Refund for the cancelled order has been credited';
+        let newTransaction = await walletService.createTransaction({
+          userId,
+          amount: calculatedRefund,
+          description,
+          orderId,
+          transactionId: generateTransactionId(),
+          transactionNote: description,
+          type: 'credit',
+        });
+      }
+
+      // updating order
+      order.orderStatus = 'Cancelled';
+      order.cancelReason = response;
+      order.paymentStatus = 'refunded';
+      order.save();
+
+      return {
+        success: true,
+        message: 'Order cancelled succesfully.',
+        redirect: `/account/orders/${orderId}`,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: 'Order cancellation failed.',
       };
     }
   },

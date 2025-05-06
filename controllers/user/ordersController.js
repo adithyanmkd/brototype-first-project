@@ -15,6 +15,7 @@ import Product from '../../models/productModel.js';
 
 // import utils
 import getUserMenus from '../../utils/getSidebarMenus.js';
+import orderService from '../../services/user/orderService.js';
 
 // empty order page
 const emptyOrderPage = (req, res) => {
@@ -232,33 +233,53 @@ const returnOrder = async (req, res) => {
 
 // cancel order
 const cancelOrder = async (req, res) => {
-  const { orderId, response } = req.body;
-
   try {
-    let order = await Order.findById(orderId);
-
-    let items = order.orderedItems.forEach(async (item) => {
-      let product = await Product.findOne(item.productId);
-      product.quantity += item.quantity;
-      product.save();
+    let user = req.session.user;
+    const { orderId, response } = req.body;
+    let serviceResponse = await orderService.cancelOrder({
+      userId: user._id,
+      orderId,
+      response,
     });
 
-    order.orderStatus = 'Cancelled';
-    order.returnReason = response;
-    order.save();
+    if (!serviceResponse.success) {
+      return res.status(500).json(serviceResponse);
+    }
 
-    res.status(200).json({
-      success: true,
-      message: 'order cancelled succesfully',
-      redirect: `/account/orders/${orderId}`,
-      data: req.body,
-    });
+    return res.status(200).json(serviceResponse);
   } catch (error) {
-    console.log('error');
-    res
-      .status(500)
-      .json({ success: false, message: 'cancel order processing failed' });
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Somthing went wrong while cancelling order.',
+    });
   }
+
+  // try {
+  //   let order = await Order.findById(orderId);
+
+  //   // let items = order.orderedItems.forEach(async (item) => {
+  //   //   let product = await Product.findOne(item.productId);
+  //   //   product.quantity += item.quantity;
+  //   //   product.save();
+  //   // });
+
+  //   // order.orderStatus = 'Cancelled';
+  //   // order.returnReason = response;
+  //   // order.save();
+
+  //   // res.status(200).json({
+  //   //   success: true,
+  //   //   message: 'order cancelled succesfully',
+  //   //   redirect: `/account/orders/${orderId}`,
+  //   //   data: req.body,
+  //   // });
+  // } catch (error) {
+  //   console.log('error');
+  //   res
+  //     .status(500)
+  //     .json({ success: false, message: 'cancel order processing failed' });
+  // }
 };
 
 const ordersController = {
