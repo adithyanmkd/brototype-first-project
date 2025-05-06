@@ -7,16 +7,46 @@
         transactions: <%= JSON.stringify(transactions) %>,
         currentPage: 1,
         perPage: 5,
+        filterType: 'all',
         get paginatedTransactions() {
+          let filtered = this.filterType === 'all'
+            ? this.transactions
+            : this.transactions.filter(txn => txn.type === this.filterType);
           const start = (this.currentPage - 1) * this.perPage;
-          return this.transactions.slice(start, start + this.perPage);
+          return filtered.slice(start, start + this.perPage);
         },
         get totalPages() {
-          return Math.ceil(this.transactions.length / this.perPage);
+          let filtered = this.filterType === 'all'
+            ? this.transactions
+            : this.transactions.filter(txn => txn.type === this.filterType);
+          return Math.ceil(filtered.length / this.perPage);
         }
       }"
       class="space-y-4"
     >
+      <div class="flex justify-end space-x-2 pb-4">
+        <button
+          @click="filterType = 'all'; currentPage = 1"
+          :class="filterType === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'"
+          class="px-3 py-1 rounded"
+        >
+          All
+        </button>
+        <button
+          @click="filterType = 'credit'; currentPage = 1"
+          :class="filterType === 'credit' ? 'bg-blue-500 text-white' : 'bg-gray-200'"
+          class="px-3 py-1 rounded"
+        >
+          Credit
+        </button>
+        <button
+          @click="filterType = 'debit'; currentPage = 1"
+          :class="filterType === 'debit' ? 'bg-blue-500 text-white' : 'bg-gray-200'"
+          class="px-3 py-1 rounded"
+        >
+          Debit
+        </button>
+      </div>
       <template x-for="txn in paginatedTransactions" :key="txn.transactionId">
         <div
           class="flex hover:cursor-pointer hover:bg-gray-100 border border-gray-300 items-center justify-between bg-white p-4 rounded-lg shadow"
