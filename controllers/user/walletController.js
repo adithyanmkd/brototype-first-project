@@ -16,7 +16,8 @@ const getWallet = async (req, res) => {
 
   try {
     let wallet = await walletService.getWallet({ userId });
-    let transactions = await walletService.getTransactions({ userId });
+    let limit = 5;
+    let transactions = await walletService.getTransactions({ userId, limit });
 
     let menus = getUserMenus(user); // fetching user menus
 
@@ -74,12 +75,15 @@ const topUpWallet = async (req, res) => {
 
 // verify topup
 const verifyTopup = async (req, res) => {
-  let user = req.session.user;
-
-  const { razorpay_payment_id, razorpay_order_id, razorpay_signature, amount } =
-    req.body;
-
   try {
+    let user = req.session.user;
+
+    const {
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+      amount,
+    } = req.body;
     let result = await walletService.topup({
       userId: user._id,
       paymentId: razorpay_payment_id,
@@ -104,11 +108,34 @@ const verifyTopup = async (req, res) => {
   }
 };
 
+let getTransactions = async (req, res) => {
+  try {
+    let user = req.session.user;
+    let menus = getUserMenus(user); // fetching user menus
+
+    let transactions = await walletService.getTransactions({
+      userId: user._id,
+    });
+
+    return res.render('user/pages/profile/walletTransactions.ejs', {
+      menus,
+      transactions,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Something went wrong while rendering transaction page.',
+    });
+  }
+};
+
 // export controller
 let walletController = {
   getWallet,
   topUpWallet,
   verifyTopup,
+  getTransactions,
 };
 
 export default walletController;

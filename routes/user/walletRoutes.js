@@ -12,6 +12,7 @@ const router = express.Router();
 router.use(auth);
 
 router.get('/', walletController.getWallet); // get wallet page
+router.get('/transactions', walletController.getTransactions); // get all transactions
 router.post('/top-up', walletController.topUpWallet); // topup wallet
 router.post('/verify', walletController.verifyTopup); // verify topup
 

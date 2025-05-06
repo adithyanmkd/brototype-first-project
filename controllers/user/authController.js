@@ -232,11 +232,15 @@ const postLogin = async (req, res) => {
 
 // get forget password
 const getForgetPassword = (req, res) => {
-  res.render('user/pages/auth/forgetPassword', {
-    layout: 'layouts/auth-layout.ejs',
-    title: 'login',
-    authData,
-  });
+  try {
+    res.render('user/pages/auth/forgetPassword', {
+      layout: 'layouts/auth-layout.ejs',
+      title: 'login',
+      authData,
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 // post forget password
@@ -249,6 +253,20 @@ const postForgetPassword = async (req, res) => {
     }
 
     const user = await User.findOne({ email }); // finding user
+
+    // checking user is google user
+    if (user.isGoogleUser) {
+      return res.status(403).json({
+        error: 'You signed up with Google. Please log in using Google Sign-In.',
+      });
+    }
+
+    // if user blocked by admin
+    if (user.isBlocked) {
+      return res
+        .status(403)
+        .json({ error: 'Your account is currently blocked.' });
+    }
 
     // checking user is exist
     if (!user) {

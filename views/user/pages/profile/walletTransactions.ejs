@@ -1,0 +1,90 @@
+<div class="flex w-full space-x-30 pb-20">
+  <%- include("../../partials/organisms/profileSidebar.ejs") %>
+  <div class="space-y-6 w-[70%]">
+    <!-- Transaction Item -->
+    <div
+      x-data="{
+        transactions: <%= JSON.stringify(transactions) %>,
+        currentPage: 1,
+        perPage: 5,
+        get paginatedTransactions() {
+          const start = (this.currentPage - 1) * this.perPage;
+          return this.transactions.slice(start, start + this.perPage);
+        },
+        get totalPages() {
+          return Math.ceil(this.transactions.length / this.perPage);
+        }
+      }"
+      class="space-y-4"
+    >
+      <template x-for="txn in paginatedTransactions" :key="txn.transactionId">
+        <div
+          class="flex hover:cursor-pointer hover:bg-gray-100 border border-gray-300 items-center justify-between bg-white p-4 rounded-lg shadow"
+        >
+          <div class="space-y-2">
+            <h4 class="font-semibold">
+              Transaction ID:
+              <span class="font-normal" x-text="txn.transactionId"></span>
+            </h4>
+            <p class="font-medium">
+              Note:
+              <span
+                x-text="`${txn.transactionNote}`"
+                class="font-normal"
+              ></span>
+            </p>
+            <p
+              class="text-sm text-gray-500"
+              x-text="new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(txn.createdAt)) 
+                + ' • ' + 
+                new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).format(new Date(txn.createdAt))"
+            ></p>
+            <span
+              x-text="txn.type"
+              :class="{'bg-red-100 text-red-600' : txn.type === 'debit',
+                          'bg-green-100 text-green-600': txn.type === 'credit'}"
+              class="text-xs font-medium px-2 py-1 rounded-full"
+            ></span>
+          </div>
+          <p
+            :class="{'text-red-600' : txn.type === 'debit',
+                     'text-green-600': txn.type === 'credit'}"
+            class="font-semibold"
+          >
+            ₹
+            <span x-text="txn.amount"> </span>
+          </p>
+        </div>
+      </template>
+      <div class="flex justify-center space-x-2 pt-4">
+        <button
+          @click="currentPage = Math.max(1, currentPage - 1)"
+          class="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
+          :disabled="currentPage === 1"
+        >
+          Prev
+        </button>
+
+        <template x-for="page in totalPages" :key="page">
+          <button
+            @click="currentPage = page"
+            x-text="page"
+            class="px-3 py-1 text-sm rounded"
+            :class="{
+              'bg-blue-500 text-white': currentPage === page,
+              'bg-gray-200 hover:bg-gray-300': currentPage !== page
+            }"
+          ></button>
+        </template>
+
+        <button
+          @click="currentPage = Math.min(totalPages, currentPage + 1)"
+          class="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
+          :disabled="currentPage === totalPages"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

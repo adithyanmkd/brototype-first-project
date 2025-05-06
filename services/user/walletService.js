@@ -24,10 +24,15 @@ let walletService = {
   },
 
   // get all transaction if no transaction gives a empty []
-  getTransactions: async ({ userId }) => {
-    let transactions = await WalletTransaction.find({ userId }).sort({
+  getTransactions: async ({ userId, limit }) => {
+    let query = WalletTransaction.find({ userId }).sort({
       createdAt: -1,
     });
+
+    if (limit) {
+      query = query.limit(Number(limit));
+    }
+    let transactions = await query;
 
     return transactions;
   },

@@ -11,7 +11,6 @@ const __dirname = path.dirname(__filename);
 
 // import models
 import Order from '../../models/orderModel.js';
-import Product from '../../models/productModel.js';
 
 // import utils
 import getUserMenus from '../../utils/getSidebarMenus.js';
@@ -254,32 +253,6 @@ const cancelOrder = async (req, res) => {
       message: 'Somthing went wrong while cancelling order.',
     });
   }
-
-  // try {
-  //   let order = await Order.findById(orderId);
-
-  //   // let items = order.orderedItems.forEach(async (item) => {
-  //   //   let product = await Product.findOne(item.productId);
-  //   //   product.quantity += item.quantity;
-  //   //   product.save();
-  //   // });
-
-  //   // order.orderStatus = 'Cancelled';
-  //   // order.returnReason = response;
-  //   // order.save();
-
-  //   // res.status(200).json({
-  //   //   success: true,
-  //   //   message: 'order cancelled succesfully',
-  //   //   redirect: `/account/orders/${orderId}`,
-  //   //   data: req.body,
-  //   // });
-  // } catch (error) {
-  //   console.log('error');
-  //   res
-  //     .status(500)
-  //     .json({ success: false, message: 'cancel order processing failed' });
-  // }
 };
 
 const ordersController = {
