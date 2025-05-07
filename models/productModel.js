@@ -26,8 +26,8 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
       required: true,
-    }, // Reference to Category model
-    isDeleted: { type: Boolean, default: false },
+    },
+    isListed: { type: Boolean, default: false },
   },
   { timestamps: true } // adds createdAt & updatedAt
 );

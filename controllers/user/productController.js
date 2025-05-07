@@ -35,16 +35,19 @@ const products = async (req, res) => {
     }
 
     // Get Total Count of Products (After Filtering)
-    let totalProducts = await Product.countDocuments(query);
+    let totalProducts = await Product.countDocuments({
+      ...query,
+      isListed: false,
+    });
     let totalPages = Math.ceil(totalProducts / limit);
 
     // Fetch Filtered & Sorted Products
-    let products = await Product.find({ ...query, isDeleted: false })
+    let products = await Product.find({ ...query, isListed: false })
       .sort(sortQuery)
       .skip(skip)
       .limit(limit);
 
-    let categories = await Category.find({ isDeleted: false });
+    let categories = await Category.find({ isListed: false });
 
     if (user) {
       const wishlist = await Wishlist.findOne({ userId: user._id }).lean();

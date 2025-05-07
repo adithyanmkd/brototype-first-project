@@ -1,15 +1,19 @@
-function openDeleteModal(productId) {
+// import handler
+import adminProductHandler from '../handlers/adminProductHandler.js';
+
+window.openDeleteModal = function (productId) {
   const modal = document.getElementById('deleteModal');
   const deleteForm = document.getElementById('deleteForm');
 
-  deleteForm.action = `/admin/products/${productId}/delete`;
-  modal.classList.remove('hidden');
-}
+  deleteForm.action = `/admin/products/${productId}/is-listed`;
 
-function closeDeleteModal() {
+  modal.classList.remove('hidden');
+};
+
+window.closeDeleteModal = function () {
   const modal = document.getElementById('deleteModal');
   modal.classList.add('hidden');
-}
+};
 
 // Search functionality
 document.getElementById('search').addEventListener('input', function () {

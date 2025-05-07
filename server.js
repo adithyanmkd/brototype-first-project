@@ -5,6 +5,7 @@ import MongoStore from 'connect-mongo';
 import expressLayouts from 'express-ejs-layouts';
 import session from 'express-session';
 import cors from 'cors';
+import morgan from 'morgan';
 
 // import config modules
 import connectDB from './config/database.js'; // database config
@@ -47,6 +48,7 @@ app.use(
 );
 
 app.use(cors());
+app.use(morgan('dev'));
 
 // cache management
 app.use((req, res, next) => {

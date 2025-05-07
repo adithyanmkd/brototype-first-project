@@ -39,6 +39,7 @@ const SalesReportService = {
         (sum, sale) => sum + (sale.discountAmount || 0),
         0
       );
+
       const totalOrders = salesData.length;
 
       return {

@@ -43,6 +43,9 @@ const adminProductHandler = {
       console.error(error);
     }
   },
+
+  // process toggle product (list or unlist)
+  processToggleProduct: async ({}) => {},
 };
 
 export default adminProductHandler;

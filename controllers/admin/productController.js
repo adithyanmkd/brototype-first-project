@@ -1,7 +1,10 @@
 // import models
 import Category from '../../models/categoryModel.js';
 import Product from '../../models/productModel.js';
+
+// import service
 import adminProductService from '../../services/admin/adminProductService.js';
+import productService from '../../services/admin/productService.js';
 
 // get add product page
 const getProduct = async (req, res) => {
@@ -76,11 +79,11 @@ const allProduct = async (req, res) => {
   }
 
   // Count total matching users
-  const totalProducts = await Product.countDocuments({ isDeleted: false });
+  const totalProducts = await Product.countDocuments();
   const totalPages = Math.ceil(totalProducts / limit);
 
   // Fetch filtered and paginated product
-  const products = await Product.find({ ...filter, isDeleted: false })
+  const products = await Product.find({ ...filter })
     .populate('category', 'name')
     .skip(skip)
     .limit(limit);
@@ -104,13 +107,32 @@ const deleteProduct = async (req, res) => {
   const id = req.params.id;
   try {
     const product = await Product.findById(id);
-    product.isDeleted = true;
+    product.isListed = true;
     await product.save();
     res.redirect('/admin/products');
   } catch (error) {
     res.json({
       Error: error,
       DeveloperNote: 'error from delete product controller',
+    });
+  }
+};
+
+// toggle product listing status
+const toggleProductListing = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const serviceResponse = await productService.toggleProductStatus({
+      productId,
+    });
+
+    console.log('Service response log', serviceResponse);
+    res.redirect('/admin/products');
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Something went wrong while toggle product listing',
     });
   }
 };
@@ -135,75 +157,10 @@ const getEdit = async (req, res) => {
     });
   }
 };
-// try {
 
-//   // Convert price values to numbers
-//   const sellingPrice = parseFloat(updates.price.sellingPrice) || 0;
-//   const originalPrice = parseFloat(updates.price.originalPrice) || 0;
-
-//   // Prepare update object
-//   const updateData = {
-//     productName: updates.productName,
-//     description: updates.description,
-//     price: {
-//       sellingPrice,
-//       originalPrice,
-//     },
-//     category: updates.category,
-//     quantity: updates.quantity,
-//     sizeCategory: updates.sizeCategory,
-//   };
-
-//   // Handle card image update
-//   if (files?.cardImage) {
-//     updateData.images = {
-//       cardImage: {
-//         path: files.cardImage[0].path.replace(/.*\/public\//, '/'),
-//         alt: `${updates.productName} card image`,
-//       },
-//       productImages: updates.images?.productImages || [],
-//     };
-//   }
-
-//   // Handle product images update
-//   if (files?.productImages) {
-//     const newProductImages = files.productImages.map((file, index) => ({
-//       path: file.path.replace(/.*\/public\//, '/'),
-//       alt: `${updates.productName} product image ${index + 1}`,
-//     }));
-
-//     updateData.images = {
-//       ...updateData.images,
-//       productImages: [
-//         ...(updateData.images?.productImages || []),
-//         ...newProductImages,
-//       ],
-//     };
-//   }
-
-//   // Update the product
-//   const updatedProduct = await Product.findByIdAndUpdate(
-//     productId,
-//     updateData,
-//     { new: true }
-//   );
-
-//   if (!updatedProduct) {
-//     return res.status(404).json({ error: 'Product not found' });
-//   }
-
-//   res.redirect('/admin/products');
-// } catch (error) {
-//   console.error('Update error:', error);
-//   res.status(500).json({
-//     error: 'Failed to update product',
-//     DeveloperNote: 'Error from updateProduct controller',
-//   });
-// }
 // Update product
 const updateProduct = async (req, res) => {
   const productId = req.params.id;
-  console.log(req.body);
 
   try {
     const {
@@ -259,9 +216,9 @@ const updateProduct = async (req, res) => {
 };
 
 const getProductDetails = async (req, res) => {
-  let productId = req.params.id;
-
   try {
+    let productId = req.params.id;
+
     let result = await adminProductService.getProduct({
       id: productId,
     });
@@ -281,6 +238,7 @@ const productController = {
   postProduct,
   allProduct,
   deleteProduct,
+  toggleProductListing,
   getEdit,
   updateProduct,
   getProductDetails,
