@@ -88,6 +88,7 @@ const allProduct = async (req, res) => {
     .skip(skip)
     .limit(limit);
 
+  console.log('products log: ', products);
   if (req.xhr || req.headers.accept.indexOf('application/json') > -1) {
     // If the request is AJAX or accepts JSON (like axios)
     res.status(200).json({ success: true, products });
@@ -107,7 +108,7 @@ const deleteProduct = async (req, res) => {
   const id = req.params.id;
   try {
     const product = await Product.findById(id);
-    product.isListed = true;
+    product.isDeleted = true;
     await product.save();
     res.redirect('/admin/products');
   } catch (error) {
@@ -118,31 +119,13 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-// toggle product listing status
-const toggleProductListing = async (req, res) => {
-  try {
-    const productId = req.params.id;
-    const serviceResponse = await productService.toggleProductStatus({
-      productId,
-    });
-
-    console.log('Service response log', serviceResponse);
-    res.redirect('/admin/products');
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: 'Something went wrong while toggle product listing',
-    });
-  }
-};
-
 // get edit page
 const getEdit = async (req, res) => {
   try {
     const id = req.params.id;
     const categories = await Category.find({ isDeleted: false });
     const product = await Product.findById(id);
+    // console.log('Product Log: ', product);
 
     return res.render('admin/pages/products/editPage', {
       categories,
@@ -157,10 +140,75 @@ const getEdit = async (req, res) => {
     });
   }
 };
+// try {
 
+//   // Convert price values to numbers
+//   const sellingPrice = parseFloat(updates.price.sellingPrice) || 0;
+//   const originalPrice = parseFloat(updates.price.originalPrice) || 0;
+
+//   // Prepare update object
+//   const updateData = {
+//     productName: updates.productName,
+//     description: updates.description,
+//     price: {
+//       sellingPrice,
+//       originalPrice,
+//     },
+//     category: updates.category,
+//     quantity: updates.quantity,
+//     sizeCategory: updates.sizeCategory,
+//   };
+
+//   // Handle card image update
+//   if (files?.cardImage) {
+//     updateData.images = {
+//       cardImage: {
+//         path: files.cardImage[0].path.replace(/.*\/public\//, '/'),
+//         alt: `${updates.productName} card image`,
+//       },
+//       productImages: updates.images?.productImages || [],
+//     };
+//   }
+
+//   // Handle product images update
+//   if (files?.productImages) {
+//     const newProductImages = files.productImages.map((file, index) => ({
+//       path: file.path.replace(/.*\/public\//, '/'),
+//       alt: `${updates.productName} product image ${index + 1}`,
+//     }));
+
+//     updateData.images = {
+//       ...updateData.images,
+//       productImages: [
+//         ...(updateData.images?.productImages || []),
+//         ...newProductImages,
+//       ],
+//     };
+//   }
+
+//   // Update the product
+//   const updatedProduct = await Product.findByIdAndUpdate(
+//     productId,
+//     updateData,
+//     { new: true }
+//   );
+
+//   if (!updatedProduct) {
+//     return res.status(404).json({ error: 'Product not found' });
+//   }
+
+//   res.redirect('/admin/products');
+// } catch (error) {
+//   console.error('Update error:', error);
+//   res.status(500).json({
+//     error: 'Failed to update product',
+//     DeveloperNote: 'Error from updateProduct controller',
+//   });
+// }
 // Update product
 const updateProduct = async (req, res) => {
   const productId = req.params.id;
+  // console.log('req body log:', req.body);
 
   try {
     const {
@@ -216,9 +264,9 @@ const updateProduct = async (req, res) => {
 };
 
 const getProductDetails = async (req, res) => {
-  try {
-    let productId = req.params.id;
+  let productId = req.params.id;
 
+  try {
     let result = await adminProductService.getProduct({
       id: productId,
     });
@@ -227,9 +275,30 @@ const getProductDetails = async (req, res) => {
       return res.status(500).json(result);
     }
 
+    console.log('Response Log: ', result);
+
     return res.status(200).json(result);
   } catch (error) {
     console.log(error);
+  }
+};
+
+// toggle product listing status
+const toggleProductListing = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const serviceResponse = await productService.toggleProductStatus({
+      productId,
+    });
+
+    console.log('Service response log', serviceResponse);
+    res.redirect('/admin/products');
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Something went wrong while toggle product listing',
+    });
   }
 };
 

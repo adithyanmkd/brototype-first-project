@@ -135,17 +135,17 @@ async function validateAddForm(event) {
   event.preventDefault();
 
   // Get form values
-  const fullName = document.querySelector('[name="fullname"]').value.trim();
-  const email = document.querySelector('[name="email"]').value.trim();
-  const phoneNumber = document
+  const fullName = addForm.querySelector('[name="fullname"]').value.trim();
+  const email = addForm.querySelector('[name="email"]').value.trim();
+  const phoneNumber = addForm
     .querySelector('[name="phoneNumber"]')
     .value.trim();
-  const address = document.querySelector('[name="address"]').value.trim();
-  const pincode = document.querySelector('[name="pincode"]').value.trim();
-  const district = document.querySelector('[name="district"]').value.trim();
-  const state = document.querySelector('[name="state"]').value.trim();
-  const locality = document.querySelector('[name="locality"]').value.trim();
-  const isDefault = document.querySelector('[name="isDefault"]').checked;
+  const address = addForm.querySelector('[name="address"]').value.trim();
+  const pincode = addForm.querySelector('[name="pincode"]').value.trim();
+  const district = addForm.querySelector('[name="district"]').value.trim();
+  const state = addForm.querySelector('[name="state"]').value.trim();
+  const locality = addForm.querySelector('[name="locality"]').value.trim();
+  const isDefault = addForm.querySelector('[name="isDefault"]').checked;
   console.log(isDefault);
 
   // Regex for email, phone number, and pincode
@@ -202,6 +202,8 @@ async function validateAddForm(event) {
     state,
     isDefault,
   };
+
+  console.log('Client body log: ', body);
 
   try {
     let response = await fetch('/account/address', {

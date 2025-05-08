@@ -150,12 +150,13 @@ let orderService = {
           transactionNote: description,
           type: 'credit',
         });
+
+        order.paymentStatus = 'refunded';
       }
 
       // updating order
       order.orderStatus = 'Cancelled';
       order.cancelReason = response;
-      order.paymentStatus = 'refunded';
       order.save();
 
       return {

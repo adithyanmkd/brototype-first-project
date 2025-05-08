@@ -10,7 +10,6 @@ const adminProductService = {
     category,
     quantity,
     files,
-    removeImgIds = [],
   }) => {
     try {
       let product = await Product.findOne({
@@ -161,7 +160,6 @@ const adminProductService = {
     try {
       let product = await Product.findOne({
         _id: id,
-        isDeleted: false,
       });
 
       if (!product) {
@@ -175,7 +173,6 @@ const adminProductService = {
       let existingProduct = await Product.findOne({
         _id: { $ne: id },
         productName: { $regex: `^${productName}$`, $options: 'i' },
-        isDeleted: false,
       });
 
       if (existingProduct) {
@@ -243,7 +240,6 @@ const adminProductService = {
     try {
       let product = await Product.findOne({
         _id: id,
-        isDeleted: false,
       }).populate('category', 'name');
       return {
         success: true,

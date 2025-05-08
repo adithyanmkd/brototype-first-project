@@ -36,7 +36,7 @@ async function loadProductData() {
 
   let product = converted.product;
 
-  console.log('Converted log: ', converted);
+  // console.log('Converted log: ', converted);
 
   // Fill form fields
   document.querySelector('#productName').value = product.productName;

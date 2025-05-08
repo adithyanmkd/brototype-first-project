@@ -107,9 +107,9 @@
               <button
                 type="button"
                 @click="openDeleteModal(product._id)"
-                x-text="product.isListed ? 'List' : 'Unlist'"
-                :class="{'bg-red-100 text-red-700 hover:bg-red-200 transition-colors cursor-pointer': !product.isListed,
-                         'bg-green-100 text-green-700 hover:bg-green-200 transition-colors cursor-pointer': product.isListed}"
+                x-text="product.isListed ? 'Unlist' : 'List'"
+                :class="{'bg-red-100 text-red-700 hover:bg-red-200 transition-colors cursor-pointer': product.isListed,
+                         'bg-green-100 text-green-700 hover:bg-green-200 transition-colors cursor-pointer': !product.isListed}"
                 class="px-4 py-2 rounded-lg flex items-center shadow-md"
               ></button>
             </div>
@@ -167,9 +167,9 @@
       <form id="deleteForm" method="POST" action="">
         <button
           type="submit"
-          class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+          class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
-          Delete
+          Yes
         </button>
       </form>
     </div>

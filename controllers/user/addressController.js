@@ -23,10 +23,12 @@ const postAddAddress = async (req, res) => {
   let user = req.session.user;
 
   try {
-    let newAddress = await Address({
+    let newAddress = new Address({
       userId: user._id,
       ...req.body,
     });
+
+    console.log('Body log: ', req.body);
 
     await newAddress.save();
   } catch (error) {
