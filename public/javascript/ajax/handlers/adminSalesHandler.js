@@ -45,6 +45,7 @@ const updateSalesReportUI = (salesData) => {
         <td class="px-4 py-2 border border-gray-200">₹${sale.totalAmount}</td>
         <td class="px-4 py-2 border border-gray-200">₹${sale.discountAmount || 0}</td>
         <td class="px-4 py-2 border border-gray-200">${new Date(sale.orderDate).toLocaleDateString()}</td>
+        <td class="px-4 py-2 border border-gray-200">${sale.paymentMethod}</td>
         <td class="px-4 py-2 border border-gray-200">${sale.orderStatus || 'N/A'}</td>
       `;
     salesDetailsContainer.appendChild(row);

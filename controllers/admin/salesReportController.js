@@ -16,6 +16,8 @@ const getSalesReport = async (req, res) => {
       endDate,
     });
 
+    // console.log('Sales Data: ', salesData);
+
     if (req.xhr || req.headers.accept.indexOf('application/json') > -1) {
       // If the request is AJAX or accepts JSON (like axios)
       return res.status(200).json({

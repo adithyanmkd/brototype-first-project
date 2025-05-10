@@ -1,7 +1,7 @@
 const errorModal = document.getElementById('errorModal');
 const backendErrorText = document.getElementById('backendErrorText');
 const categoryForm = document.querySelector('#categoryFormElement');
-const categoryImageInput = document.getElementById('categoryImageInput');
+// const categoryImageInput = document.getElementById('categoryImageInput');
 
 let errorTimeout; // Store timeout reference
 
@@ -42,83 +42,83 @@ function hideErrorModal() {
 }
 
 // handle files and show preview
-function handleFileChange(event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      document.getElementById('imagePreview').src = e.target.result;
-      document
-        .getElementById('imagePreviewContainer')
-        .classList.remove('hidden');
-    };
-    reader.readAsDataURL(file);
-  }
-}
+// function handleFileChange(event) {
+//   const file = event.target.files[0];
+//   if (file) {
+//     const reader = new FileReader();
+//     reader.onload = (e) => {
+//       document.getElementById('imagePreview').src = e.target.result;
+//       document
+//         .getElementById('imagePreviewContainer')
+//         .classList.remove('hidden');
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// }
 
 // remove added image
-function removeImage() {
-  document.getElementById('imagePreviewContainer').classList.add('hidden');
-  document.getElementById('categoryImageInput').value = '';
-}
+// function removeImage() {
+//   document.getElementById('imagePreviewContainer').classList.add('hidden');
+//   document.getElementById('categoryImageInput').value = '';
+// }
 
-let blobImage = null;
+// let blobImage = null;
 
-function saveImage() {
-  // Get cropped image as blob
-  cropper.getCroppedCanvas().toBlob(async (blob) => {
-    if (blob) {
-      const thumbnailContainer = document.getElementById('imageThumbnail');
-      thumbnailContainer.innerHTML = ''; // Clear existing thumbnail
+// function saveImage() {
+//   // Get cropped image as blob
+//   cropper.getCroppedCanvas().toBlob(async (blob) => {
+//     if (blob) {
+//       const thumbnailContainer = document.getElementById('imageThumbnail');
+//       thumbnailContainer.innerHTML = ''; // Clear existing thumbnail
 
-      thumbnailContainer.classList.remove('hidden');
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(blob);
-      img.classList.add(
-        'h-full',
-        'w-full',
-        'object-cover',
-        'rounded-lg',
-        'border',
-        'border-gray-300'
-      );
+//       thumbnailContainer.classList.remove('hidden');
+//       const img = document.createElement('img');
+//       img.src = URL.createObjectURL(blob);
+//       img.classList.add(
+//         'h-full',
+//         'w-full',
+//         'object-cover',
+//         'rounded-lg',
+//         'border',
+//         'border-gray-300'
+//       );
 
-      thumbnailContainer.appendChild(img);
-      document.getElementById('imagePreviewContainer').classList.add('hidden');
-      blobImage = blob;
-    }
-  });
-}
+//       thumbnailContainer.appendChild(img);
+//       document.getElementById('imagePreviewContainer').classList.add('hidden');
+//       blobImage = blob;
+//     }
+//   });
+// }
 
-let cropper;
+// let cropper;
 
-categoryImageInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = document.getElementById('imagePreview');
-      img.src = event.target.result;
+// categoryImageInput.addEventListener('change', (e) => {
+//   const file = e.target.files[0];
+//   if (file) {
+//     const reader = new FileReader();
+//     reader.onload = (event) => {
+//       const img = document.getElementById('imagePreview');
+//       img.src = event.target.result;
 
-      // Destroy old cropper instance (if exists)
-      if (cropper) cropper.destroy();
+//       // Destroy old cropper instance (if exists)
+//       if (cropper) cropper.destroy();
 
-      // Initialize new cropper instance
-      cropper = new Cropper(img, {
-        aspectRatio: 1,
-        viewMode: 2,
-        autoCropArea: 1,
-        movable: true,
-        scalable: true,
-        zoomable: true,
-      });
-      document
-        .getElementById('imagePreviewContainer')
-        .classList.remove('hidden');
-    };
-    reader.readAsDataURL(file);
-  }
-});
+//       // Initialize new cropper instance
+//       cropper = new Cropper(img, {
+//         aspectRatio: 1,
+//         viewMode: 2,
+//         autoCropArea: 1,
+//         movable: true,
+//         scalable: true,
+//         zoomable: true,
+//       });
+//       document
+//         .getElementById('imagePreviewContainer')
+//         .classList.remove('hidden');
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// });
 
 const currentUrl = window.location.href;
 const match = currentUrl.split('/');
@@ -138,9 +138,9 @@ categoryForm.addEventListener('submit', async (e) => {
     .value.trim();
   // const categoryName = formData.get("categoryName").trim()
   // const description = formData.get("description").trim()
-  const categoryImageInput = categoryForm.querySelector('#categoryImageInput');
+  // const categoryImageInput = categoryForm.querySelector('#categoryImageInput');
 
-  if (!categoryName && !description && categoryImageInput.files.length == 0) {
+  if (!categoryName && !description) {
     displayError('All fields are required');
     return;
   } else if (!categoryName) {
@@ -148,9 +148,6 @@ categoryForm.addEventListener('submit', async (e) => {
     return;
   } else if (!description) {
     displayError('Please enter description');
-    return;
-  } else if (categoryImageInput.files.length == 0) {
-    displayError('Please add an image');
     return;
   }
 
@@ -162,7 +159,6 @@ categoryForm.addEventListener('submit', async (e) => {
   let formData = {
     name: categoryName,
     description,
-    categoryImageInput: categoryImageInput[0],
   };
 
   // formData.forEach((value, key) => {

@@ -40,8 +40,9 @@
           <th>Amount</th>
           <th>Discount</th>
           <th>Date</th>
-          <th>Delivery Address</th>
-          <th>Ordered Items</th>
+          <!-- <th>Delivery Address</th> -->
+          <th>Order Status</th>
+          <th>Payment Method</th>
         </tr>
       </thead>
       <tbody>
@@ -51,17 +52,8 @@
           <td>₹<%= sale.totalAmount %></td>
           <td>₹<%= sale.discountAmount || 0 %></td>
           <td><%= new Date(sale.orderDate).toLocaleDateString() %></td>
-          <td>
-            <%= sale.deliveryAddress.name %>, <%= sale.deliveryAddress.address
-            %>, <%= sale.deliveryAddress.locality %>, <%=
-            sale.deliveryAddress.district %>, <%= sale.deliveryAddress.state %>,
-            <%= sale.deliveryAddress.pincode %>
-          </td>
-          <td>
-            <% sale.orderedItems.forEach(item => { %> <%= item.productName %>
-            (x<%= item.quantity %>)<br />
-            <% }) %>
-          </td>
+          <td><%= sale.orderStatus %></td>
+          <td><%= sale.paymentMethod %></td>
         </tr>
         <% }) %>
       </tbody>

@@ -1,108 +1,112 @@
 <!-- Main Container -->
 <div id="categoryForm" class="h-full">
-    <!-- Error Modal -->
-    <div id="errorModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50"
-        onclick="hideErrorModal()">
-        <div class="w-96 rounded-lg bg-white p-6 shadow-xl">
-            <div class="flex items-start gap-3">
-                <div class="shrink-0">
-                    <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="mb-2 text-lg font-semibold">Error Occurred</h3>
-                    <p id="backendErrorText" class="text-gray-600"></p>
-                </div>
-            </div>
-            <div class="mt-4 flex justify-end">
-                <button onclick="hideErrorModal()" class="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600">
-                    OK
-                </button>
-            </div>
+  <!-- Error Modal -->
+  <div
+    id="errorModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50"
+    onclick="hideErrorModal()"
+  >
+    <div class="w-96 rounded-lg bg-white p-6 shadow-xl">
+      <div class="flex items-start gap-3">
+        <div class="shrink-0">
+          <svg
+            class="h-6 w-6 text-red-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
         </div>
+        <div>
+          <h3 class="mb-2 text-lg font-semibold">Error Occurred</h3>
+          <p id="backendErrorText" class="text-gray-600"></p>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-end">
+        <button
+          onclick="hideErrorModal()"
+          class="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+        >
+          OK
+        </button>
+      </div>
     </div>
+  </div>
 
-    <!-- Form -->
-    <form action="/admin/categories/edit/<%= category._id %>" method="POST" enctype="multipart/form-data"
-        class="mx-auto max-w-3xl rounded-lg bg-white p-6 shadow-lg" id="categoryFormElement">
-        <h2 class="mb-4 text-2xl font-semibold text-gray-800">
-            edit Category
-        </h2>
+  <!-- Form -->
+  <form
+    action="/admin/categories/edit/<%= category._id %>"
+    method="POST"
+    enctype="multipart/form-data"
+    class="mx-auto max-w-3xl rounded-lg bg-white p-6 shadow-lg"
+    id="categoryFormElement"
+  >
+    <h2 class="mb-4 text-2xl font-semibold text-gray-800">edit Category</h2>
 
-        <div class="flex gap-6">
-            <!-- Left Side - Category Form Fields -->
-            <div class="w-1/2 space-y-4">
-                <!-- Category Name -->
-                <div>
-                    <label class="mb-1 block font-medium text-gray-700">Category Name</label>
-                    <input type="text" name="categoryName" value="<%= category.name %>"
-                        class="w-full rounded-lg border border-gray-300 p-3 focus:ring focus:ring-red-300"
-                        placeholder="Enter category name" id="categoryName" />
-                </div>
-
-                <!-- Category Description -->
-                <div>
-                    <label class="mb-1 block font-medium text-gray-700">Description</label>
-                    <textarea name="description"
-                        class="w-full rounded-lg border border-gray-300 p-3 focus:ring focus:ring-red-300"
-                        placeholder="Enter category description" id="description"><%= category.description %></textarea>
-                </div>
-            </div>
-
-            <!-- Right Side - Image Upload -->
-            <div class="flex w-1/2 flex-col items-center justify-center">
-                <label
-                    class="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition hover:border-blue-400 hover:bg-gray-100">
-                    <div class="flex flex-col items-center">
-                        <svg class="mb-2 h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-5 4l4-4m-4 4l4-4" />
-                        </svg>
-                        <span class="text-sm text-gray-600">Click to upload or drag & drop</span>
-                    </div>
-                    <input type="file" name="categoryImage" accept="image/*" class="hidden" id="categoryImageInput"
-                        onchange="handleFileChange(event)" />
-                </label>
-
-                <!-- Image Previews -->
-                <div id="imageThumbnail" class="mt-4  w-40 h-40 hidden rounded-[8px]"></div>
-                <div id="imagePreviewContainer" class="mt-3 space-y-4  gap-4 flex-col ">
-                    <div class="w-full ">
-                        <p class="mb-1 text-sm text-gray-500">Selected Image:</p>
-                        <img id="imagePreview" src="<%= category.image.path %>"
-                            class="h-40 w-40  rounded-lg border border-gray-300 object-cover" />
-                    </div>
-                    <div class="w-full flex justify-center space-x-3">
-                        <button type="button" onclick="removeImage()"
-                            class="rounded-lg bg-red-200 border px-2  border-red-400 py-1 text-red-800 hover:bg-red-300">
-                            Delete
-                        </button>
-                        <button type="button" onclick="saveImage()"
-                            class="rounded-lg bg-green-200 border px-2  border-green-400 py-1 text-green-800 hover:bg-green-300">
-                            save
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <div class="flex gap-6">
+      <!-- Left Side - Category Form Fields -->
+      <div class="w-1/2 space-y-4">
+        <!-- Category Name -->
+        <div>
+          <label class="mb-1 block font-medium text-gray-700"
+            >Category Name</label
+          >
+          <input
+            type="text"
+            name="categoryName"
+            value="<%= category.name %>"
+            class="w-full rounded-lg border border-gray-300 p-3 focus:ring focus:ring-red-300"
+            placeholder="Enter category name"
+            id="categoryName"
+          />
         </div>
-        <!-- error message box started -->
-        <div id="error-box" class="p-4 mt-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:text-red-400 hidden">
-        </div>
-        <!-- error message box ended -->
 
-        <!-- Action Buttons -->
-        <div class="mt-6 flex justify-end space-x-3">
-            <button type="button" onclick="history.back()"
-                class="rounded-lg border border-gray-400 px-5 py-2 text-gray-700 transition hover:bg-gray-200">
-                Cancel
-            </button>
-            <button type="submit" class="rounded-lg bg-blue-500 px-5 py-2 text-white transition hover:bg-blue-700">
-                Add Category
-            </button>
+        <!-- Category Description -->
+        <div>
+          <label class="mb-1 block font-medium text-gray-700"
+            >Description</label
+          >
+          <textarea
+            name="description"
+            class="w-full rounded-lg border border-gray-300 p-3 focus:ring focus:ring-red-300"
+            placeholder="Enter category description"
+            id="description"
+          >
+            <%= category.description %></textarea
+          >
         </div>
-    </form>
+      </div>
+    </div>
+    <!-- error message box started -->
+    <div
+      id="error-box"
+      class="p-4 mt-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:text-red-400 hidden"
+    ></div>
+    <!-- error message box ended -->
+
+    <!-- Action Buttons -->
+    <div class="mt-6 flex justify-end space-x-3">
+      <button
+        type="button"
+        onclick="history.back()"
+        class="rounded-lg border border-gray-400 px-5 py-2 text-gray-700 transition hover:bg-gray-200"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="rounded-lg bg-blue-500 px-5 py-2 text-white transition hover:bg-blue-700"
+      >
+        Edit Category
+      </button>
+    </div>
+  </form>
 </div>
 
 <!-- Script -->

@@ -1,7 +1,7 @@
 const errorModal = document.getElementById('errorModal');
 const backendErrorText = document.getElementById('backendErrorText');
 const categoryForm = document.querySelector('#categoryFormElement');
-const categoryImageInput = document.getElementById('categoryImageInput');
+// const categoryImageInput = document.getElementById('categoryImageInput');
 
 let errorTimeout; // Store timeout reference
 
@@ -57,10 +57,10 @@ function handleFileChange(event) {
 }
 
 // remove added image
-function removeImage() {
-  document.getElementById('imagePreviewContainer').classList.add('hidden');
-  document.getElementById('categoryImageInput').value = '';
-}
+// function removeImage() {
+//   document.getElementById('imagePreviewContainer').classList.add('hidden');
+//   document.getElementById('categoryImageInput').value = '';
+// }
 
 let blobImage = null;
 
@@ -90,35 +90,35 @@ function saveImage() {
   });
 }
 
-let cropper;
+// let cropper;
 
-categoryImageInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = document.getElementById('imagePreview');
-      img.src = event.target.result;
+// categoryImageInput.addEventListener('change', (e) => {
+//   const file = e.target.files[0];
+//   if (file) {
+//     const reader = new FileReader();
+//     reader.onload = (event) => {
+//       const img = document.getElementById('imagePreview');
+//       img.src = event.target.result;
 
-      // Destroy old cropper instance (if exists)
-      if (cropper) cropper.destroy();
+//       // Destroy old cropper instance (if exists)
+//       if (cropper) cropper.destroy();
 
-      // Initialize new cropper instance
-      cropper = new Cropper(img, {
-        aspectRatio: 1,
-        viewMode: 2,
-        autoCropArea: 1,
-        movable: true,
-        scalable: true,
-        zoomable: true,
-      });
-      document
-        .getElementById('imagePreviewContainer')
-        .classList.remove('hidden');
-    };
-    reader.readAsDataURL(file);
-  }
-});
+//       // Initialize new cropper instance
+//       cropper = new Cropper(img, {
+//         aspectRatio: 1,
+//         viewMode: 2,
+//         autoCropArea: 1,
+//         movable: true,
+//         scalable: true,
+//         zoomable: true,
+//       });
+//       document
+//         .getElementById('imagePreviewContainer')
+//         .classList.remove('hidden');
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// });
 
 // category form validation and send body data into server
 categoryForm.addEventListener('submit', async (e) => {
@@ -128,9 +128,9 @@ categoryForm.addEventListener('submit', async (e) => {
 
   const categoryName = formData.get('categoryName').trim();
   const description = formData.get('description').trim();
-  const categoryImageInput = categoryForm.querySelector('#categoryImageInput');
+  // const categoryImageInput = categoryForm.querySelector('#categoryImageInput');
 
-  if (!categoryName && !description && categoryImageInput.files.length == 0) {
+  if (!categoryName && !description) {
     displayError('All fields are required');
     return;
   } else if (!categoryName) {
@@ -139,15 +139,12 @@ categoryForm.addEventListener('submit', async (e) => {
   } else if (!description) {
     displayError('Please enter description');
     return;
-  } else if (categoryImageInput.files.length == 0) {
-    displayError('Please add an image');
-    return;
   }
 
   // hide error box after successful validation
   hideError();
 
-  formData.append('categoryImageInput', categoryImageInput[0]);
+  // formData.append('categoryImageInput', categoryImageInput[0]);
   try {
     const response = await fetch('/admin/categories/add', {
       method: 'POST',

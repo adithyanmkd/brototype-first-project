@@ -1,7 +1,4 @@
-import path from 'path';
-import fs from 'fs';
-
-import { User, Category } from '../../models/index.js';
+import { Category } from '../../models/index.js';
 
 // get category add page
 const getAddCategory = (req, res) => {
@@ -14,11 +11,11 @@ const getAddCategory = (req, res) => {
 const postAddCategory = async (req, res) => {
   const { categoryName, description } = req.body;
 
-  const imgObj = req.files.categoryImage[0];
-  imgObj.path = req.files.categoryImage[0].path.replace(/.*\/public\//, '/');
+  // const imgObj = req.files.categoryImage[0];
+  // imgObj.path = req.files.categoryImage[0].path.replace(/.*\/public\//, '/');
 
   const category = await Category.findOne({
-    name: { $regex: categoryName, $options: 'i' },
+    name: { $regex: `^${categoryName}$`, $options: 'i' },
   });
 
   if (category) {
@@ -30,7 +27,7 @@ const postAddCategory = async (req, res) => {
     const newCategory = new Category({
       name: categoryName,
       description,
-      image: imgObj,
+      // image: imgObj,
     });
 
     await newCategory.save();
@@ -121,35 +118,22 @@ const postEditCategory = async (req, res) => {
 
     const { name, description } = req.body;
 
-    const category = await Category.findOne({
-      name: { $regex: name, $options: 'i' },
-    });
+    let category = await Category.findById(categoryId);
 
     // console.log('Category log: ', category);
 
-    if (!category) {
+    const isDuplicate = await Category.findOne({
+      name: { $regex: `^${name}$`, $options: 'i' },
+      _id: { $ne: categoryId },
+    });
+
+    if (isDuplicate) {
       return res.status(404).json({ error: 'category already exists' });
-    }
-
-    let imagePath = category.image.path.replace(/.*\/public\//, '/');
-
-    if (req.file) {
-      // If an old image exists, delete it
-      if (imagePath) {
-        const oldImagePath = path.join('public', imagePath); // Convert stored path to absolute path
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
-      }
-
-      // Save only relative path
-      imagePath = '/' + path.relative('public', req.file.path);
     }
 
     // Update category
     category.name = name;
     category.description = description;
-    category.image.path = imagePath;
     await category.save();
 
     res.status(200).json({ success: 'Successfully edited category' });
