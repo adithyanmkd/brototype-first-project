@@ -32,103 +32,196 @@
     </template>
   </div>
 
-  <div
-    class="max-w-sm mt-8 w-full border border-gray-300 bg-white rounded-lg shadow-sm p-4 md:p-6"
-  >
-    <div class="flex justify-between">
-      <div>
-        <h5
-          id="users"
-          class="leading-none text-3xl font-bold text-gray-900 pb-2"
-        ></h5>
-        <p class="text-base font-normal text-gray-500">Users this week</p>
+  <div>
+    <!-- Revenue Chart -->
+    <div
+      class="mt-8 w-full border border-gray-300 bg-white rounded-lg shadow-sm p-4 md:p-6"
+    >
+      <div class="flex justify-between">
+        <div>
+          <h1 class="inline leading-none text-3xl font-bold text-gray-900 pb-2">
+            Revenue
+            <span id="revenue" class=""></span>
+          </h1>
+        </div>
+      </div>
+
+      <div id="revenue-chart" class="w-full"></div>
+
+      <div
+        class="grid grid-cols-1 items-center border-gray-200 border-t justify-between"
+      >
+        <div class="flex justify-between items-center pt-5">
+          <button
+            id="revenueDropdownButton"
+            data-dropdown-toggle="revenueDaysDropdown"
+            data-dropdown-placement="bottom"
+            class="text-sm font-medium text-gray-500 hover:text-gray-900 text-center inline-flex items-center"
+            type="button"
+          >
+            <span id="revenueDropdownText">Last 7 days</span>
+
+            <svg
+              class="w-2.5 m-2.5 ms-1.5"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 10 6"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 4 4 4-4"
+              />
+            </svg>
+          </button>
+
+          <div
+            id="revenueDaysDropdown"
+            class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44"
+          >
+            <ul
+              class="py-2 text-sm text-gray-700"
+              aria-labelledby="revenueDropdownButton"
+            >
+              <li>
+                <a
+                  href="#"
+                  data-range="7"
+                  class="block px-4 py-2 hover:bg-gray-100"
+                  >Last 7 days</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  data-range="30"
+                  class="block px-4 py-2 hover:bg-gray-100"
+                  >Last 30 days</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  data-range="90"
+                  class="block px-4 py-2 hover:bg-gray-100"
+                  >Last 90 days</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  data-range="365"
+                  class="block px-4 py-2 hover:bg-gray-100"
+                  >Yearly</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div id="area-chart"></div>
-
+    <!-- user chart -->
     <div
-      class="grid grid-cols-1 items-center border-gray-200 border-t justify-between"
+      class="max-w-sm mt-8 w-full border border-gray-300 bg-white rounded-lg shadow-sm p-4 md:p-6"
     >
-      <div class="flex justify-between items-center pt-5">
-        <button
-          id="dropdownDefaultButton"
-          data-dropdown-toggle="lastDaysdropdown"
-          data-dropdown-placement="bottom"
-          class="text-sm font-medium text-gray-500 hover:text-gray-900 text-center inline-flex items-center"
-          type="button"
-        >
-          Last 7 days
-          <svg
-            class="w-2.5 m-2.5 ms-1.5"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 10 6"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="m1 1 4 4 4-4"
-            />
-          </svg>
-        </button>
-
-        <div
-          id="lastDaysdropdown"
-          class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44"
-        >
-          <ul
-            class="py-2 text-sm text-gray-700"
-            aria-labelledby="dropdownDefaultButton"
-          >
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100"
-                >Yesterday</a
-              >
-            </li>
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Today</a>
-            </li>
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100"
-                >Last 7 days</a
-              >
-            </li>
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100"
-                >Last 30 days</a
-              >
-            </li>
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100"
-                >Last 90 days</a
-              >
-            </li>
-          </ul>
+      <div class="flex justify-between">
+        <div>
+          <h5
+            id="users"
+            class="leading-none text-3xl font-bold text-gray-900 pb-2"
+          ></h5>
+          <p class="text-base font-normal text-gray-500">Users this week</p>
         </div>
+      </div>
 
-        <a
-          href="#"
-          class="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 hover:bg-gray-100 px-3 py-2"
-        >
-          Users Report
-          <svg
-            class="w-2.5 h-2.5 ms-1.5 rtl:rotate-180"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 6 10"
+      <div id="area-chart"></div>
+
+      <div
+        class="grid grid-cols-1 items-center border-gray-200 border-t justify-between"
+      >
+        <div class="flex justify-between items-center pt-5">
+          <button
+            id="dropdownDefaultButton"
+            data-dropdown-toggle="lastDaysdropdown"
+            data-dropdown-placement="bottom"
+            class="text-sm font-medium text-gray-500 hover:text-gray-900 text-center inline-flex items-center"
+            type="button"
           >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="m1 9 4-4-4-4"
-            />
-          </svg>
-        </a>
+            Last 7 days
+            <svg
+              class="w-2.5 m-2.5 ms-1.5"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 10 6"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 4 4 4-4"
+              />
+            </svg>
+          </button>
+
+          <div
+            id="lastDaysdropdown"
+            class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44"
+          >
+            <ul
+              class="py-2 text-sm text-gray-700"
+              aria-labelledby="dropdownDefaultButton"
+            >
+              <li>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                  >Yesterday</a
+                >
+              </li>
+              <li>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-100">Today</a>
+              </li>
+              <li>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                  >Last 7 days</a
+                >
+              </li>
+              <li>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                  >Last 30 days</a
+                >
+              </li>
+              <li>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                  >Last 90 days</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <a
+            href="#"
+            class="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 hover:bg-gray-100 px-3 py-2"
+          >
+            Users Report
+            <svg
+              class="w-2.5 h-2.5 ms-1.5 rtl:rotate-180"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 6 10"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 9 4-4-4-4"
+              />
+            </svg>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -239,35 +332,6 @@
         </tbody>
       </table>
     </div>
-    <!-- <div
-      class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between"
-    >
-      <span class="text-xs text-gray-900 xs:text-sm">
-        Showing 1 to 5 of 10 entries
-      </span>
-      <div class="inline-flex mt-2 xs:mt-0">
-        <button
-          class="text-sm bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded-l border border-gray-300 hover:bg-gray-200"
-        >
-          Prev
-        </button>
-        <button
-          class="text-sm bg-primary-600 text-white font-semibold py-2 px-4 border border-primary-600"
-        >
-          1
-        </button>
-        <button
-          class="text-sm bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-300 hover:bg-gray-200"
-        >
-          2
-        </button>
-        <button
-          class="text-sm bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded-r border border-gray-300 hover:bg-gray-200"
-        >
-          Next
-        </button>
-      </div>
-    </div> -->
   </div>
 
   <!-- Category Table -->
@@ -335,35 +399,6 @@
         </tbody>
       </table>
     </div>
-    <!-- <div
-      class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between"
-    >
-      <span class="text-xs text-gray-900 xs:text-sm">
-        Showing 1 to 5 of 10 entries
-      </span>
-      <div class="inline-flex mt-2 xs:mt-0">
-        <button
-          class="text-sm bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded-l border border-gray-300 hover:bg-gray-200"
-        >
-          Prev
-        </button>
-        <button
-          class="text-sm bg-primary-600 text-white font-semibold py-2 px-4 border border-primary-600"
-        >
-          1
-        </button>
-        <button
-          class="text-sm bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-300 hover:bg-gray-200"
-        >
-          2
-        </button>
-        <button
-          class="text-sm bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded-r border border-gray-300 hover:bg-gray-200"
-        >
-          Next
-        </button>
-      </div>
-    </div> -->
   </div>
 </main>
 <script type="module" src="/javascript/ajax/pages/adminDashboard.js"></script>

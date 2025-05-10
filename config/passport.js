@@ -1,5 +1,8 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import crypto from 'crypto';
+
+// import model
 import { User } from '../models/index.js';
 
 // import util functions
@@ -23,6 +26,9 @@ passport.use(
           profile.id
         );
 
+        // Generate a unique referral code for the new user
+        const newReferralCode = crypto.randomBytes(4).toString('hex');
+
         if (!user) {
           // Create new user
           user = new User({
@@ -31,6 +37,7 @@ passport.use(
             email: profile.emails[0].value,
             profilePic: savedImagePath, // Use locally saved image
             isGoogleUser: true,
+            referralCode: newReferralCode,
           });
 
           await user.save();

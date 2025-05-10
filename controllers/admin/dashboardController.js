@@ -2,7 +2,10 @@
 import moment from 'moment';
 
 import { User, Order } from '../../models/index.js';
+
+// sales service
 import salesService from '../../services/admin/salesService.js';
+import chartServices from '../../services/admin/chartServices.js';
 
 //get dashboard
 const getDashboard = async (req, res) => {
@@ -48,9 +51,8 @@ const getDashboard = async (req, res) => {
 
 // get user chart data
 const getUserChartData = async (req, res) => {
-  const range = parseInt(req.query.range) || 7;
-
   try {
+    const range = parseInt(req.query.range) || 7;
     const startDate = moment()
       .startOf('day')
       .subtract(range - 1, 'days')
@@ -102,8 +104,27 @@ const getUserChartData = async (req, res) => {
   }
 };
 
+// revenue report fetching
+const getRevenueChartData = async (req, res) => {
+  try {
+    const range = parseInt(req.query.range) || 7;
+
+    let data = await chartServices.fetchRevenueData({ range });
+    console.log(data);
+    return res.status(200).json({
+      success: true,
+      message: 'Revenue data fetched successfully.',
+      data,
+    });
+  } catch (error) {
+    console.error('Error Log: ', error);
+    return res.status(500).send('Server error');
+  }
+};
+
 //export controllers
 export default {
   getDashboard,
   getUserChartData,
+  getRevenueChartData,
 };

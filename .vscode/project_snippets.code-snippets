@@ -1,0 +1,44 @@
+{
+  "ExpressArrowFunctionComponent": {
+    "prefix": "eafc", // like rafce but for controllers
+    "body": [
+      "const ${1:functionName} = async (req, res) => {",
+      "  try {",
+      "    ${2:// your code here}",
+      "  } catch (error) {",
+      "    console.error(error);",
+      "    res.status(500).send('Server error');",
+      "  }",
+      "};",
+      "",
+    ],
+    "description": "React-style Express async controller",
+  },
+  "Service Object Export": {
+    "prefix": "serviceObj",
+    "body": [
+      "const ${1:${TM_FILENAME_BASE}} = {",
+      "  ${2:// your code here}",
+      "};",
+      "",
+      "export default ${1:${TM_FILENAME_BASE}};",
+    ],
+    "description": "Create and export a service object using the file name",
+  },
+
+  "serviceFunctionComponent": {
+    "prefix": "sfc",
+    "body": [
+      "${1:functionName}: async () => {",
+      "  try {",
+      "    ${3:// logic here}",
+      "    return ${4:data};",
+      "  } catch (error) {",
+      "    console.error(error);",
+      "    throw error;",
+      "  }",
+      "},",
+    ],
+    "description": "Async service function template",
+  },
+}

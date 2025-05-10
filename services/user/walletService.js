@@ -11,16 +11,21 @@ import orderService from './orderService.js';
 
 let walletService = {
   getWallet: async ({ userId }) => {
-    let wallet = await Wallet.findOne({ userId });
+    try {
+      let wallet = await Wallet.findOne({ userId });
 
-    // create a wallet if it doesn't exist
-    if (!wallet) {
-      wallet = await Wallet.create({
-        userId,
-      });
+      // create a wallet if it doesn't exist
+      if (!wallet) {
+        wallet = await Wallet.create({
+          userId,
+        });
+      }
+
+      return wallet;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-
-    return wallet;
   },
 
   // get all transaction if no transaction gives a empty []

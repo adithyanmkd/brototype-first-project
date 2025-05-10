@@ -12,19 +12,33 @@ import getUserMenus from '../../utils/getSidebarMenus.js';
 
 // get user details page
 const userDetails = (req, res) => {
-  const user = req.session.user;
+  try {
+    const user = req.session.user;
 
-  let menus = getUserMenus(user); // fetching user menus
+    let menus = getUserMenus(user); // fetching user menus
 
-  res.render('user/pages/profile/userDetails', { user, menus });
+    return res.render('user/pages/profile/userDetails', { user, menus });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: 'user details fetch failed.' });
+  }
 };
 
 // get edit profile page
 const getEditProfile = (req, res) => {
-  const user = req.session.user;
-  let menus = getUserMenus(user); // fetching user menus
+  try {
+    const user = req.session.user;
+    let menus = getUserMenus(user); // fetching user menus
 
-  res.render('user/pages/profile/editProfile', { user, menus });
+    return res.render('user/pages/profile/editProfile', { user, menus });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: 'user edit profile fetch error' });
+  }
 };
 
 // post edit profile page
@@ -224,7 +238,7 @@ const deleteWishlist = async (req, res) => {
   }
 };
 
-export const getReferralLink = async (req, res) => {
+const getReferralLink = async (req, res) => {
   const user = req.user;
 
   let menus = getUserMenus(user); // fetching user menus
@@ -253,7 +267,7 @@ export const getReferralLink = async (req, res) => {
   }
 };
 
-export const applyReferralCode = async (req, res) => {
+const applyReferralCode = async (req, res) => {
   let user = req.user;
   let menus = getUserMenus(user); // fetching user menus
 
@@ -278,6 +292,17 @@ export const applyReferralCode = async (req, res) => {
 
     // Generate the referral link
     const referralLink = `${req.protocol}://${req.get('host')}/register?referralCode=${user.referralCode}`;
+
+    if (user.referralCode === referralCode) {
+      return res.render('user/pages/profile/referral', {
+        layout: 'layouts/user-layout',
+        menus,
+        referralLink,
+        referralCode: user.referralCode,
+        successMessage: null,
+        errorMessage: 'Own referal code not applicable.',
+      });
+    }
 
     if (user.referredBy) {
       return res.render('user/pages/profile/referral', {

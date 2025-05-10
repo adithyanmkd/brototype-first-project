@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 
 function generateOrderId() {
   const timestamp = Date.now().toString().slice(-8); // Last 8 digits of timestamp

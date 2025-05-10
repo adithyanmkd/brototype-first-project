@@ -28,7 +28,7 @@ const postAddAddress = async (req, res) => {
       ...req.body,
     });
 
-    console.log('Body log: ', req.body);
+    // console.log('Body log: ', req.body);
 
     await newAddress.save();
   } catch (error) {
@@ -40,9 +40,18 @@ const postAddAddress = async (req, res) => {
 
 // edit address page
 const getAddressEdit = async (req, res) => {
-  let addressId = req.params.id;
-  let address = await Address.findById(addressId);
-  res.render('user/partials/organisms/editAddressModal.ejs', { address });
+  try {
+    let addressId = req.params.id;
+    let address = await Address.findById(addressId);
+    return res.render('user/partials/organisms/editAddressModal.ejs', {
+      address,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Address page fetch failed',
+    });
+  }
 };
 
 // edit address
