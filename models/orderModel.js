@@ -84,6 +84,8 @@ const orderSchema = new mongoose.Schema(
         return delivery;
       },
     },
+    retryAttempts: { type: Number, default: 0 },
+    razorpayOrderId: { type: String, default: null },
   },
   { timestamps: true }
 );

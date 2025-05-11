@@ -1,0 +1,68 @@
+<main class="bg-gray-100">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-4">
+      Retry Payment for Order #<%= order.orderId %>
+    </h1>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <p>
+        <strong>Total Amount:</strong> ₹<%= order.totalAmount -
+        (order.discountAmount || 0) %>
+      </p>
+      <p><strong>Payment Method:</strong> Razorpay</p>
+      <button
+        id="rzp-button"
+        class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-md shadow-md transition"
+      >
+        Pay Now
+      </button>
+    </div>
+  </div>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    var options = {
+      key: '<%= key_id %>',
+      amount: <%= (order.totalAmount - (order.discountAmount || 0)) * 100 %>,
+      currency: 'INR',
+      name: 'ComfyNest',
+      description: 'Retry Payment for Order #<%= order.orderId %>',
+      order_id: '<%= razorpayOrderId %>',
+      handler: function (response) {
+        // Send payment details to the server for verification
+        fetch('/payment/verify', { // Updated to use /payment/verify
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+            orderId: '<%= order._id %>',
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              window.location.href = data.redirect;
+            } else {
+              alert(data.message);
+              window.location.href = '/account/orders/<%= order._id %>';
+            }
+          });
+      },
+      prefill: {
+        name: '<%= order.deliveryAddress.name %>',
+        contact: '<%= order.deliveryAddress.phone %>',
+      },
+      theme: {
+        color: '#3B82F6',
+      },
+    };
+    var rzp = new Razorpay(options);
+    document.getElementById('rzp-button').onclick = function (e) {
+      rzp.open();
+      e.preventDefault();
+    };
+  </script>
+</main>

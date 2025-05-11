@@ -1,15 +1,14 @@
-// import configs
 import redisClient from '../../config/redisConfig.js';
 import razorpay from '../../config/razorpay.js';
 
-// import models
+// Import models
 import { Product, Order, Address } from '../../models/index.js';
 
-// import services
+// Import services
 import orderService from '../../services/user/orderService.js';
 import { walletService } from '../../services/user/walletService.js';
 
-// get payment page
+// Get payment page
 const getPayment = async (req, res) => {
   let user = req.session.user;
 
@@ -36,7 +35,7 @@ const getPayment = async (req, res) => {
 
   let userCart = JSON.parse(cart);
 
-  // calcalated prices
+  // Calculated prices
   let totalSellingPrice = 0;
   let totalOriginalPrice = 0;
 
@@ -55,7 +54,7 @@ const getPayment = async (req, res) => {
     })
   );
 
-  let totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0); // calculating total quantity
+  let totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0); // Calculating total quantity
 
   cartItems.forEach((item) => {
     totalSellingPrice += item._doc.price.sellingPrice * item.quantity;
@@ -71,6 +70,7 @@ const getPayment = async (req, res) => {
   });
 };
 
+// Post payment
 const postPayment = async (req, res) => {
   let user = req.session.user;
   let paymentMethod = req.body.method;
@@ -91,7 +91,7 @@ const postPayment = async (req, res) => {
           paymentMethod,
         });
 
-        let totalAmount = result.order.totalAmount; // total amout accessing from order
+        let totalAmount = result.order.totalAmount; // Total amount accessing from order
 
         const options = {
           amount: totalAmount * 100,
@@ -132,14 +132,39 @@ const postPayment = async (req, res) => {
           .json({ success: false, message: 'Invalid payment method' });
     }
   } catch (error) {
-    console.error({
-      Error: 'Error from post payment method controller',
-      error,
-    });
+    console.error(error);
   }
 };
 
-// get success page
+// Verify payment (for both initial and retry payments)
+const verifyPayment = async (req, res) => {
+  try {
+    const {
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+      orderId,
+    } = req.body;
+    const userId = req.session.user._id;
+
+    const result = await orderService.verifyPayment({
+      orderId,
+      userId,
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+    });
+
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ success: false, message: 'Payment verification failed' });
+  }
+};
+
+// Get success page
 const successPage = async (req, res) => {
   let user = req.session.user;
   let paymentMethod = req.query.payment_method;
@@ -157,34 +182,34 @@ const successPage = async (req, res) => {
   }
 };
 
-// order success page
+// Order success page
 const successView = (req, res) => {
   return res.render('user/pages/payment/success.ejs');
 };
 
-// order failed page
+// Order failed page
 const paymentFailed = async (req, res) => {
   let user = req.session.user;
   let paymentMethod = 'razorpay';
 
   try {
-    // creating new order
+    // Creating new order
     let result = await orderService.createOrder({
       userId: user._id,
       paymentMethod,
     });
 
-    // find the most recent order with pending status
+    // Find the most recent order with pending status
     let lastPendingOrder = await Order.findOne({
       userId: user._id,
       orderStatus: 'Pending',
     }).sort({ createdAt: -1 });
 
-    // change the payment status of the new order
+    // Change the payment status of the new order
     if (lastPendingOrder) {
       lastPendingOrder.orderStatus = 'Order Failed';
       lastPendingOrder.paymentStatus = 'failed';
-      lastPendingOrder.save();
+      await lastPendingOrder.save();
     }
 
     return res.render('common/error/paymentFailed.ejs');
@@ -193,10 +218,11 @@ const paymentFailed = async (req, res) => {
   }
 };
 
-// exporting all controllers
+// Exporting all controllers
 const paymentController = {
   getPayment,
   postPayment,
+  verifyPayment,
   successPage,
   successView,
   paymentFailed,

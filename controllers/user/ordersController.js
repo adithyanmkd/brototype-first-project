@@ -1,34 +1,34 @@
-// import libraries
+// Import libraries
 import pdf from 'html-pdf';
 import ejs from 'ejs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ObjectId } from 'mongodb';
 
-//fix __dirname && __filename for module
+// Fix __dirname && __filename for module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// import models
+// Import models
 import Order from '../../models/orderModel.js';
 
-// import utils
+// Import utils
 import getUserMenus from '../../utils/getSidebarMenus.js';
 import orderService from '../../services/user/orderService.js';
 
-// empty order page
+// Empty order page
 const emptyOrderPage = (req, res) => {
   let user = req.session.user;
 
-  let menus = getUserMenus(user); // fetching user menus
+  let menus = getUserMenus(user); // Fetching user menus
 
   res.render('common/empty/emptyOrder.ejs', { menus });
 };
 
-// get all orders
+// Get all orders
 const getAllOrders = async (req, res) => {
   let user = req.session.user;
-  let menus = getUserMenus(user); // fetching user menus
+  let menus = getUserMenus(user); // Fetching user menus
 
   let search = req.query.search || '';
   let category = req.query.category || '';
@@ -103,32 +103,39 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-// get single order details page
+// Get single order details page
 const getOrder = async (req, res) => {
-  let id = req.params.orderId; // accessing id from query params
+  let id = req.params.orderId; // Accessing id from query params
   try {
     let order = await Order.findById(id).populate(
       'userId',
       'email name profilePic number'
     );
 
-    // calculate total items
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+
+    // Calculate total items
     let totalItems = order.orderedItems.reduce(
       (acc, item) => acc + item.quantity,
       0
-    ); // calculating total quantity
+    ); // Calculating total quantity
+
+    const error = req.query.error || undefined; // Pass error query parameter for retry failures
 
     res.render('user/pages/order/orderDetails.ejs', {
       layout: 'layouts/user-layout.ejs',
       order,
       totalItems,
+      error, // Pass error to the template
     });
   } catch (error) {
     console.log({ Error: error });
     res.status(501).json({
       success: false,
       Error: error,
-      message: 'Error while a showing order details',
+      message: 'Error while showing order details',
     });
   }
 };
@@ -169,15 +176,12 @@ const placeOrder = async (req, res) => {
   }
 };
 
-// download invoice
+// Download invoice
 const downloadInvoice = async (req, res) => {
   let user = req.session.user;
   let orderId = req.params.orderId;
 
   let order = await Order.findById(orderId);
-
-  // console.log(order);
-  // res.render('user/pages/order/invoice.ejs', { layout: false, order });
 
   ejs.renderFile(
     path.join(__dirname, '../../views/user/pages/order/invoice.ejs'),
@@ -190,9 +194,7 @@ const downloadInvoice = async (req, res) => {
 
       pdf.create(html).toStream((err, stream) => {
         if (err) {
-          if (err) {
-            return res.status(500).send('Error generating PDF');
-          }
+          return res.status(500).send('Error generating PDF');
         }
 
         res.setHeader(
@@ -206,7 +208,7 @@ const downloadInvoice = async (req, res) => {
   );
 };
 
-// return order
+// Return order
 const returnOrder = async (req, res) => {
   let { orderId, response } = req.body;
 
@@ -215,7 +217,7 @@ const returnOrder = async (req, res) => {
 
     order.orderStatus = 'Return Requested';
     order.returnReason = response;
-    order.save();
+    await order.save();
 
     return res.status(200).json({
       success: true,
@@ -230,7 +232,7 @@ const returnOrder = async (req, res) => {
   }
 };
 
-// cancel order
+// Cancel order
 const cancelOrder = async (req, res) => {
   try {
     let user = req.session.user;
@@ -250,8 +252,35 @@ const cancelOrder = async (req, res) => {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: 'Somthing went wrong while cancelling order.',
+      message: 'Something went wrong while cancelling order.',
     });
+  }
+};
+
+// Retry payment
+const retryPayment = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const { orderId } = req.params;
+    // console.log('Order ID: ', orderId);
+
+    const result = await orderService.retryPayment({ orderId, userId });
+    if (!result.success) {
+      return res.redirect(
+        `/account/orders/${orderId}?error=${encodeURIComponent(result.message)}`
+      );
+    }
+
+    res.render('user/pages/order/retryPayment.ejs', {
+      order: result.order,
+      razorpayOrderId: result.razorpayOrderId,
+      key_id: process.env.RAZORPAY_KEY_ID,
+    });
+  } catch (error) {
+    console.error(error);
+    res.redirect(
+      `/account/orders/${req.params.orderId}?error=${encodeURIComponent('Error retrying payment')}`
+    );
   }
 };
 
@@ -263,6 +292,7 @@ const ordersController = {
   returnOrder,
   cancelOrder,
   emptyOrderPage,
+  retryPayment, // Add the new retryPayment method
 };
 
 export default ordersController;

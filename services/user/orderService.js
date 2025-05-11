@@ -1,9 +1,18 @@
 import redisClient from '../../config/redisConfig.js';
 import { Product, Order, Address } from '../../models/index.js';
 import { walletService } from './walletService.js';
+import Razorpay from 'razorpay';
+import crypto from 'crypto';
 
-// import utils
+// Import utils
 import { generateTransactionId } from '../../utils/generateTxnID.js';
+import verifyRazorpaySignature from '../../utils/verifyRazorpaySignature.js';
+
+// Initialize Razorpay instance
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 let orderService = {
   getCartSummery: async ({ userId }) => {
@@ -64,7 +73,12 @@ let orderService = {
       let { cardImagePaths, totalAmount, discount, orderedItems } =
         await orderService.getCartSummery({ userId });
 
-      console.log(orderedItems);
+      if (totalAmount > 1000 && paymentMethod === 'cash_on_delivery') {
+        let error = new Error(
+          'Cash on delivery not possible for amounts above 1000'
+        );
+        throw error;
+      }
 
       // accessing address for order
       let deliveryAddress = {
@@ -89,7 +103,7 @@ let orderService = {
         deliveryAddress,
       });
 
-      // descrease the quantity from the product
+      // decrease the quantity from the product
       for (let item of orderedItems) {
         let product = await Product.findById(item.productId);
         product.quantity -= item.quantity;
@@ -114,7 +128,7 @@ let orderService = {
       return {
         success: false,
         message: 'order creation failed!',
-        error,
+        error: error.message,
       };
     }
   },
@@ -169,6 +183,115 @@ let orderService = {
       return {
         success: false,
         message: 'Order cancellation failed.',
+      };
+    }
+  },
+
+  // Retry payment
+  retryPayment: async ({ orderId, userId }) => {
+    // console.log('Order ID: ', orderId);
+    try {
+      const order = await Order.findOne({ _id: orderId, userId });
+      if (!order) {
+        throw new Error('Order not found');
+      }
+
+      if (order.paymentStatus !== 'failed') {
+        throw new Error('Payment retry not applicable');
+      }
+
+      // Increment retry attempts
+      order.retryAttempts = (order.retryAttempts || 0) + 1;
+      if (order.retryAttempts > 3) {
+        throw new Error('Maximum retry attempts reached');
+      }
+
+      // Create a new Razorpay order for retry
+      const razorpayOrder = await razorpayInstance.orders.create({
+        amount: (order.totalAmount - (order.discountAmount || 0)) * 100, // Razorpay expects amount in paise
+        currency: 'INR',
+        receipt: `order_${order._id}_retry_${order.retryAttempts}`,
+      });
+
+      // Update order with the new Razorpay order ID
+      order.razorpayOrderId = razorpayOrder.id;
+      await order.save();
+
+      return {
+        success: true,
+        message: 'Retry payment initiated',
+        order,
+        razorpayOrderId: razorpayOrder.id,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: 'Retry payment failed',
+        error: error.message,
+      };
+    }
+  },
+
+  // Verify payment after retry
+  verifyPayment: async ({
+    orderId,
+    userId,
+    razorpay_payment_id,
+    razorpay_order_id,
+    razorpay_signature,
+  }) => {
+    try {
+      const order = await Order.findOne({
+        _id: orderId,
+        userId,
+        razorpayOrderId: razorpay_order_id,
+      });
+
+      let details = {
+        orderId,
+        userId,
+        razorpay_payment_id,
+        razorpay_order_id,
+        razorpay_signature,
+      };
+
+      console.log('Details Log: ', details);
+
+      if (!order) {
+        throw new Error('Order not found');
+      }
+
+      // Verify payment signature using the utility function
+      const isSignatureValid = verifyRazorpaySignature({
+        orderId: razorpay_order_id,
+        paymentId: razorpay_payment_id,
+        signature: razorpay_signature,
+      });
+
+      if (!isSignatureValid) {
+        order.paymentStatus = 'failed';
+        await order.save();
+        throw new Error('Payment verification failed');
+      }
+
+      // Update order status on successful payment
+      order.paymentStatus = 'paid';
+      order.orderStatus = 'Pending'; // Move order to Pending state after payment
+      order.retryAttempts = 0; // Reset retry attempts
+      await order.save();
+
+      return {
+        success: true,
+        message: 'Payment verified successfully',
+        redirect: `/account/orders/${order._id}`,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: 'Payment verification failed',
+        error: error.message,
       };
     }
   },
