@@ -194,7 +194,7 @@ const paymentFailed = async (req, res) => {
 
   try {
     // Creating new order
-    let result = await orderService.createOrder({
+    let order = await orderService.createOrder({
       userId: user._id,
       paymentMethod,
     });
@@ -212,7 +212,10 @@ const paymentFailed = async (req, res) => {
       await lastPendingOrder.save();
     }
 
-    return res.render('common/error/paymentFailed.ejs');
+    let orderId = lastPendingOrder._id;
+    return res.redirect(`/account/orders/${orderId}`);
+
+    // return res.render('common/error/paymentFailed.ejs');
   } catch (error) {
     console.error(error);
   }

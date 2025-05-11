@@ -16,50 +16,54 @@ const razorpayInstance = new Razorpay({
 
 let orderService = {
   getCartSummery: async ({ userId }) => {
-    // fetching raw data from redis for create order
-    let cartRaw = await redisClient.get(`cart:${userId}`);
-    let discountRaw = await redisClient.get(`couponDiscount:${userId}`);
+    try {
+      // fetching raw data from redis for create order
+      let cartRaw = await redisClient.get(`cart:${userId}`);
+      let discountRaw = await redisClient.get(`couponDiscount:${userId}`);
 
-    // parse raw data into object
-    let cart = JSON.parse(cartRaw);
+      // parse raw data into object
+      let cart = JSON.parse(cartRaw);
 
-    let discount =
-      JSON.parse(discountRaw).trim() !== '' ? JSON.parse(discountRaw) : 0;
+      let discount =
+        JSON.parse(discountRaw).trim() !== '' ? JSON.parse(discountRaw) : 0;
 
-    let cardImagePaths = [];
+      let cardImagePaths = [];
 
-    let orderedItems = await Promise.all(
-      cart.items.map(async (item) => {
-        let product = await Product.findById(item.productId);
+      let orderedItems = await Promise.all(
+        cart.items.map(async (item) => {
+          let product = await Product.findById(item.productId);
 
-        if (!product) {
-          throw new Error(`Product not found: ${item.productId}`);
-        }
+          if (!product) {
+            throw new Error(`Product not found: ${item.productId}`);
+          }
 
-        cardImagePaths.push(product.images.cardImage.path); // images pushing for order thumbnails
+          cardImagePaths.push(product.images.cardImage.path); // images pushing for order thumbnails
 
-        return {
-          productId: product._doc._id,
-          productName: product._doc.productName,
-          thumbnail: product._doc.images.cardImage.path,
-          quantity: item.quantity,
-          price: product._doc.price.sellingPrice,
-        };
-      })
-    );
+          return {
+            productId: product._doc._id,
+            productName: product._doc.productName,
+            thumbnail: product._doc.images.cardImage.path,
+            quantity: item.quantity,
+            price: product._doc.price.sellingPrice,
+          };
+        })
+      );
 
-    // calculating total price
-    let totalAmount = orderedItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+      // calculating total price
+      let totalAmount = orderedItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
 
-    return {
-      orderedItems,
-      totalAmount,
-      discount,
-      cardImagePaths,
-    };
+      return {
+        orderedItems,
+        totalAmount,
+        discount,
+        cardImagePaths,
+      };
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   // order creating
@@ -256,7 +260,7 @@ let orderService = {
         razorpay_signature,
       };
 
-      console.log('Details Log: ', details);
+      // console.log('Details Log: ', details);
 
       if (!order) {
         throw new Error('Order not found');
