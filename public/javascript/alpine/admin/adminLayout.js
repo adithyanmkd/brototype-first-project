@@ -1,15 +1,6 @@
 // adminAlpine.js
 document.addEventListener('alpine:init', () => {
   Alpine.data('adminLayout', () => ({
-    // formatDate(dateStr) {
-    //   if (!dateStr) return '';
-    //   const date = new Date(dateStr);
-    //   const year = date.getFullYear();
-    //   const month = String(date.getMonth() + 1).padStart(2, '0');
-    //   const day = String(date.getDate()).padStart(2, '0');
-    //   return `${day}-${month}-${year}`;
-    // },
-
     currentCoupon: [],
     couponAdd: { open: false },
     couponEdit: { open: false },
@@ -29,11 +20,6 @@ document.addEventListener('alpine:init', () => {
 
     // Method to open the edit modal
     openEditModal(coupon) {
-      // this.currentCoupon = {
-      //   ...coupon,
-      //   startDate: this.formatDate(coupon.startDate),
-      //   endDate: this.formatDate(coupon.endDate),
-      // };
       this.currentCoupon = coupon;
 
       this.couponEdit.open = true;

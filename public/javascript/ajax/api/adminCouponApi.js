@@ -10,10 +10,7 @@ async function sendCouponToServer(formData) {
     });
 
     let data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message || 'coupon adding failed');
-    }
+    console.log('api data log: ', data);
 
     return data;
   } catch (error) {
@@ -55,9 +52,17 @@ async function deleteCoupon(couponId) {
 
     let data = await res.json();
 
-    if (!res.ok) {
-      throw new Error(data.error || 'coupon deleting failed');
-    }
+    if (!res.ok) throw new Error('Failed to delete coupon');
+
+    await Swal.fire({
+      title: 'Deleted!',
+      text: 'The coupon has been deleted.',
+      icon: 'success',
+      timer: 1500,
+      showConfirmButton: false,
+    });
+
+    window.location.href = '/admin/coupons';
 
     return data;
   } catch (error) {

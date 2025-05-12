@@ -1,99 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard</title>
-    
-    <link rel="stylesheet" href="/style/output.css">
-     
-    <!-- alpine script started -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <!-- Cropper.js CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
-
-    <!-- flowbite cdn -->
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
-
-    <!-- font awesome cdn -->
+    <!-- Flowbite CSS (loaded first to allow Tailwind to override) -->
     <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css"
+      rel="stylesheet"
     />
 
-    <!-- clodinary for cropping -->
-    <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
-</head>
+    <!-- Tailwind CSS (loaded after Flowbite) -->
+    <link rel="stylesheet" href="/style/output.css" />
 
-<body
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- Alpine.js -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <!-- Other dependencies (Cropper.js, Cloudinary, etc.) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
+    />
+    <script
+      src="https://widget.cloudinary.com/v2.0/global/all.js"
+      type="text/javascript"
+    ></script>
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+
+  <body
     x-data="adminLayout"
-    :class="{'overflow-hidden': couponAdd.open}"
-    class="flex h-screen bg-gray-50">
-    <!-- Sidebar started -->
+    :class="{'overflow-hidden': couponAdd.open || couponEdit.open || confirmModal.open}"
+    class="flex min-h-screen bg-gray-50"
+  >
+    <!-- Sidebar -->
     <%- include("../admin/partials/organisms/sidebar.ejs", { adminSidebar }) %>
-    <!-- sidebar ended -->
 
-
-     <!-- modals -->
-      <div x-show="couponAdd.open" class="absolute w-full bg-black/75 h-screen overflow-hidden flex  z-10">
-          <%- include("../admin/partials/organisms/modals/couponCreateModal.ejs") %>
+    <!-- Modals -->
+    <div
+      x-show="couponAdd.open"
+      class="fixed inset-0 bg-black/80 flex items-start sm:items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto"
+    >
+      <div @click.stop class="w-full max-w-3xl">
+        <%- include("../admin/partials/organisms/modals/couponCreateModal.ejs") %>
       </div>
+    </div>
 
-      <div x-show="couponEdit.open" class="absolute w-full bg-black/75 h-screen overflow-hidden flex z-10">
+    <!-- Other modals (couponEdit, confirmModal) -->
+    <div
+      x-show="couponEdit.open"
+      class="fixed inset-0 bg-black/80 flex items-start sm:items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto"
+    >
+      <div @click.stop class="w-full max-w-3xl">
         <%- include("../admin/partials/organisms/modals/couponEditModal.ejs") %>
       </div>
+    </div>
 
-      <div x-show="confirmModal.open" @click="confirmModal.open = false" class="absolute w-full bg-black/75 h-screen overflow-hidden flex z-10">
-          <span><%- include("../common/modal/confirmModal.ejs") %></span>
+    <div
+      x-show="confirmModal.open"
+      @click="confirmModal.open = false"
+      class="fixed inset-0 bg-black/80 flex items-start sm:items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto"
+    >
+      <div @click.stop class="w-full max-w-md">
+        <%- include("../common/modal/confirmModal.ejs") %>
       </div>
+    </div>
 
-
-        <!-- modals ended -->
-        <!-- Main Content -->
-        <div class="flex flex-1 flex-col">
-            <!-- Navbar -->
-            <header class="flex items-center justify-between bg-white px-6 py-4 shadow">
-                <h1 class="text-xl font-semibold">Admin Dashboard</h1>
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-700">Welcome, Admin</span>
-                    <a class="rounded-lg bg-red-500 px-4 py-2 text-white" 
-                       id="admin-logout"
-                       href="/admin/auth/login">
-                        Logout
-                    </a>
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <main class="flex w-full h-full flex-col  overflow-auto py-4">
-                <div id="content-area" class="p-4 w-full h-full">
-                    <%- body %>
-                </div>
-            </main>
+    <!-- Main Content -->
+    <div class="flex flex-1 flex-col">
+      <header
+        class="flex items-center justify-between bg-white px-4 sm:px-6 py-3 sm:py-4 shadow"
+      >
+        <h1 class="text-lg sm:text-xl font-semibold">Admin Dashboard</h1>
+        <div class="flex items-center space-x-3 sm:space-x-4">
+          <span class="text-gray-700 text-sm sm:text-base">Welcome, Admin</span>
+          <a
+            class="rounded-lg bg-red-500 px-3 sm:px-4 py-2 text-white text-sm sm:text-base"
+            id="admin-logout"
+            href="/admin/auth/login"
+          >
+            Logout
+          </a>
         </div>
+      </header>
+      <main class="flex w-full flex-1 flex-col overflow-auto py-3 sm:py-4">
+        <div id="content-area" class="p-3 sm:p-4 w-full">
+          <%- body %>
+        </div>
+      </main>
+    </div>
 
-        <!-- alpine script -->
-        <script src="/javascript/alpine/admin/adminLayout.js"></script>
-        
-
-        <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-
-        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-        <!-- flowbite date picker -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/datepicker.min.js"></script>
-        
-        <!-- flowbite chart cdn -->
-        <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
-
-         <!-- flowbite chart cdn ended -->
-        <script type="module" src="/javascript/layout/adminLayout.js"></script>
-</body>
-
+    <!-- Scripts -->
+    <script src="/javascript/alpine/admin/adminLayout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
+    <script type="module" src="/javascript/layout/adminLayout.js"></script>
+  </body>
 </html>

@@ -55,8 +55,7 @@ const processAddCoupon = async (data) => {
   }
 
   if (errors.length > 0) {
-    alert(errors.join('\n'));
-    return false;
+    return { success: false, message: errors.join('\n') };
   }
 
   console.log('Coupon data is valid:', data);
@@ -64,14 +63,17 @@ const processAddCoupon = async (data) => {
     let response = await sendCouponToServer(data);
 
     if (!response.success) {
-      alert(response.message || 'Coupon adding failed');
-      return;
+      console.log('response msg', response);
+      return {
+        success: false,
+        message: response.message || 'Coupon adding failed',
+      };
     }
 
-    window.location.href = '/admin/coupons';
+    return { success: true, redirect: '/admin/coupons' };
   } catch (error) {
     console.error('Coupon submission error:', error);
-    alert('An unexpected error occurred.');
+    return { success: false, message: 'An unexpected error occurred.' };
   }
 };
 
@@ -91,10 +93,10 @@ const processEditCoupon = async (data) => {
 
   const errors = [];
 
-  // // Validate ID (ensuring it is a string and is present)
-  // if (!couponId || typeof couponId !== 'string') {
-  //   errors.push('Coupon ID is required.');
-  // }
+  // Validate ID (ensuring it is a string and is present)
+  if (!couponId || typeof couponId !== 'string') {
+    errors.push('Coupon ID is required.');
+  }
 
   // Validate coupon code
   if (!code || typeof code !== 'string' || code.trim() === '') {
@@ -136,30 +138,29 @@ const processEditCoupon = async (data) => {
     errors.push('Start date cannot be in the past.');
   }
 
-  // If there are errors, alert and stop the function
   if (errors.length > 0) {
-    alert(errors.join('\n'));
-    return false;
+    return { success: false, message: errors.join('\n') };
   }
 
-  // Log the valid data (for debugging purposes)
   console.log('Coupon data is valid:', data);
 
   try {
-    // Call the API to update the coupon on the server
     const response = await sendEditCouponToServer(data);
 
-    // Handle the response from the server
     if (!response.success) {
-      alert(response.message || 'Coupon editing failed');
-      return;
+      return {
+        success: false,
+        message: response.message || 'Coupon editing failed',
+      };
     }
 
-    // Redirect to the coupon listing page after successful update
-    window.location.href = '/admin/coupons';
+    return { success: true, redirect: '/admin/coupons' };
   } catch (error) {
     console.error('Coupon update error:', error);
-    alert('An unexpected error occurred while updating the coupon.');
+    return {
+      success: false,
+      message: 'An unexpected error occurred while updating the coupon.',
+    };
   }
 };
 
@@ -168,17 +169,20 @@ const processdeleteCoupon = async (couponId) => {
   try {
     const response = await deleteCoupon(couponId);
 
-    // handle the response
     if (!response.success) {
-      alert(response.message || 'coupon delete failed');
-      return;
+      return {
+        success: false,
+        message: response.message || 'Coupon delete failed',
+      };
     }
 
-    // redirect if success
-    window.location.href = response.redirect;
-  } catch {
-    console.error('Coupon update error:', error);
-    alert('An unexpected error occurred while deleting the coupon.');
+    return { success: true, redirect: response.redirect || '/admin/coupons' };
+  } catch (error) {
+    console.error('Coupon deletion error:', error);
+    return {
+      success: false,
+      message: 'An unexpected error occurred while deleting the coupon.',
+    };
   }
 };
 

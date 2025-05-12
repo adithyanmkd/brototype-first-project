@@ -7,101 +7,243 @@ import {
 document.addEventListener('DOMContentLoaded', loadScript);
 
 function loadScript() {
-  let couponAddForm = document.querySelector('#couponAddForm');
-  let couponEditForm = document.querySelector('#couponEditForm');
-  let delBtns = document.querySelectorAll('.coupon-del-btn');
+  const couponAddForm = document.querySelector('#couponAddForm');
+  const couponEditForm = document.querySelector('#couponEditForm');
+  const delBtns = document.querySelectorAll('.coupon-del-btn');
 
-  if (!couponAddForm) return;
+  // Coupon creation form
+  if (couponAddForm) {
+    couponAddForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent default form submission
 
-  // coupon creating
-  couponAddForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+      try {
+        // Access form values
+        const code = couponAddForm.querySelector('#code')?.value.trim();
+        const discountType =
+          couponAddForm.querySelector('#discountType')?.value;
+        const discountValue = parseFloat(
+          couponAddForm.querySelector('#discountValue')?.value
+        );
+        const minOrderAmount = parseFloat(
+          couponAddForm.querySelector('#minOrderAmount')?.value
+        );
+        const maxDiscountAmount = parseFloat(
+          couponAddForm.querySelector('#maxDiscountAmount')?.value || 0
+        );
+        const startDate = couponAddForm.querySelector('#startDate')?.value;
+        const endDate = couponAddForm.querySelector('#endDate')?.value;
+        const isActive = couponAddForm.querySelector('#isActive')?.checked;
 
-    // accessing form values
-    const code = couponAddForm.querySelector('#code').value.trim();
-    const discountType = couponAddForm.querySelector('#discountType').value;
-    const discountValue = parseFloat(
-      couponAddForm.querySelector('#discountValue').value
-    );
-    const minOrderAmount = parseFloat(
-      couponAddForm.querySelector('#minOrderAmount').value
-    );
-    const maxDiscountAmount = parseFloat(
-      couponAddForm.querySelector('#maxDiscountAmount').value
-    );
-    const startDate = couponAddForm.querySelector(
-      '#datepicker-range-start'
-    ).value;
-    const endDate = couponAddForm.querySelector('#datepicker-range-end').value;
-    const isActive = couponAddForm.querySelector('#isActive').checked;
+        // Validate required fields
+        if (
+          !code ||
+          !discountType ||
+          !discountValue ||
+          !startDate ||
+          !endDate
+        ) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'Please fill in all required fields.',
+          });
+          return;
+        }
 
-    const couponData = {
-      code,
-      discountType,
-      discountValue,
-      minOrderAmount,
-      maxDiscountAmount,
-      startDate,
-      endDate,
-      isActive,
-    };
+        // Validate date range
+        if (new Date(endDate) < new Date(startDate)) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid Date Range',
+            text: 'End date must be after start date.',
+          });
+          return;
+        }
 
-    // form values pass into handler
-    await processAddCoupon(couponData);
-  });
+        const couponData = {
+          code,
+          discountType,
+          discountValue,
+          minOrderAmount,
+          maxDiscountAmount: maxDiscountAmount || null,
+          startDate,
+          endDate,
+          isActive,
+        };
 
-  // edit form
+        // Add loading state
+        const submitBtn = couponAddForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<i class="fas fa-spinner fa-spin mr-3"></i> Creating...';
+
+        // Process coupon creation
+        const response = await processAddCoupon(couponData);
+
+        // Check response for success
+        if (response && response.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Coupon Created',
+            text: 'The coupon has been successfully created!',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+
+          setTimeout(() => {
+            window.location.href = '/admin/coupons';
+          }, 1600);
+        } else {
+          throw new Error(response?.message || 'Failed to create coupon');
+        }
+      } catch (error) {
+        // Log detailed error information
+        console.error('Error creating coupon:', {
+          message: error.message,
+          stack: error.stack,
+          response: error.response || 'No response data',
+        });
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error Creating Coupon',
+          text:
+            error.message || 'An unexpected error occurred. Please try again.',
+        });
+      } finally {
+        // Reset button state
+        const submitBtn = couponAddForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML =
+          '<i class="fas fa-save mr-3 text-lg"></i> Create Coupon';
+      }
+    });
+  }
+
+  // Coupon edit form
   if (couponEditForm) {
     couponEditForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const couponId = couponEditForm.querySelector('#couponId').value;
-      const code = couponEditForm.querySelector('#code').value.trim();
+      try {
+        const couponId = couponEditForm.querySelector('#couponId')?.value;
 
-      const discountType = couponEditForm.querySelector('#discountType').value;
+        const code = couponEditForm.querySelector('#code')?.value.trim();
+        const discountType =
+          couponEditForm.querySelector('#discountType')?.value;
+        const discountValue = parseFloat(
+          couponEditForm.querySelector('#discountValue')?.value
+        );
+        console.log(discountValue, 'field log');
+        const minOrderAmount = parseFloat(
+          couponEditForm.querySelector('#minOrderAmount')?.value
+        );
+        const maxDiscountAmount = parseFloat(
+          couponEditForm.querySelector('#maxDiscountAmount')?.value || 0
+        );
+        const startDate = couponEditForm.querySelector('#startDate')?.value;
+        const endDate = couponEditForm.querySelector('#endDate')?.value;
+        const isActive = couponEditForm.querySelector('#isActive')?.checked;
 
-      const discountValue = parseFloat(
-        couponEditForm.querySelector('#discountValue').value
-      );
+        if (
+          !couponId ||
+          !code ||
+          !discountType ||
+          !discountValue ||
+          !startDate ||
+          !endDate
+        ) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'Please fill in all required fields.',
+          });
+          return;
+        }
 
-      const minOrderAmount = parseFloat(
-        couponEditForm.querySelector('#minOrderAmount').value
-      );
+        if (new Date(endDate) < new Date(startDate)) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid Date Range',
+            text: 'End date must be after start date.',
+          });
+          return;
+        }
 
-      const maxDiscountAmount = parseFloat(
-        couponEditForm.querySelector('#maxDiscountAmount').value
-      );
+        const couponData = {
+          couponId,
+          code,
+          discountType,
+          discountValue,
+          minOrderAmount,
+          maxDiscountAmount: maxDiscountAmount || null,
+          startDate,
+          endDate,
+          isActive,
+        };
 
-      const startDate = couponEditForm.querySelector('#startDate').value;
+        const submitBtn = couponEditForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<i class="fas fa-spinner fa-spin mr-3"></i> Updating...';
 
-      const endDate = couponEditForm.querySelector('#endDate').value;
+        const response = await processEditCoupon(couponData);
 
-      const isActive = couponEditForm.querySelector('#isActive').checked;
+        if (response && response.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Coupon Updated',
+            text: 'The coupon has been successfully updated!',
+            showConfirmButton: false,
+            timer: 1500,
+          });
 
-      const couponData = {
-        couponId,
-        code,
-        discountType,
-        discountValue,
-        minOrderAmount,
-        maxDiscountAmount,
-        startDate,
-        endDate,
-        isActive,
-      };
+          setTimeout(() => {
+            window.location.href = '/admin/coupons';
+          }, 1700);
 
-      await processEditCoupon(couponData);
+          // if (window.Alpine) {
+          //   Alpine.store('adminLayout').couponEdit.open = false;
+          // }
+        } else {
+          throw new Error(response?.message || 'Failed to update coupon');
+        }
+      } catch (error) {
+        console.error('Error updating coupon:', {
+          message: error.message,
+          stack: error.stack,
+          response: error.response || 'No response data',
+        });
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error Updating Coupon',
+          text:
+            error.message || 'An unexpected error occurred. Please try again.',
+        });
+      } finally {
+        const submitBtn = couponEditForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save mr-3"></i> Update Coupon';
+      }
     });
   }
 
-  // coupon deleting
-  delBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      let confirm = document.querySelector('#confirm');
-
-      confirm.addEventListener('click', async () => {
-        await processdeleteCoupon(btn.dataset.couponId);
+  // Coupon deletion
+  delBtns.forEach(async (btn) => {
+    btn.addEventListener('click', async () => {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: `You won't be able to revert this!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
       });
+      if (result.isConfirmed) {
+        await processdeleteCoupon(btn.dataset.couponId);
+      }
     });
   });
 }

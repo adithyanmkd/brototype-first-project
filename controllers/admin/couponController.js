@@ -45,6 +45,7 @@ const addCoupon = async (req, res) => {
     const existingCoupon = await Coupon.findOne({ code: code.toUpperCase() });
 
     if (existingCoupon) {
+      console.error('Coupon code already exists');
       return res
         .status(400)
         .json({ success: false, message: 'Coupon code already exists' });

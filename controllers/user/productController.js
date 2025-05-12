@@ -47,13 +47,15 @@ const products = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    let categories = await Category.find({ isListed: false });
+    let categories = await Category.find({ isDeleted: false });
 
     if (user) {
       const wishlist = await Wishlist.findOne({ userId: user._id }).lean();
 
       wishlistIds = wishlist ? wishlist.items.map((item) => item.product) : [];
     }
+
+    // console.log('Categories log: ', categories);
 
     res.render('user/pages/products/products', {
       products,

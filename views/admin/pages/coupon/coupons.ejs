@@ -214,12 +214,6 @@
                 <td
                   class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
                 >
-                  <!-- <a
-                    href="#"
-                    class="text-indigo-600 hover:text-indigo-900 mr-3"
-                  >
-                    <i class="far fa-eye"></i>
-                  </a> -->
                   <a
                     href="#"
                     @click="openEditModal(coupon)"
@@ -228,11 +222,7 @@
                     <i class="far fa-edit"></i>
                   </a>
                   <a
-                    @click="confirmModal.open = true"
                     :data-coupon-id="coupon._id"
-                    data-modal-target="popup-modal"
-                    data-modal-toggle="popup-modal"
-                    href="#"
                     class="text-red-600 coupon-del-btn hover:text-red-900"
                   >
                     <i class="far fa-trash-alt"></i>
