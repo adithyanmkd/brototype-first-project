@@ -1,10 +1,15 @@
-<ul class="flex space-x-8 text-gray-700">
-  <% navLinks.forEach((link)=> { %>
+<ul class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-6 text-gray-700 px-4 md:px-0">
+  <% navLinks.forEach((link) => { %>
     <li class="relative">
-      <a href="<%- link.url %>" class="font-medium"><%- link.name %></a>
+      <a
+        href="<%- link.url %>"
+        class="font-medium hover:text-indigo-600 transition-colors duration-200 <%- link.active ? 'text-indigo-600' : '' %>"
+      >
+        <%- link.name %>
+      </a>
       <% if (link.active) { %>
-        <div class="absolute left-0 w-full h-[2px] bg-black"></div>
-        <% } %>
+        <div class="absolute left-0 w-full h-[2px] bg-indigo-600 md:h-[3px]"></div>
+      <% } %>
     </li>
-    <% }) %>
+  <% }) %>
 </ul>

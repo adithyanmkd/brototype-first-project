@@ -8,6 +8,7 @@ import profileRoutes from './profileRoutes.js';
 import cartRoutes from './cartRoutes.js';
 import checkoutRoutes from './checkoutRoutes.js';
 import paymentRoutes from './paymentRoutes.js';
+import aboutRoutes from './aboutRoutes.js';
 
 // import middlewares
 import navLinks from '../../middlewares/user/navLinks.js';
@@ -20,6 +21,7 @@ router.use(navLinks); // middleware using
 router.use('/', homeRoutes); // home page routes
 router.use('/auth', authRoutes); // authentication routes
 router.use('/products', productRoutes); // product routes
+router.use('/about', aboutRoutes); // about routes
 
 router.use(auth); // apply auth middleware to all routes below
 
