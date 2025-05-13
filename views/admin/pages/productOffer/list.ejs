@@ -27,11 +27,17 @@
               <td class="px-6 py-4 text-sm text-gray-800"><%= offer.discountPercentage %></td>
               <td class="px-6 py-4 text-sm text-gray-800"><%= new Date(offer.startDate).toLocaleDateString() %></td>
               <td class="px-6 py-4 text-sm text-gray-800"><%= new Date(offer.endDate).toLocaleDateString() %></td>
-              <td class="px-6 py-4 text-center">
+              <td class="px-6 py-4 text-center space-x-4">
                 <a href="/admin/offers/product/edit/<%= offer._id %>" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
                   Edit
                 </a>
-                <form action="/admin/offers/product/delete/<%= offer._id %>" method="POST" class="inline-block">
+                <form
+                  action="/admin/offers/product/delete/<%= offer._id %>"
+                  method="POST"
+                  class="inline-block delete-offer-form"
+                  data-offer-id="<%= offer._id %>"
+                  onsubmit="return confirmDelete(event)"
+                >
                   <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">
                     Delete
                   </button>
@@ -48,3 +54,5 @@
     </table>
   </div>
 </div>
+
+<script src="/javascript/ajax/pages/productOffer/productOffersList.js"></script>

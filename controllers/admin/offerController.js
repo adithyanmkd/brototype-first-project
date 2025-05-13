@@ -17,7 +17,10 @@ import Category from '../../models/categoryModel.js';
 export const createProductOffer = async (req, res) => {
   try {
     await createProductOfferService(req.body);
-    res.redirect('/admin/offers/product');
+    return res.status(200).json({
+      success: true,
+      message: 'Prodout offer successfully created.',
+    });
   } catch (error) {
     console.error('Error creating product offer:', error);
     res.status(400).send('Invalid Data');
@@ -41,12 +44,19 @@ export const getAllProductOffers = async (req, res) => {
 // Update a product offer
 export const updateProductOffer = async (req, res) => {
   try {
+    // console.log('Content-Type:', req.headers['content-type']);
+    // console.log('req.body:', req.body);
     const { id } = req.params;
     const updatedProductOffer = await updateProductOfferService(id, req.body);
     if (!updatedProductOffer) {
       return res.status(404).send('Product offer not found');
     }
-    res.redirect('/admin/offers/product'); // Redirect to the product offer list page
+
+    // console.log(req.body);
+    return res.status(200).json({
+      success: true,
+      message: 'Prodout offer successfully updated.',
+    });
   } catch (error) {
     console.error('Error updating product offer:', error);
     res.status(400).send('Invalid Data');
@@ -61,7 +71,11 @@ export const deleteProductOffer = async (req, res) => {
     if (!deletedProductOffer) {
       return res.status(404).send('Product offer not found');
     }
-    res.redirect('/admin/offers/product'); // Redirect to the product offer list page
+
+    return res.status(200).json({
+      success: true,
+      message: 'Product offer successfully deleted.',
+    });
   } catch (error) {
     console.error('Error deleting product offer:', error);
     res.status(500).send('Server Error');

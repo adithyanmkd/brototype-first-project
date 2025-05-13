@@ -96,7 +96,7 @@ let orderService = {
       };
 
       // new order creating
-      let newOrder = await Order.create({
+      let newOrder = new Order({
         userId,
         orderedItems,
         orderThumbnail: cardImagePaths[0], // now displaying 1st card image thumnail or oder list page
@@ -106,6 +106,14 @@ let orderService = {
         paymentMethod,
         deliveryAddress,
       });
+
+      // switch (paymentMethod) {
+      //   case 'razaropay':
+      //   case 'wallet':
+      //     newOrder.paymentStatus = 'paid';
+      // }
+
+      // newOrder.save(); // order saving
 
       // decrease the quantity from the product
       for (let item of orderedItems) {
@@ -246,6 +254,7 @@ let orderService = {
     razorpay_signature,
   }) => {
     try {
+      console.log('verify payment service');
       const order = await Order.findOne({
         _id: orderId,
         userId,
@@ -284,6 +293,8 @@ let orderService = {
       order.orderStatus = 'Pending'; // Move order to Pending state after payment
       order.retryAttempts = 0; // Reset retry attempts
       await order.save();
+
+      // console.log(order, 'order log');
 
       return {
         success: true,

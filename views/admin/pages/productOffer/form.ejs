@@ -3,9 +3,12 @@
     <%= offer ? 'Edit Product Offer' : 'Create Product Offer' %>
   </h2>
   <form
+    id="productOfferForm"
     action="<%= offer ? `/admin/offers/product/edit/${offer._id}` : '/admin/offers/product' %>"
     method="POST"
     class="space-y-4"
+    onsubmit="return validateForm(event)"
+    data-mode="<%= offer ? 'edit' : 'create' %>"
   >
     <!-- Product Selection -->
     <div>
@@ -49,7 +52,7 @@
         value="<%= offer ? offer.discountPercentage : '' %>"
         placeholder="Enter Discount Percentage"
         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        required
+        step="0.01"
       />
     </div>
 
@@ -86,6 +89,13 @@
     <!-- Submit Button -->
     <div class="text-right">
       <button
+        type="button"
+        onclick="goBack()"
+        class="px-6 py-2 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+      >
+        Back
+      </button>
+      <button
         type="submit"
         class="px-6 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
@@ -94,3 +104,5 @@
     </div>
   </form>
 </div>
+
+<script src="/javascript/ajax/pages/adminProductOffer.js"></script>

@@ -35,8 +35,8 @@ const processAddCoupon = async (data) => {
 
   if (isNaN(discountValue) || discountValue <= 0) {
     errors.push('Discount value must be a positive number.');
-  } else if (discountType === 'percentage' && discountValue > 100) {
-    errors.push('Percentage discount value cannot exceed 100%.');
+  } else if (discountType === 'percentage' && discountValue > 40) {
+    errors.push('Percentage discount value cannot exceed 40%.');
   }
 
   if (isNaN(minOrderAmount) || minOrderAmount < 0) {
@@ -58,7 +58,7 @@ const processAddCoupon = async (data) => {
     return { success: false, message: errors.join('\n') };
   }
 
-  console.log('Coupon data is valid:', data);
+  // console.log('Coupon data is valid:', data);
   try {
     let response = await sendCouponToServer(data);
 
@@ -116,8 +116,8 @@ const processEditCoupon = async (data) => {
   // Validate discount value
   if (isNaN(discountValue) || discountValue <= 0) {
     errors.push('Discount value must be a positive number.');
-  } else if (discountType === 'percentage' && discountValue > 100) {
-    errors.push('Percentage discount value cannot exceed 100%.');
+  } else if (discountType === 'percentage' && discountValue > 40) {
+    errors.push('Percentage discount value cannot exceed 40%.');
   }
 
   // Validate minimum order amount

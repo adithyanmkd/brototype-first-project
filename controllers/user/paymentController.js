@@ -138,6 +138,7 @@ const postPayment = async (req, res) => {
 
 // Verify payment (for both initial and retry payments)
 const verifyPayment = async (req, res) => {
+  console.log('code from verify payment');
   try {
     const {
       razorpay_payment_id,
@@ -174,6 +175,15 @@ const successPage = async (req, res) => {
     case 'wallet':
       return res.render('user/pages/payment/success.ejs');
     case 'razorpay':
+      // Find the most recent order with pending status
+      let lastOrder = await Order.findOne({
+        userId: user._id,
+        orderStatus: 'Pending',
+      }).sort({ createdAt: -1 });
+
+      lastOrder.paymentStatus = 'paid';
+      lastOrder.save();
+
       return res.status(200).json({
         success: true,
         message: 'success page',

@@ -201,10 +201,6 @@ function loadScript() {
           setTimeout(() => {
             window.location.href = '/admin/coupons';
           }, 1700);
-
-          // if (window.Alpine) {
-          //   Alpine.store('adminLayout').couponEdit.open = false;
-          // }
         } else {
           throw new Error(response?.message || 'Failed to update coupon');
         }

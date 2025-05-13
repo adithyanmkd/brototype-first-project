@@ -22,6 +22,19 @@ document.addEventListener('alpine:init', () => {
     openEditModal(coupon) {
       this.currentCoupon = coupon;
 
+      // Format startDate and endDate to YYYY-MM-DD for <input type="date">
+      if (this.currentCoupon.startDate) {
+        this.currentCoupon.startDate = new Date(this.currentCoupon.startDate)
+          .toISOString()
+          .split('T')[0];
+      }
+      if (this.currentCoupon.endDate) {
+        this.currentCoupon.endDate = new Date(this.currentCoupon.endDate)
+          .toISOString()
+          .split('T')[0];
+      }
+
+      console.log(this.currentCoupon, 'current coupon');
       this.couponEdit.open = true;
     },
 

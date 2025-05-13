@@ -64,6 +64,39 @@ async function initiateRazorpayPayment(response) {
         window.location.href = data.redirect;
       }
     },
+    // handler: async function (response) {
+    //   try {
+    //     await fetch('/payment/verify', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({
+    //         razorpay_payment_id: response.razorpay_payment_id,
+    //         razorpay_order_id: response.razorpay_order_id,
+    //         razorpay_signature: response.razorpay_signature,
+    //         amount: data.amount,
+    //       }),
+    //     })
+    //       .then(async (res) => {
+    //         let result = await res.json();
+
+    //         if (!result.success) {
+    //           console.error(result.message);
+    //           return;
+    //         }
+
+    //         window.location.href = result.redirect;
+    //       })
+    //       .catch((err) => {
+    //         alert(err);
+    //         console.error(err);
+    //       });
+    //   } catch (error) {
+    //     console.log(error);
+    //     window.location.href = '/payment/payment-failed';
+    //   }
+    // },
     prefill: {
       name: response.user.name,
       email: response.user.email,

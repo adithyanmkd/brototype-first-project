@@ -45,8 +45,7 @@ let getCheckout = async (req, res) => {
 
   res.render('user/pages/checkout/checkout.ejs', {
     totalItems,
-    totalSellingPrice:
-      totalSellingPrice - Number(JSON.parse(couponDiscount)) || 0,
+    totalSellingPrice,
     totalOriginalPrice,
     addresses,
     couponDiscount,
