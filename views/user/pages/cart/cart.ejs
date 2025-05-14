@@ -71,9 +71,49 @@ x-data="{
         },
       <% }); %>
     ],
-    updateQuantity(index, delta) {
+    async updateQuantity(index, delta) {
       const newQty = this.items[index].quantity + delta;
-      if (newQty >= 1 && newQty <= 3) {
+
+      let productId = this.items[index].id
+
+      try{
+        const res = await window.userProductApi.fetchProduct({ productId });
+
+        if (!res.success) {
+            console.error(data);
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong',
+            });
+            return;
+          }
+
+          let product = res.product;
+
+          console.log(product.quantity);
+
+          if (newQty > product.quantity) {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Quantity Unavailable',
+              text: `Sorry, the requested quantity is not available. Only ${product.quantity} units are in stock. Please adjust your quantity`,
+            });
+            return;
+          }
+      }catch(error){
+        console.error(error)
+      }
+
+      if (newQty >= 1) {
+         if (newQty > 3) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Max quantity reached!!',
+            });
+            return;
+          }
         this.items[index].quantity = newQty;
       }
     },
@@ -295,4 +335,5 @@ x-data="{
 </form>
 </div>
 
-<script src="/javascript/ajax/cart/cart.js"></script>
+<script type="module" src="/javascript/ajax/cart/cart.js"></script>
+<script type="module" src="/javascript/ajax/api/userProductApi.js"></script>

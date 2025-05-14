@@ -47,6 +47,7 @@ const userProductApi = {
   },
 };
 
-// async function addToWishlistApi(productId) {}
+// Attach to window for Alpine.js
+window.userProductApi = userProductApi;
 
 export default userProductApi;
