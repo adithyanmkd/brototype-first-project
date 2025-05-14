@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const startDate = document.getElementById('start-date').value;
     const endDate = document.getElementById('end-date').value;
 
+    console.log(startDate, endDate);
+
     if (startDate && endDate) {
       let result = fetchSalesReport('custom', startDate, endDate);
     }
