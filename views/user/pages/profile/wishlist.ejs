@@ -1,10 +1,15 @@
+<!-- Define the wishlist items in a script tag -->
+<script>
+  window.wishlistItems = JSON.parse(
+    `<%- JSON.stringify(wishlist?.items || []) %>`
+  );
+</script>
+
 <div class="flex">
   <%- include("../../partials/organisms/profileSidebar.ejs") %>
 
   <div class="w-[70%] mx-auto p-4">
-    <div
-      x-data="{ wishlistItems: JSON.parse('<%= JSON.stringify(wishlist?.items) %>')}"
-    >
+    <div x-data="{ wishlistItems: window.wishlistItems }">
       <template x-for="item in wishlistItems" :key="item.productId">
         <!-- Wishlist Item -->
         <a :href="`/products/${item.productId}`">
