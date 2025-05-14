@@ -47,6 +47,8 @@ const postEditProfile = async (req, res) => {
     const { id } = req.params;
     const { name, email, number, gender } = req.body;
 
+    console.log('Body log', req.body);
+
     const user = await User.find({ email });
 
     if (user.email) {

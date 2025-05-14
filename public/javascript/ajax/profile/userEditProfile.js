@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const pathname = window.location.pathname;
 
-  if (pathname.includes('/account/my-details')) myDetails();
-
   let errorTimeout; // Store timeout reference
 
   // show error message
@@ -43,11 +41,61 @@ document.addEventListener('DOMContentLoaded', () => {
     errorBox.classList.add('hidden');
   }
 
-  function myDetails() {
-    const editForm = document.querySelector('#profile-edit-form');
+  const editForm = document.querySelector('#profile-edit-form');
 
-    editForm.addEventListener('submit', (e) => {
-      console.log('profile form triggered');
+  editForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Get form values
+    const name = editForm.querySelector('input[name="name"]').value.trim();
+    const gender = editForm.querySelector('select[name="gender"]').value;
+    const number = editForm.querySelector('input[name="number"]').value.trim();
+
+    // Validation
+    let errors = [];
+
+    // Validate Full Name
+    if (!name) {
+      errors.push('Full Name is required.');
+    } else if (name.length < 2) {
+      errors.push('Full Name must be at least 2 characters long.');
+    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+      errors.push('Full Name must contain only letters and spaces.');
+    }
+
+    // Validate Gender
+    if (!gender) {
+      errors.push('Please select a gender.');
+    }
+
+    // Validate Phone Number
+    const phoneRegex = /^[0-9]{10}$/; // Assuming a 10-digit phone number
+    if (!number) {
+      errors.push('Phone Number is required.');
+    } else if (!phoneRegex.test(number)) {
+      errors.push('Phone Number must be a valid 10-digit number.');
+    }
+
+    // If there are validation errors, show them
+    if (errors.length > 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        html: errors.join('<br>'),
+        confirmButtonColor: '#d33',
+      });
+      return;
+    }
+
+    // Show success message
+    Swal.fire({
+      icon: 'success',
+      title: 'Profile Updated',
+      text: 'Your profile has been updated successfully!',
+      confirmButtonColor: '#3085d6',
+    }).then(() => {
+      // submit form after checking
+      editForm.submit();
     });
-  }
+  });
 });
