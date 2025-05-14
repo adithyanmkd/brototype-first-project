@@ -1,8 +1,5 @@
 // import APIs
-import { addToWishlistApi } from '../api/userProductApi.js';
-
-// import toast notification
-import { showToast } from '../utils/toast.js';
+import userProductApi from '../api/userProductApi.js';
 
 // accessing url
 let pathname = window.location.pathname;
@@ -16,7 +13,7 @@ async function handleAddToWishlist(e) {
 
   if (!productId) return false;
 
-  let response = await addToWishlistApi(productId);
+  let response = await userProductApi.addToWishlistApi(productId);
 
   if (response.success) {
     window.location.reload();

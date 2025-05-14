@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 // import models
 import { Category, Product } from '../../models/index.js';
 
@@ -64,89 +66,6 @@ const adminProductService = {
   },
 
   // edit product service
-  // editProduct: async ({
-  //   id,
-  //   productName,
-  //   description,
-  //   price,
-  //   category,
-  //   quantity,
-  //   files,
-  //   removeImgIds = [],
-  // }) => {
-  //   try {
-  //     let product = await Product.findOne({
-  //       _id: id,
-  //       isDeleted: false,
-  //     });
-
-  //     if (!product) {
-  //       return {
-  //         success: false,
-  //         message: 'Product not found',
-  //       };
-  //     }
-
-  //     // Check if another product with the same name exists
-  //     let existingProduct = await Product.findOne({
-  //       _id: { $ne: id },
-  //       productName: { $regex: `^${productName}$`, $options: 'i' },
-  //       isDeleted: false,
-  //     });
-
-  //     if (existingProduct) {
-  //       return {
-  //         success: false,
-  //         message: 'Another product with this name already exists',
-  //       };
-  //     }
-
-  //     product.productName = productName;
-  //     product.description = description;
-  //     product.price = price;
-  //     product.category = category;
-  //     product.quantity = quantity;
-
-  //     if (files?.cardImage?.length > 0) {
-  //       product.images.cardImage = {
-  //         path: files['cardImage'][0].path.replace(/.*\/public\//, '/'),
-  //         alt: `${productName} card image.`,
-  //       };
-  //     }
-
-  //     if (files?.productImages?.length > 0) {
-  //       product.images.productImages = files['productImages'].map(
-  //         (file, index) => ({
-  //           path: file.path.replace(/.*\/public\//, '/'),
-  //           alt: `${productName} product image ${index + 1}`,
-  //         })
-  //       );
-  //     }
-
-  //     if (removeImgIds.length > 0) {
-  //       product.images.productImages = product.images.productImages.filter(
-  //         (img) => !removeImgIds.includes(String(img._id))
-  //       );
-  //     }
-
-  //     await product.save();
-
-  //     return {
-  //       success: true,
-  //       message: 'Product updated successfully',
-  //       product,
-  //       redirect: '/admin/products',
-  //     };
-  //   } catch (error) {
-  //     console.error(error);
-  //     return {
-  //       success: false,
-  //       message: 'Product updating failed.',
-  //       error,
-  //     };
-  //   }
-  // },
-
   editProduct: async ({
     id,
     productName,
@@ -238,9 +157,27 @@ const adminProductService = {
   // get product details
   getProduct: async ({ id }) => {
     try {
-      let product = await Product.findOne({
-        _id: id,
-      }).populate('category', 'name');
+      // let product = await Product.findOne({
+      //   _id: id,
+      // }).populate('category', 'name');
+
+      let productId = new mongoose.Types.ObjectId(`${id}`);
+
+      let product = await Product.aggregate([
+        { $match: { _id: productId } },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'category',
+          },
+        },
+        {
+          $unwind: '$category',
+        },
+      ]);
+
       return {
         success: true,
         message: 'Product fetched',

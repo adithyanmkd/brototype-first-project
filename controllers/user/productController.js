@@ -1,6 +1,7 @@
 import Category from '../../models/categoryModel.js';
 import Product from '../../models/productModel.js';
 import Wishlist from '../../models/wishlistModel.js';
+import adminProductService from '../../services/admin/adminProductService.js';
 import {
   getProductOfferByProductId,
   getCategoryOfferByCategoryId,
@@ -75,7 +76,20 @@ const products = async (req, res) => {
 // get product (single product)
 const productDetails = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate('category');
+    let productId = req.params.id;
+
+    // Check if the request is expecting a JSON response
+    const isFetchRequest =
+      req.xhr || req.headers.accept.includes('application/json');
+
+    // const product = await Product.findById(req.params.id).populate('category');
+
+    let data = await adminProductService.getProduct({ id: productId });
+
+    let product = data.product[0];
+
+    // console.log('Product details: ', product);
+
     if (!product) {
       return res.status(404).send('Product not found');
     }
@@ -99,16 +113,30 @@ const productDetails = async (req, res) => {
       bestOffer = categoryOffer;
     }
 
+    if (isFetchRequest) {
+      return res.status(200).json({
+        success: true,
+        product,
+      });
+    }
+
+    // console.log('test');
+
     // Render the product details page with the product and offer data
-    res.render('user/pages/products/productDetails', {
+    return res.render('user/pages/products/productDetails', {
       product,
       productOffer,
       categoryOffer,
       bestOffer, // Pass the best offer to the template
     });
-  } catch (error) {
+  } catch (err) {
+    let error = err.message || 'Error fetching product details';
+
     console.error('Error fetching product details:', error);
-    res.status(500).send('Server Error');
+    res.status(500).json({
+      success: false,
+      error,
+    });
   }
 };
 

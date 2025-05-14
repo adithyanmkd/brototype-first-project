@@ -107,13 +107,7 @@ let orderService = {
         deliveryAddress,
       });
 
-      // switch (paymentMethod) {
-      //   case 'razaropay':
-      //   case 'wallet':
-      //     newOrder.paymentStatus = 'paid';
-      // }
-
-      // newOrder.save(); // order saving
+      newOrder.save(); // order saving
 
       // decrease the quantity from the product
       for (let item of orderedItems) {
@@ -136,6 +130,7 @@ let orderService = {
         redirect: '/payment/success-view',
       };
     } catch (error) {
+      console.log('Order service error =========');
       console.error(error);
       return {
         success: false,

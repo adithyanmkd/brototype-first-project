@@ -7,8 +7,3 @@ let wishlistBtns = document.querySelectorAll('.wishlist-btn'); // accessing wish
 wishlistBtns.forEach((btn) => {
   btn.addEventListener('click', handleAddToWishlist);
 });
-
-// add item into wishlist
-// if (wishlistBtn) {
-//   wishlistBtn.addEventListener('click', handleAddToWishlist);
-// }

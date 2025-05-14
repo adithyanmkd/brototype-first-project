@@ -1,22 +1,52 @@
-async function addToWishlistApi(productId) {
-  try {
-    let res = await fetch('/account/wishlist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId }),
-    });
+const userProductApi = {
+  // add to wishlist api
+  addToWishlistApi: async (productId) => {
+    try {
+      let res = await fetch('/account/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId }),
+      });
 
-    let data = await res.json();
+      let data = await res.json();
 
-    if (!res.ok) {
-      console.error({ Error: data.message });
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
       return data;
+    } catch (error) {
+      console.error('Status update error', error);
+      return { success: false };
     }
-    return data;
-  } catch (error) {
-    console.error('Status update error', error);
-    return { success: false };
-  }
-}
+  },
 
-export { addToWishlistApi };
+  // fetch product details
+  fetchProduct: async ({ productId }) => {
+    try {
+      let url = `/products/${productId}`;
+
+      let res = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+
+      let data = await res.json();
+
+      // console.log(data);
+
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+};
+
+// async function addToWishlistApi(productId) {}
+
+export default userProductApi;

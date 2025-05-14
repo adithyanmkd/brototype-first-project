@@ -1,3 +1,6 @@
+// import api
+import userProductApi from '../api/userProductApi.js';
+
 let addToCartForm = document.querySelector('#add-to-cart-form');
 
 let errorTimeout; // Store timeout reference
@@ -31,7 +34,9 @@ function changeImage(img) {
 
 // Zoom functionality
 document.addEventListener('DOMContentLoaded', function () {
+  // image zooming feature
   const mainImage = document.querySelector('.main-image');
+
   mainImage.addEventListener('mousemove', function (event) {
     const { left, top, width, height } = this.getBoundingClientRect();
     const x = ((event.clientX - left) / width) * 100;
@@ -56,17 +61,50 @@ let originalPrice = originalPriceEl.innerHTML.replace('₹', '') || 0;
 let saveAmount = saveAmountEl.innerHTML.replace('Save ₹', '') || 0;
 
 // update quantity needed elements ended
-function updateQuantity(change, event) {
+async function updateQuantity(change, event) {
   event.preventDefault();
 
   let qty = parseInt(document.getElementById('quantity').value);
 
   qty = Math.max(1, qty + change);
 
-  if (qty > 3) {
-    alert('Max quantity reached!!');
+  let url = window.location.pathname;
+  let productId = url.split('/').pop();
+
+  let data = await userProductApi.fetchProduct({ productId });
+
+  if (!data.success) {
+    console.error(data);
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Something went wrong',
+    });
     return;
   }
+
+  let product = data.product;
+
+  console.log(product.quantity);
+
+  if (qty > product.quantity) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Quantity Unavailable',
+      text: `Sorry, the requested quantity is not available. Only ${product.quantity} units are in stock. Please adjust your quantity`,
+    });
+    return;
+  }
+
+  if (qty > 3) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Max quantity reached!!',
+    });
+    return;
+  }
+
   document.getElementById('quantity').value = qty;
   sellingPriceEl.innerHTML = `₹${qty * Number(sellingPrice)}`;
   originalPriceEl.innerHTML = `₹${qty * Number(originalPrice)}`;
@@ -109,3 +147,6 @@ addToCartForm.addEventListener('submit', async (e) => {
     });
   }
 });
+
+// Expose the function to the global scope
+window.updateQuantity = updateQuantity;

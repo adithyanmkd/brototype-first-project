@@ -818,9 +818,6 @@
   .flex-1 {
     flex: 1;
   }
-  .flex-shrink-0 {
-    flex-shrink: 0;
-  }
   .shrink-0 {
     flex-shrink: 0;
   }
@@ -1338,9 +1335,6 @@
   }
   .bg-red-200 {
     background-color: var(--color-red-200);
-  }
-  .bg-red-300 {
-    background-color: var(--color-red-300);
   }
   .bg-red-500 {
     background-color: var(--color-red-500);
@@ -2799,16 +2793,6 @@
   .sm\:py-32 {
     @media (width >= 40rem) {
       padding-block: calc(var(--spacing) * 32);
-    }
-  }
-  .sm\:pr-4 {
-    @media (width >= 40rem) {
-      padding-right: calc(var(--spacing) * 4);
-    }
-  }
-  .sm\:pl-12 {
-    @media (width >= 40rem) {
-      padding-left: calc(var(--spacing) * 12);
     }
   }
   .sm\:text-2xl {
