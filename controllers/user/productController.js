@@ -86,7 +86,7 @@ const productDetails = async (req, res) => {
 
     let data = await adminProductService.getProduct({ id: productId });
 
-    let product = data.product[0];
+    let product = data.product;
 
     // console.log('Product details: ', product);
 

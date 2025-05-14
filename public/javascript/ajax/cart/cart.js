@@ -1,3 +1,6 @@
+// import api
+import userCartApi from '../api/userCartApi.js';
+
 let errorTimeout; // Store timeout reference
 
 // display error
@@ -20,30 +23,6 @@ function displayError(message) {
 function hideError() {
   let errorBox = document.querySelector('#error-box');
   errorBox.classList.add('hidden');
-}
-
-// delete item
-async function deleteItem(productId, event) {
-  event.preventDefault();
-  try {
-    let response = await fetch(`/cart/delete`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId }),
-    });
-
-    let data = await response.json();
-
-    if (response.ok) {
-      console.log('successfully deleted');
-      window.location.href = '/cart';
-    } else {
-      console.error(data.message);
-      window.location.href = '/cart/empty';
-    }
-  } catch (error) {
-    console.log({ Error: error });
-  }
 }
 
 // update quantity needed elements ended
@@ -109,6 +88,30 @@ async function deleteItem(productId, event) {
 // post form event listener
 cartForm.addEventListener('submit', postCartForm);
 
+// delete item
+async function deleteItem(productId, event) {
+  event.preventDefault();
+  try {
+    let response = await fetch(`/cart/delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId }),
+    });
+
+    let data = await response.json();
+
+    if (response.ok) {
+      console.log('successfully deleted');
+      window.location.href = '/cart';
+    } else {
+      console.error(data.message);
+      window.location.href = '/cart/empty';
+    }
+  } catch (error) {
+    console.log({ Error: error });
+  }
+}
+
 // post cart function
 async function postCartForm(e) {
   e.preventDefault();
@@ -133,20 +136,41 @@ async function postCartForm(e) {
     '';
 
   try {
-    const response = await fetch('/cart', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cartItems, couponDiscount }),
+    const response = await userCartApi.postCartApi({
+      cartItems,
+      couponDiscount,
     });
 
-    let data = await response.json();
-    if (response.ok) {
+    if (response.success) {
       window.location.href = '/checkout';
-    } else {
-      displayError(`${data.product} ${data.message} `);
-      console.error(data.message, 'error');
     }
   } catch (error) {
-    console.log('error catch block', error);
+    console.error(error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: `${error.message}` || 'Something went wrong.',
+    });
   }
+
+  // try {
+  //   const response = await fetch('/cart', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({ cartItems, couponDiscount }),
+  //   });
+
+  //   let data = await response.json();
+  //   if (response.ok) {
+  //     window.location.href = '/checkout';
+  //   } else {
+  //     displayError(`${data.product} ${data.message} `);
+  //     console.error(data.message, 'error');
+  //   }
+  // } catch (error) {
+  //   console.log('error catch block', error);
+  // }
 }
+
+// bind into window object
+window.deleteItem = deleteItem;

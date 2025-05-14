@@ -1,18 +1,9 @@
 <div class="flex">
   <%- include("../../partials/organisms/profileSidebar.ejs") %>
 
-  <!-- Toast Messages -->
-  <div class="absolute top-10 right-10">
-    <%- include("../../partials/organisms/toastMsg.ejs") %>
-  </div>
-
-  <!-- pop up modal -->
-  <%- include("../../partials/organisms/modal.ejs") %>
-  <!-- pop up modal ended -->
-
   <div class="w-[70%] mx-auto p-4">
     <div
-      x-data="{ wishlistItems: JSON.parse('<%= JSON.stringify(wishlist?.items ) %>')}"
+      x-data="{ wishlistItems: JSON.parse('<%= JSON.stringify(wishlist?.items) %>')}"
     >
       <template x-for="item in wishlistItems" :key="item.productId">
         <!-- Wishlist Item -->
@@ -101,9 +92,9 @@
                 })"
                   ></span
                 ></span>
+                <!-- data-modal-target="popup-modal"
+                data-modal-toggle="popup-modal" -->
                 <button
-                  data-modal-target="popup-modal"
-                  data-modal-toggle="popup-modal"
                   :data-product-id="item.productDetails._id"
                   class="deleteWishlist text-gray-400 transition-all hover:scale-150 hover:text-red-600 cursor-pointer"
                 >

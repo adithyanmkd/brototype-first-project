@@ -178,10 +178,12 @@ const adminProductService = {
         },
       ]);
 
+      // console.log(product, 'product log');
+
       return {
         success: true,
         message: 'Product fetched',
-        product,
+        product: product[0],
       };
     } catch (error) {
       console.error(error);

@@ -44,18 +44,6 @@ const adminSidebar = (req, res, next) => {
       active: req.path === '/orders',
     },
     {
-      id: 'banner',
-      name: 'Banner',
-      href: '#',
-      active: req.path === '/banner',
-    },
-    {
-      id: 'settings',
-      name: 'Settings',
-      href: '#',
-      active: req.path === '/settings',
-    },
-    {
       id: 'coupons',
       name: 'Coupons',
       href: '/admin/coupons',

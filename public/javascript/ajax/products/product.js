@@ -72,6 +72,7 @@ async function updateQuantity(change, event) {
   let productId = url.split('/').pop();
 
   let data = await userProductApi.fetchProduct({ productId });
+  // let currentCart =
 
   if (!data.success) {
     console.error(data);
@@ -91,7 +92,7 @@ async function updateQuantity(change, event) {
     Swal.fire({
       icon: 'warning',
       title: 'Quantity Unavailable',
-      text: `Sorry, the requested quantity is not available. Only ${product.quantity} units are in stock. Please adjust your quantity`,
+      text: `Sorry, the requested quantity is not available. Only ${product.quantity} units are in stock.`,
     });
     return;
   }
@@ -129,17 +130,28 @@ addToCartForm.addEventListener('submit', async (e) => {
 
     let data = await response.json();
 
-    if (response.ok) {
-      window.location.href = '/cart';
-    } else {
-      if (data.message === 'User not found') {
-        window.location.href = '/auth/login';
-      } else if (data.message === 'Max product purchase reached') {
-        return displayError(data.message);
-      } else if (data.message === 'Product is out of stock') {
-        return displayError(data.message);
-      }
+    if (!data.success) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: `${data.message}`,
+      });
+      return;
     }
+
+    window.location.href = '/cart';
+
+    // if (response.ok) {
+    //   window.location.href = '/cart';
+    // } else {
+    //   if (data.message === 'User not found') {
+    //     window.location.href = '/auth/login';
+    //   } else if (data.message === 'Max product purchase reached') {
+    //     return displayError(data.message);
+    //   } else if (data.message === 'Product is out of stock') {
+    //     return displayError(data.message);
+    //   }
+    // }
   } catch (error) {
     console.error({
       Error: error,

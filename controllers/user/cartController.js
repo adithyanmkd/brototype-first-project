@@ -71,12 +71,12 @@ const getCart = async (req, res) => {
   });
 
   let couponDiscount = await redisClient.get(`couponDiscount:${user._id}`);
+  // totalSellingPrice - Number(JSON.parse(couponDiscount)) || 0,
 
   res.render('user/pages/cart/cart.ejs', {
     cartItems,
     totalItems,
-    totalSellingPrice:
-      totalSellingPrice - Number(JSON.parse(couponDiscount)) || 0,
+    totalSellingPrice,
     totalOriginalPrice,
     availableCoupons,
     couponDiscount,
@@ -126,23 +126,33 @@ const addToCart = async (req, res) => {
         .json({ success: false, message: 'Max product purchase reached' });
     }
 
-    if (quantity > product.quantity) {
-      return res
-        .status(404)
-        .json({ success: false, message: 'Product is out of stock' });
-    }
-
     // if product already exist increase qty
     if (itemIndex !== -1) {
       let itemQty = cart.items[itemIndex].quantity;
 
       if (itemQty >= 3) {
-        return res
-          .status(404)
-          .json({ success: false, message: 'Max product purchase reached' });
+        return res.status(500).json({
+          success: false,
+          message: 'Max product purchase reached',
+        });
       }
       cart.items[itemIndex].quantity =
         Number(cart.items[itemIndex].quantity) + Number(quantity);
+
+      // console.log(itemQty, 'item qty log ========>>>>>>>><<<<<<<<<<<');
+
+      if (itemQty + 1 > product.quantity) {
+        return res.status(500).json({
+          success: false,
+          message: 'Currently available stock already in you cart!!',
+        });
+      }
+
+      if (quantity > product.quantity) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'Product is out of stock' });
+      }
     } else {
       cart.items.push({ productId, quantity });
     }
@@ -192,6 +202,7 @@ const deleteItem = async (req, res) => {
   }
 };
 
+// cart item proceeding
 const postCart = async (req, res) => {
   let user = req.session.user;
   let { cartItems, couponDiscount } = req.body;
