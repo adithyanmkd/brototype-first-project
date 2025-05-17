@@ -72,7 +72,6 @@ async function updateQuantity(change, event) {
   let productId = url.split('/').pop();
 
   let data = await userProductApi.fetchProduct({ productId });
-  // let currentCart =
 
   if (!data.success) {
     console.error(data);
@@ -86,7 +85,7 @@ async function updateQuantity(change, event) {
 
   let product = data.product;
 
-  console.log(product.quantity);
+  // console.log(product.quantity);
 
   if (qty > product.quantity) {
     Swal.fire({
@@ -162,3 +161,4 @@ addToCartForm.addEventListener('submit', async (e) => {
 
 // Expose the function to the global scope
 window.updateQuantity = updateQuantity;
+window.changeImage = changeImage;

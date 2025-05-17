@@ -150,7 +150,12 @@ cropConfirmBtn.addEventListener('click', () => {
 
   const canvas = cropper.getCroppedCanvas({});
   if (!canvas) {
-    alert('Cropping failed!');
+    Swal.fire({
+      icon: 'error',
+      title: 'Cropping Failed',
+      text: 'An error occurred while cropping the image.',
+      confirmButtonText: 'OK',
+    });
     return;
   }
 
@@ -217,17 +222,32 @@ submitBtn.addEventListener('click', async (e) => {
     !quantity ||
     !category
   ) {
-    alert('Please fill all fields.');
+    Swal.fire({
+      icon: 'error',
+      title: 'Missing Fields',
+      text: 'Please fill all fields.',
+      confirmButtonText: 'OK',
+    });
     return;
   }
 
   if (isNaN(sellingPrice) || isNaN(originalPrice)) {
-    alert('Prices must be valid numbers.');
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid Prices',
+      text: 'Prices must be valid numbers.',
+      confirmButtonText: 'OK',
+    });
     return;
   }
 
   if (parseFloat(originalPrice) < parseFloat(sellingPrice)) {
-    alert('Original price must not be less than the selling price.');
+    Swal.fire({
+      icon: 'error',
+      title: 'Price Error',
+      text: 'Original price must not be less than the selling price.',
+      confirmButtonText: 'OK',
+    });
     return;
   }
 

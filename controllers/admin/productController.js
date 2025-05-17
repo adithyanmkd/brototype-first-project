@@ -67,7 +67,7 @@ const allProduct = async (req, res) => {
   let searchValue = req.query.search || ''; // accessing search value from url
 
   const page = parseInt(req.query.page) || 1;
-  const limit = 3; // Number of users per page
+  const limit = 4; // Number of users per page
   const skip = (page - 1) * limit;
 
   // Build the search filter
@@ -108,7 +108,7 @@ const deleteProduct = async (req, res) => {
   const id = req.params.id;
   try {
     const product = await Product.findById(id);
-    product.isDeleted = true;
+    product.isListed = true;
     await product.save();
     res.redirect('/admin/products');
   } catch (error) {

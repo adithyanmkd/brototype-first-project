@@ -11,6 +11,8 @@ async function handleAddToWishlist(e) {
   // product details page wishlist btn
   let productId = e.target.dataset.productId;
 
+  // console.log('product ID: ', productId);
+
   if (!productId) return false;
 
   let response = await userProductApi.addToWishlistApi(productId);

@@ -6,6 +6,7 @@ import {
   getProductOfferByProductId,
   getCategoryOfferByCategoryId,
 } from '../../services/admin/offerService.js'; // Import the services to fetch offers
+import wishlistService from '../../services/user/wishlistService.js';
 
 // get all products
 const products = async (req, res) => {
@@ -75,20 +76,32 @@ const products = async (req, res) => {
 
 // get product (single product)
 const productDetails = async (req, res) => {
+  let user = req.session.user;
   try {
     let productId = req.params.id;
+    let userId = user._id;
+    let isWishlist = false;
 
     // Check if the request is expecting a JSON response
     const isFetchRequest =
       req.xhr || req.headers.accept.includes('application/json');
 
-    // const product = await Product.findById(req.params.id).populate('category');
-
     let data = await adminProductService.getProduct({ id: productId });
+    let wishlistItems = await wishlistService.getAllWishlistItemsService({
+      userId,
+    });
 
     let product = data.product;
 
+    // console.log('wishlist items log: ', wishlistItems);
     // console.log('Product details: ', product);
+    // console.log(user);
+
+    let isFound = wishlistItems.find((item) =>
+      item.product.equals(product._id)
+    );
+
+    if (isFound) isWishlist = true; // change wishlist status is item is in wishlist
 
     if (!product) {
       return res.status(404).send('Product not found');
@@ -120,14 +133,13 @@ const productDetails = async (req, res) => {
       });
     }
 
-    // console.log('test');
-
     // Render the product details page with the product and offer data
     return res.render('user/pages/products/productDetails', {
       product,
       productOffer,
       categoryOffer,
       bestOffer, // Pass the best offer to the template
+      isWishlist,
     });
   } catch (err) {
     let error = err.message || 'Error fetching product details';

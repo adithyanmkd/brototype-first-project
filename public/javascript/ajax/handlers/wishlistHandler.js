@@ -5,20 +5,35 @@ import { deleteWishlistApi, wishlistToCartApi } from '../api/wishlistApi.js';
 import { showToast } from '../utils/toast.js';
 
 // wishlist delete handler
-const handleWishlistDelete = async (e) => {
-  e.preventDefault();
-  let productId = e.currentTarget.dataset.productId;
+const handleWishlistDelete = async ({ productId }) => {
+  let response = await deleteWishlistApi(productId);
 
-  document.querySelector('#confirmBtn').addEventListener('click', async () => {
-    let response = await deleteWishlistApi(productId);
+  if (!response.success) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: `${response.message}`,
+    });
+    return;
+  }
 
-    if (!response.success) {
-      showToast('toast-danger', response.message);
-    }
-
-    showToast('toast-success', response.message);
-    window.location.reload();
+  Swal.fire({
+    icon: 'success',
+    title: 'Deleted',
+    text: `${response.message}`,
+  }).then(() => {
+    window.location.href = '/account/wishlist';
   });
+
+  // document.querySelector('#confirmBtn').addEventListener('click', async () => {
+  //   let response = await deleteWishlistApi(productId);
+
+  //   if (!response.success) {
+  //     showToast('toast-danger', response.message);
+  //   }
+
+  //   window.location.reload();
+  // });
 };
 
 // wishlist to cart handler

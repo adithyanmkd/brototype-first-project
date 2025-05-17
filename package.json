@@ -52,6 +52,10 @@
     "validator": "^13.12.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.27.2",
+    "@babel/core": "^7.27.1",
+    "@babel/preset-flow": "^7.27.1",
+    "babel-plugin-syntax-hermes-parser": "^0.28.1",
     "connect-livereload": "^0.6.1",
     "livereload": "^0.9.3",
     "nodemon": "^3.1.9",

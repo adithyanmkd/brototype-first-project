@@ -141,7 +141,7 @@ const addToCart = async (req, res) => {
 
       // console.log(itemQty, 'item qty log ========>>>>>>>><<<<<<<<<<<');
 
-      if (itemQty + 1 > product.quantity) {
+      if (itemQty >= product.quantity) {
         return res.status(500).json({
           success: false,
           message: 'Currently available stock already in you cart!!',

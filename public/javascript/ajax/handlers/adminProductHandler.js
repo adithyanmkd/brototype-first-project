@@ -32,15 +32,32 @@ const adminProductHandler = {
 
       if (!data.success) {
         console.error(data);
-        alert(data.message);
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: data.message,
+          confirmButtonText: 'OK',
+        });
         return;
       }
 
       console.log(data.message);
-      alert(data.message);
+      await Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: data.message,
+        confirmButtonText: 'OK',
+      });
+
       window.location.href = data.redirect;
     } catch (error) {
       console.error(error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Unexpected Error',
+        text: 'An unexpected error occurred. Please try again.',
+        confirmButtonText: 'OK',
+      });
     }
   },
 

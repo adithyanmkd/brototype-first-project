@@ -1,4 +1,10 @@
-<form id="add-to-cart-form">
+<form
+    x-data="{
+        product: JSON.parse('<%= JSON.stringify(product) %>'),
+        isWishlist: JSON.parse('<%= JSON.stringify(isWishlist) %>')
+    }"
+    id="add-to-cart-form">
+
     <div class="container mx-auto px-4 py-8">
         <!-- Back Button -->
         <a @click="history.back()" class="mb-4 cursor-pointer w-40 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center">
@@ -118,18 +124,20 @@
                     </div>
 
                     <!-- Wishlist and Add to Cart Buttons -->
-                    <button
-                        data-product-id="<%= product._id %>"
-                        class="wishlist-btn w-full cursor-pointer py-3 text-center border border-blue-500 font-medium rounded-lg shadow-md hover:bg-blue-50"
-                    >
-                        Move to Wishlist
-                    </button>
-                    <button
+                    <div class="flex items-center gap-x-4">
+                        <button
                         type="submit"
                         class="w-full cursor-pointer py-3 text-center bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600"
-                    >
-                        🛒 Add To Cart
+                        >
+                        <i class="fa-solid fa-cart-shopping mr-2"></i> Add To Cart
                     </button>
+                    <button class="cursor-pointer" >
+                        <i
+                         :data-product-id="product._id"
+                         :class="{'text-red-500': isWishlist}"
+                         class="wishlist-btn fa-solid fa-heart fa-2xl text-gray-400 hover:scale-110 transition-all"></i>
+                    </button>
+                    </div>
                 <% } else { %>
                     <!-- Out of Stock Message -->
                     <p class="bg-red-50 py-2 text-red-800 border text-center rounded-lg border-red-500 font-medium">
