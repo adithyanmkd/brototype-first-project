@@ -56,9 +56,15 @@ let sellingPriceEl = document.querySelector('#sellingPrice'); // selling price e
 let originalPriceEl = document.querySelector('#originalPrice');
 let saveAmountEl = document.querySelector('#saveAmount');
 
-let sellingPrice = sellingPriceEl.innerHTML.replace('₹', '') || 0;
-let originalPrice = originalPriceEl.innerHTML.replace('₹', '') || 0;
-let saveAmount = saveAmountEl.innerHTML.replace('Save ₹', '') || 0;
+let sellingPrice = 0;
+let originalPrice = 0;
+let saveAmount = 0;
+
+if (sellingPriceEl) {
+  sellingPrice = sellingPriceEl.innerHTML.replace('₹', '') || 0;
+  originalPrice = originalPriceEl.innerHTML.replace('₹', '') || 0;
+  saveAmount = saveAmountEl.innerHTML.replace('Save ₹', '') || 0;
+}
 
 // update quantity needed elements ended
 async function updateQuantity(change, event) {

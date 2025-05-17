@@ -31,14 +31,14 @@ const wishlistToCartApi = async (productId, quantity) => {
     const data = await res.json();
 
     if (!res.ok) {
-      console.log('item add to cart failed');
-      return data;
+      console.error(data.message);
+      throw new Error(`${data.message}`);
     }
 
     return data;
   } catch (error) {
-    console.error({ Error: error });
-    return { success: false, Error: error };
+    console.error(error);
+    throw error;
   }
 };
 

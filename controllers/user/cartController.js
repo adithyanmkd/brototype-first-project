@@ -6,6 +6,8 @@ import redisClient from '../../config/redisConfig.js';
 
 // import services
 import { CartService } from '../../services/user/cartService.js';
+import productServices from '../../services/user/productService.js';
+import wishlistService from '../../services/user/wishlistService.js';
 
 const getEmptyCart = async (req, res) => {
   let user = req.session.user;
@@ -85,41 +87,42 @@ const getCart = async (req, res) => {
 
 // adding cart item into user
 const addToCart = async (req, res) => {
-  let user = req.session.user;
-
-  if (!user) {
-    return res.status(404).json({ success: false, message: 'User not found' });
-  }
-
-  let { productId, quantity } = req.body;
-
-  // let cart = await Cart.findOne({ userId: user._id }); // checking cart already exist
-
-  // if cart is not exist
-  // if (!cart) {
-  //   cart = new Cart({ userId: user._id, items: [] });
-  // }
-
-  // find() returns a reference to the found object
-  // let existingItem = cart.items.find(
-  //   (item) => item.productId.toString() === productId
-  // );
-
-  let cart = await redisClient.get(`cart:${user._id}`);
-  cart = cart ? JSON.parse(cart) : { items: [] };
-
-  // checking item already exist
-  const itemIndex = cart.items.findIndex((item) => item.productId == productId);
-
   try {
-    // if (existingItem) {
-    //   existingItem.quantity += Number(quantity);
-    // } else {
-    //   cart.items.push({ productId, quantity });
-    // }
-    // await cart.save(); // save item
+    let user = req.session.user;
+    let userId = user._id;
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'User not found' });
+    }
+
+    let { productId, quantity } = req.body;
+
+    let cart = await redisClient.get(`cart:${user._id}`);
+    cart = cart ? JSON.parse(cart) : { items: [] };
+
+    // checking item already exist
+    const itemIndex = cart.items.findIndex(
+      (item) => item.productId == productId
+    );
+
     let product = await Product.findById(productId);
 
+    // product stock checking condition
+    if (quantity > product.quantity) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Product is out of stock' });
+    }
+
+    // remove the current item
+    let updatedWishlist = await wishlistService.removeWishlistItemService({
+      userId,
+      productId,
+    });
+
+    // max product purchase limit condition
     if (cart.quantity >= 3) {
       return res
         .status(404)
@@ -147,12 +150,6 @@ const addToCart = async (req, res) => {
           message: 'Currently available stock already in you cart!!',
         });
       }
-
-      if (quantity > product.quantity) {
-        return res
-          .status(404)
-          .json({ success: false, message: 'Product is out of stock' });
-      }
     } else {
       cart.items.push({ productId, quantity });
     }
@@ -160,7 +157,7 @@ const addToCart = async (req, res) => {
     // store updated cart in Redis
     await redisClient.set(`cart:${user._id}`, JSON.stringify(cart));
 
-    res.json({ success: true, message: 'Item added succesfully', cart });
+    res.json({ success: true, message: 'Item moved succesfully', cart });
   } catch (error) {
     console.log({
       Error: error,

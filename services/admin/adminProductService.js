@@ -157,10 +157,6 @@ const adminProductService = {
   // get product details
   getProduct: async ({ id }) => {
     try {
-      // let product = await Product.findOne({
-      //   _id: id,
-      // }).populate('category', 'name');
-
       let productId = new mongoose.Types.ObjectId(`${id}`);
 
       let product = await Product.aggregate([
@@ -191,6 +187,22 @@ const adminProductService = {
         success: false,
         message: 'Something went wrong while product fetching.',
       };
+    }
+  },
+
+  // list and unlist product
+  toggleProductStatus: async ({ productId }) => {
+    try {
+      const product = await Product.findOne({ _id: productId });
+      product.isListed = !product.isListed;
+      await product.save();
+      return {
+        message: `Product has been ${product.isListed ? 'listed' : 'unlisted'}`,
+        isListed: product.isListed,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
     }
   },
 };

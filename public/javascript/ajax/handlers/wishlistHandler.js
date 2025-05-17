@@ -42,16 +42,32 @@ const handleWishlistToCart = async (e) => {
   let productId = e.target.dataset.productId;
   let quantity = Number(e.target.dataset.qty);
 
-  let response = await wishlistToCartApi(productId, quantity);
+  try {
+    let response = await wishlistToCartApi(productId, quantity);
 
-  if (!response.success) {
-    // showToast('toast-danger', response.message);
-    alert(response.message);
+    if (!response.success) {
+      Swal.fire({
+        icon: 'error',
+        title: `Oops...`,
+        text: `${response.message}`,
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Success',
+      text: `${response.message}`,
+    }).then(() => {
+      window.location.reload();
+    });
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: `Oops...`,
+      text: `${error.message}`,
+    });
   }
-
-  // showToast('toast-success', response.message);
-  alert(response.message);
-  window.location.reload();
 };
 
 export { handleWishlistDelete, handleWishlistToCart };

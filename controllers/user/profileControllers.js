@@ -5,7 +5,9 @@ import mongoose from 'mongoose';
 // import models
 import { Address, Cart, Product, User, Wishlist } from '../../models/index.js';
 
+// import services
 import { walletService } from '../../services/user/walletService.js';
+import productServices from '../../services/user/productService.js';
 
 // import utils
 import getUserMenus from '../../utils/getSidebarMenus.js';
@@ -193,7 +195,7 @@ const postWishlist = async (req, res) => {
         (item) => item.product.toString() === productId
       );
 
-      // if product not it wishlist push the new produt into wishlist
+      // if product not in wishlist push the new produt into wishlist
       if (!alreadyExists) {
         wishlist.items.push({ product: productId });
       } else {

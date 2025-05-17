@@ -10,6 +10,7 @@ function scriptLoad() {
   const delBtns = document.querySelectorAll('.deleteWishlist');
   const wishlistToCartForm = document.querySelectorAll('.wishlistToCartForm');
 
+  // delete wishlist item
   delBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -33,6 +34,7 @@ function scriptLoad() {
     });
   });
 
+  // add wishlist item into cart
   wishlistToCartForm.forEach((form) => {
     form.addEventListener('submit', handleWishlistToCart);
   });

@@ -14,8 +14,8 @@
     ],
     "description": "React-style Express async controller",
   },
-  "Service Object Export": {
-    "prefix": "serviceObj",
+  "expressServiceObjectExport": {
+    "prefix": "esoe",
     "body": [
       "const ${1:${TM_FILENAME_BASE}} = {",
       "  ${2:// your code here}",

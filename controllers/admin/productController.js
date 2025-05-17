@@ -4,7 +4,6 @@ import Product from '../../models/productModel.js';
 
 // import service
 import adminProductService from '../../services/admin/adminProductService.js';
-import productService from '../../services/admin/productService.js';
 
 // get add product page
 const getProduct = async (req, res) => {
@@ -223,7 +222,7 @@ const getProductDetails = async (req, res) => {
 const toggleProductListing = async (req, res) => {
   try {
     const productId = req.params.id;
-    const serviceResponse = await productService.toggleProductStatus({
+    const serviceResponse = await adminProductService.toggleProductStatus({
       productId,
     });
 
