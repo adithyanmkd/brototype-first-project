@@ -72,15 +72,15 @@ x-data="{
       <% }); %>
     ],
     async updateQuantity(index, delta) {
+      // delta is -1 or 1
       const newQty = this.items[index].quantity + delta;
-
       let productId = this.items[index].id
 
       try{
         const res = await window.userProductApi.fetchProduct({ productId });
 
         if (!res.success) {
-            console.error(data);
+            console.error(res);
             Swal.fire({
               icon: 'error',
               title: 'Oops...',
@@ -89,9 +89,7 @@ x-data="{
             return;
           }
 
-          let product = res.product;
-
-          console.log(product.quantity);
+          let product = res.product; // fetching product details
 
           if (newQty > product.quantity) {
             Swal.fire({
@@ -101,6 +99,9 @@ x-data="{
             });
             return;
           }
+
+          // fetch update goes here
+          console.log('here')
       }catch(error){
         console.error(error)
       }
@@ -192,7 +193,10 @@ x-data="{
                    <input name="items[<%= index %>][sellingPrice]" hidden type="text" value="<%= item._doc.price.sellingPrice %>">
                    <input name="items[<%= index %>][originalPrice]" hidden type="text" value="<%= item._doc.price.originalPrice %>">
                   <!-- product prices ended -->
+
                   <label class="block text-gray-700 font-semibold mb-2">Quantity:</label>
+
+                  <!-- quantity updating -->
                   <div class="flex items-center space-x-2">
                       <button type="button" @click="updateQuantity(<%= index %>, -1)"
                           class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">-</button>

@@ -66,7 +66,7 @@ const allProduct = async (req, res) => {
   let searchValue = req.query.search || ''; // accessing search value from url
 
   const page = parseInt(req.query.page) || 1;
-  const limit = 4; // Number of users per page
+  const limit = 5; // Number of users per page
   const skip = (page - 1) * limit;
 
   // Build the search filter

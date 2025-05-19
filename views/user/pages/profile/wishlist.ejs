@@ -27,26 +27,28 @@
                   x-text="item.productDetails.productName"
                   class="text-xl font-semibold"
                 ></h2>
-                <div class="flex items-center gap-3 mt-2">
-                  <span class="text-xl font-bold">
-                    ₹
-                    <span
-                      x-text="item.productDetails.price.sellingPrice"
-                    ></span>
-                  </span>
-                  <span class="text-gray-400 line-through">
-                    ₹
-                    <span
-                      x-text="item.productDetails.price.originalPrice"
-                    ></span>
-                  </span>
-                  <span class="text-green-600"
-                    >save ₹
-                    <span
-                      x-text="item.productDetails.price.originalPrice - item.productDetails.price.sellingPrice"
-                    ></span>
-                  </span>
-                </div>
+                <template x-if="item.productDetails.quantity > 0">
+                  <div class="flex items-center gap-3 mt-2">
+                    <span class="text-xl font-bold">
+                      ₹
+                      <span
+                        x-text="item.productDetails.price.sellingPrice"
+                      ></span>
+                    </span>
+                    <span class="text-gray-400 line-through">
+                      ₹
+                      <span
+                        x-text="item.productDetails.price.originalPrice"
+                      ></span>
+                    </span>
+                    <span class="text-green-600"
+                      >save ₹
+                      <span
+                        x-text="item.productDetails.price.originalPrice - item.productDetails.price.sellingPrice"
+                      ></span>
+                    </span>
+                  </div>
+                </template>
                 <form
                   :data-product-id="item.productDetails._id"
                   :data-qty="1"

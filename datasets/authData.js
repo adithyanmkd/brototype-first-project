@@ -12,6 +12,7 @@ const adminLoginAuthHeading = {
   title: 'Welcome Admin',
   description: 'We are glad to see you back with us',
 };
+
 const forgetAuthHeading = {
   title: 'Forgot Password?',
   description: 'Enter your email to receive a password reset link.',

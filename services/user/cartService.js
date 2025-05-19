@@ -3,7 +3,7 @@ import redisClient from '../../config/redisConfig.js';
 import { Product } from '../../models/index.js';
 
 const CartService = {
-  updateCart: async (userId, cartItems, couponDiscount) => {
+  updateCart: async (userId, cartItems, couponDiscount = 0) => {
     try {
       let userCart = await redisClient.get(`cart:${userId}`);
       let cart = JSON.parse(userCart);

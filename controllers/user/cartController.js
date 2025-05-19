@@ -99,6 +99,8 @@ const addToCart = async (req, res) => {
 
     let { productId, quantity } = req.body;
 
+    quantity = Number(quantity); // converting
+
     let cart = await redisClient.get(`cart:${user._id}`);
     cart = cart ? JSON.parse(cart) : { items: [] };
 
@@ -131,7 +133,10 @@ const addToCart = async (req, res) => {
 
     // if product already exist increase qty
     if (itemIndex !== -1) {
-      let itemQty = cart.items[itemIndex].quantity;
+      console.log(itemIndex, 'item index');
+      let itemQty = Number(cart.items[itemIndex].quantity);
+      console.log(typeof itemQty, 'item qty');
+      console.log(typeof quantity, 'qty');
 
       if (itemQty >= 3) {
         return res.status(500).json({
@@ -139,6 +144,17 @@ const addToCart = async (req, res) => {
           message: 'Max product purchase reached',
         });
       }
+
+      if (quantity + itemQty > 3) {
+        let message = `you are only able to add ${3 - itemQty}`;
+        console.log(quantity + itemQty, 'log');
+
+        return res.status(500).json({
+          success: false,
+          message: message,
+        });
+      }
+
       cart.items[itemIndex].quantity =
         Number(cart.items[itemIndex].quantity) + Number(quantity);
 

@@ -77,9 +77,10 @@ const products = async (req, res) => {
 // get product (single product)
 const productDetails = async (req, res) => {
   let user = req.session.user;
+  let userId = user?._id;
+
   try {
     let productId = req.params.id;
-    let userId = user._id;
     let isWishlist = false;
 
     // Check if the request is expecting a JSON response
@@ -87,21 +88,22 @@ const productDetails = async (req, res) => {
       req.xhr || req.headers.accept.includes('application/json');
 
     let data = await adminProductService.getProduct({ id: productId });
-    let wishlistItems = await wishlistService.getAllWishlistItemsService({
-      userId,
-    });
+
+    if (user) {
+      let wishlistItems = await wishlistService.getAllWishlistItemsService({
+        userId,
+      });
+
+      let isFound = wishlistItems.find((item) =>
+        item.product.equals(product._id)
+      );
+
+      if (isFound) isWishlist = true;
+    }
 
     let product = data.product;
 
-    // console.log('wishlist items log: ', wishlistItems);
-    // console.log('Product details: ', product);
-    // console.log(user);
-
-    let isFound = wishlistItems.find((item) =>
-      item.product.equals(product._id)
-    );
-
-    if (isFound) isWishlist = true; // change wishlist status is item is in wishlist
+    // change wishlist status is item is in wishlist
 
     if (!product) {
       return res.status(404).send('Product not found');
@@ -144,7 +146,7 @@ const productDetails = async (req, res) => {
   } catch (err) {
     let error = err.message || 'Error fetching product details';
 
-    console.error('Error fetching product details:', error);
+    console.error('Error fetching product details: ', error);
     res.status(500).json({
       success: false,
       error,

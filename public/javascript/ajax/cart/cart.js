@@ -112,34 +112,57 @@ async function deleteItem(productId, event) {
   }
 }
 
-// post cart function
-async function postCartForm(e) {
-  e.preventDefault();
-  const cartItems = [];
-
-  document.querySelectorAll('input.cart-item.hidden').forEach((item, index) => {
-    cartItems[index] = {
-      productId: item.dataset.productId,
-      quantity: 0,
-    };
-  });
-
-  document
-    .querySelectorAll('.cart-item[data-quantity]')
-    .forEach((item, index) => {
-      cartItems[index].quantity = item.value;
-    });
-
-  // fetching user selected coupon
-  let couponDiscount =
-    document.querySelector('#couponDiscountValue')?.dataset.couponDiscount ||
-    '';
-
+// update cart
+async function updateCart() {
   try {
+    const cartItems = [];
+
+    document
+      .querySelectorAll('input.cart-item.hidden')
+      .forEach((item, index) => {
+        cartItems[index] = {
+          productId: item.dataset.productId,
+          quantity: 0,
+        };
+      });
+
+    document
+      .querySelectorAll('.cart-item[data-quantity]')
+      .forEach((item, index) => {
+        cartItems[index].quantity = parseInt(item.value, 10); // Ensure quantity is a number
+      });
+
+    const couponDiscount =
+      document.querySelector('#couponDiscountValue')?.dataset.couponDiscount ||
+      '';
+
     const response = await userCartApi.postCartApi({
       cartItems,
       couponDiscount,
     });
+
+    if (!response.success) {
+      throw new Error(response.message || 'Failed to update cart.');
+    }
+
+    return response;
+  } catch (error) {
+    console.error(error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: error.message || 'Something went wrong.',
+    });
+    throw error;
+  }
+}
+
+// post cart function
+async function postCartForm(e) {
+  e.preventDefault();
+
+  try {
+    const response = await updateCart();
 
     if (response.success) {
       window.location.href = '/checkout';
@@ -152,25 +175,8 @@ async function postCartForm(e) {
       text: `${error.message}` || 'Something went wrong.',
     });
   }
-
-  // try {
-  //   const response = await fetch('/cart', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({ cartItems, couponDiscount }),
-  //   });
-
-  //   let data = await response.json();
-  //   if (response.ok) {
-  //     window.location.href = '/checkout';
-  //   } else {
-  //     displayError(`${data.product} ${data.message} `);
-  //     console.error(data.message, 'error');
-  //   }
-  // } catch (error) {
-  //   console.log('error catch block', error);
-  // }
 }
 
 // bind into window object
 window.deleteItem = deleteItem;
+window.postCartForm = postCartForm;
