@@ -6,7 +6,6 @@ import redisClient from '../../config/redisConfig.js';
 
 // import services
 import { CartService } from '../../services/user/cartService.js';
-import productServices from '../../services/user/productService.js';
 import wishlistService from '../../services/user/wishlistService.js';
 
 const getEmptyCart = async (req, res) => {

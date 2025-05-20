@@ -6,6 +6,7 @@ import {
   getProductOfferByProductId,
   getCategoryOfferByCategoryId,
 } from '../../services/admin/offerService.js'; // Import the services to fetch offers
+import userProductServices from '../../services/user/userProductService.js';
 import wishlistService from '../../services/user/wishlistService.js';
 
 // get all products
@@ -87,7 +88,7 @@ const productDetails = async (req, res) => {
     const isFetchRequest =
       req.xhr || req.headers.accept.includes('application/json');
 
-    let data = await adminProductService.getProduct({ id: productId });
+    let product = await userProductServices.getProduct({ productId });
 
     if (user) {
       let wishlistItems = await wishlistService.getAllWishlistItemsService({
@@ -100,8 +101,6 @@ const productDetails = async (req, res) => {
 
       if (isFound) isWishlist = true;
     }
-
-    let product = data.product;
 
     // change wishlist status is item is in wishlist
 

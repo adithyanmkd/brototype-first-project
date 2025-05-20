@@ -3,11 +3,13 @@ import mongoose from 'mongoose';
 // import models
 import { Product } from '../../models/index.js';
 
-const productServices = {
+const userProductServices = {
   // get product details
   getProduct: async ({ productId }) => {
     try {
       let id = new mongoose.Types.ObjectId(`${productId}`);
+
+      // let product = await Product.findById(id);
 
       let product = await Product.aggregate([
         { $match: { _id: id } },
@@ -24,6 +26,10 @@ const productServices = {
         },
       ]);
 
+      console.log(id, 'id log');
+
+      console.log(product[0], 'user product log');
+
       return product[0];
     } catch (error) {
       console.error(error);
@@ -32,4 +38,4 @@ const productServices = {
   },
 };
 
-export default productServices;
+export default userProductServices;

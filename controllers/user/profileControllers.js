@@ -7,7 +7,6 @@ import { Address, Cart, Product, User, Wishlist } from '../../models/index.js';
 
 // import services
 import { walletService } from '../../services/user/walletService.js';
-import productServices from '../../services/user/productService.js';
 
 // import utils
 import getUserMenus from '../../utils/getSidebarMenus.js';

@@ -174,7 +174,7 @@ const adminProductService = {
         },
       ]);
 
-      // console.log(product, 'product log');
+      console.log(product, 'product log');
 
       return {
         success: true,
