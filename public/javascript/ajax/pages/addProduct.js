@@ -1,3 +1,6 @@
+// import utils
+import validations from '../../utils/validators/validations.js';
+
 // import handler
 import adminProductHandler from '../handlers/adminProductHandler.js';
 
@@ -158,6 +161,16 @@ cropConfirmBtn.addEventListener('click', () => {
   }
 });
 
+// sweat alert component for reusing
+const showAlert = (title, text, icon = 'warning') => {
+  Swal.fire({
+    title,
+    text,
+    icon,
+    confirmButtonText: 'OK',
+  });
+};
+
 submitBtn.addEventListener('click', async (e) => {
   e.preventDefault();
 
@@ -168,38 +181,58 @@ submitBtn.addEventListener('click', async (e) => {
   let category = document.querySelector("[name='category']").value;
   let quantity = document.querySelector("[name='quantity']").value.trim();
 
-  // Input validations
+  // converting string into number
+  sellingPrice = Number(sellingPrice);
+  originalPrice = Number(originalPrice);
+
+  if (!validations.isValidName({ name: productName })) return; // product name validation
+
+  if (!validations.isValidDescription({ description })) return; // description validation
+
+  if (!validations.isValidPrice({ price: sellingPrice, priceType: 'selling' }))
+    return; // selling price validation
+
   if (
-    !productName ||
-    !description ||
-    !sellingPrice ||
-    !originalPrice ||
-    !quantity ||
-    !category
-  ) {
-    alert('Please fill out all the fields.');
-    return;
+    !validations.isValidPrice({ price: originalPrice, priceType: 'original' })
+  )
+    return; // original price validation
+
+  if (sellingPrice > originalPrice) {
+    return showAlert(
+      'Price Error',
+      'Selling price cannot be greater than the original price.',
+      'error'
+    );
   }
 
-  if (isNaN(sellingPrice) || isNaN(originalPrice)) {
-    alert('Prices must be valid numbers.');
-    return;
+  if (!validations.isValidQuantity({ quantity })) return; // quantity validation
+
+  // category validation
+  if (!category)
+    return showAlert('Missing Field', 'Please select category.', 'error');
+
+  // image validation
+  if (croppedImages.length === 0)
+    return showAlert('Missing Image', 'Please upload images.', 'error');
+
+  if (croppedImages.length < 3) {
+    return showAlert(
+      'Missing Image',
+      'Please upload at least 3 product image.',
+      'error'
+    );
   }
 
-  if (parseFloat(originalPrice) < parseFloat(sellingPrice)) {
-    alert('Original price must not be less than the selling price.');
-    return;
+  if (croppedImages.length > 6) {
+    return showAlert(
+      'Too Many Images',
+      'You can upload a maximum of 6 product images.',
+      'error'
+    );
   }
 
-  if (croppedImages.length === 0) {
-    alert('Please upload at least one product image.');
-    return;
-  }
-
-  if (croppedCardImage.length === 0) {
-    alert('Please upload a card image.');
-    return;
-  }
+  if (croppedCardImage.length === 0)
+    return showAlert('Missing Image', 'Please upload a card image.', 'error');
 
   let formData = new FormData();
 

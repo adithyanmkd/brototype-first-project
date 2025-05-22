@@ -1,3 +1,5 @@
+import validator from 'validator';
+
 // import models
 import Category from '../../models/categoryModel.js';
 import Product from '../../models/productModel.js';
@@ -61,10 +63,9 @@ const postProduct = async (req, res) => {
   }
 };
 
-// list all products
+// get all products
 const allProduct = async (req, res) => {
   let searchValue = req.query.search || ''; // accessing search value from url
-
   const page = parseInt(req.query.page) || 1;
   const limit = 5; // Number of users per page
   const skip = (page - 1) * limit;
@@ -77,26 +78,28 @@ const allProduct = async (req, res) => {
     };
   }
 
-  // Count total matching users
-  const totalProducts = await Product.countDocuments();
+  // Count total matching products (filtered)
+  const totalProducts = await Product.countDocuments(filter); // Apply filter here
   const totalPages = Math.ceil(totalProducts / limit);
 
-  // Fetch filtered and paginated product
+  // Fetch filtered and paginated products
   const products = await Product.find({ ...filter })
+    .sort({ createdAt: -1 })
     .populate('category', 'name')
     .skip(skip)
     .limit(limit);
 
-  console.log('products log: ', products);
+  console.log('products log: ', products.length);
   if (req.xhr || req.headers.accept.indexOf('application/json') > -1) {
     // If the request is AJAX or accepts JSON (like axios)
-    res.status(200).json({ success: true, products });
+    res.status(200).json({ success: true, products, totalProducts, page });
   } else {
     // Normal page render
     res.render('admin/pages/products/listProducts.ejs', {
       products,
       page,
       totalPages,
+      searchValue, // Pass searchValue to the template
       layout: 'layouts/admin-layout',
     });
   }

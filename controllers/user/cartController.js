@@ -132,10 +132,10 @@ const addToCart = async (req, res) => {
 
     // if product already exist increase qty
     if (itemIndex !== -1) {
-      console.log(itemIndex, 'item index');
+      // console.log(itemIndex, 'item index');
       let itemQty = Number(cart.items[itemIndex].quantity);
-      console.log(typeof itemQty, 'item qty');
-      console.log(typeof quantity, 'qty');
+      // console.log(typeof itemQty, 'item qty');
+      // console.log(typeof quantity, 'qty');
 
       if (itemQty >= 3) {
         return res.status(500).json({
@@ -146,7 +146,7 @@ const addToCart = async (req, res) => {
 
       if (quantity + itemQty > 3) {
         let message = `you are only able to add ${3 - itemQty}`;
-        console.log(quantity + itemQty, 'log');
+        // console.log(quantity + itemQty, 'log');
 
         return res.status(500).json({
           success: false,

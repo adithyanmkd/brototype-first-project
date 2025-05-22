@@ -17,13 +17,14 @@ const getOrders = async (req, res) => {
   let category = req.query.category || '';
 
   const page = parseInt(req.query.page) || 1;
-  const limit = 10; // Number of users per page
+  const limit = 10; // Number of items per page
   const skip = (page - 1) * limit;
 
   // Count total matching users
   const totalProducts = await Order.countDocuments();
-  const totalPages = Math.ceil(totalProducts / limit);
+  const totalPages = Math.floor(totalProducts / limit);
 
+  // search query
   let matchQuery = {
     $or: [
       { orderId: { $regex: search, $options: 'i' } },
@@ -43,6 +44,9 @@ const getOrders = async (req, res) => {
   try {
     let orders = await Order.aggregate([
       {
+        $match: matchQuery,
+      },
+      {
         $lookup: {
           from: 'users',
           localField: 'userId',
@@ -51,9 +55,6 @@ const getOrders = async (req, res) => {
         },
       },
       { $unwind: '$user' },
-      {
-        $match: matchQuery,
-      },
       {
         $sort: { orderDate: -1 },
       },

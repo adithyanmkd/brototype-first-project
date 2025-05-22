@@ -59,7 +59,7 @@ let postCheckout = async (req, res) => {
   try {
     await redisClient.set(`address:${user._id}`, req.body.addressId);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'successfully added address into redisClient',
     });

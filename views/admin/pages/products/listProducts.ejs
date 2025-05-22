@@ -2,32 +2,50 @@
   x-data="{
     products: <%= JSON.stringify(products) %>,
     perPage: 5,
-    page: 1,
-    get totalPages() {
-      return Math.ceil(this.products.length / this.perPage);
-    },
-    get paginatedProducts() {
-      const start = (this.page - 1) * this.perPage;
-      return this.products.slice(start, start + this.perPage);
+    page: <%= page %>,
+    totalPages: <%= totalPages %>,
+    search: '<%= searchValue || '' %>',
+    async fetchProducts(page, search = '') {
+      try {
+        const response = await fetch(`/admin/products?page=${page}&search=${encodeURIComponent(search)}`, {
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await response.json();
+        if (data.success) {
+          this.products = data.products;
+          this.page = page;
+          this.totalPages = Math.ceil(data.totalProducts / this.perPage);
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
     },
     goToPage(p) {
-      if (p >= 1 && p <= this.totalPages) this.page = p;
+      if (p >= 1 && p <= this.totalPages) {
+        this.fetchProducts(p, this.search);
+      }
+    },
+    searchProducts() {
+      this.page = 1; // Reset to first page on new search
+      this.fetchProducts(this.page, this.search);
+    },
+    clearSearch() {
+      this.search = '';
+      this.page = 1;
+      this.fetchProducts(this.page, '');
     }
   }"
+  x-init="fetchProducts(page, search)"
   class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-lg"
 >
   <!-- Search Bar & Add Product Button -->
   <div class="flex justify-between items-center py-6">
-    <!-- Search Bar -->
-    <form
-      action="/admin/products"
-      method="GET"
-      class="flex items-center space-x-2"
-    >
+    <form @submit.prevent="searchProducts" class="flex items-center space-x-2">
       <input
         type="text"
         name="search"
         id="search"
+        x-model="search"
         class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
         placeholder="Search..."
       />
@@ -39,14 +57,12 @@
       </button>
       <button
         type="button"
-        id="clearSearch"
+        @click="clearSearch"
         class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
       >
         Clear
       </button>
     </form>
-
-    <!-- Add Product Button -->
     <a
       href="/admin/products/add"
       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md"
@@ -67,7 +83,7 @@
       </tr>
     </thead>
     <tbody id="productTable">
-      <template x-for="product in paginatedProducts" :key="product._id">
+      <template x-for="product in products" :key="product._id">
         <tr class="border-b hover:bg-gray-50">
           <td class="p-4 flex items-center">
             <img

@@ -11,13 +11,23 @@ const adminProductHandler = {
 
       if (!data.success) {
         console.error(data);
-        alert(data.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed!!',
+          text: 'Product adding failed',
+        });
         return;
       }
 
-      console.log(data.message);
-      alert(data.message);
-      window.location.href = data.redirect;
+      Swal.fire({
+        icon: 'success',
+        title: 'Product Added!',
+        text: 'Your new product is now listed.',
+        timer: 2000,
+        showConfirmButton: false,
+      }).then(() => {
+        window.location.href = data.redirect;
+      });
     } catch (error) {
       console.error(error);
     }

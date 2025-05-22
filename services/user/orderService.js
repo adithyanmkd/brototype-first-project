@@ -102,7 +102,7 @@ let orderService = {
         orderThumbnail: cardImagePaths[0], // now displaying 1st card image thumnail or oder list page
         productName: orderedItems[0].productName,
         discountAmount: discount,
-        totalAmount: totalAmount - discount,
+        totalAmount: totalAmount,
         paymentMethod,
         deliveryAddress,
       });

@@ -124,6 +124,8 @@ const getOrder = async (req, res) => {
 
     const error = req.query.error || undefined; // Pass error query parameter for retry failures
 
+    console.log(order, 'order');
+
     res.render('user/pages/order/orderDetails.ejs', {
       layout: 'layouts/user-layout.ejs',
       order,

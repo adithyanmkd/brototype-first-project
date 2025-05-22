@@ -78,11 +78,12 @@
                         <div class="flex items-center space-x-2">
                             <button 
                                 onclick="updateQuantity(-1, event)" 
-                                class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                                class="px-3 py-2 bg-gray-300 cursor-pointer text-gray-800 rounded-lg hover:bg-gray-400"
                             >
                                 -
                             </button>
                             <input 
+                                disabled
                                 name="quantity" 
                                 type="text" 
                                 id="quantity" 
@@ -91,7 +92,7 @@
                             >
                             <button 
                                 onclick="updateQuantity(1, event)" 
-                                class="px-3 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                                class="px-3 py-2 bg-gray-300 cursor-pointer text-gray-800 rounded-lg hover:bg-gray-400"
                             >
                                 +
                             </button>
