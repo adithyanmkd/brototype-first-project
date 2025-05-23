@@ -1,14 +1,19 @@
 import authData from '../../datasets/authData.js';
 
-import jwt from 'jsonwebtoken';
+// import utils
+import { HTTP_STATUS } from '../../utils/constants.js';
 
 //get login
 const getLogin = (req, res) => {
-  res.render('admin/pages/auth/login', {
-    layout: 'layouts/auth-layout',
-    title: 'admin login',
-    authData,
-  });
+  try {
+    res.render('admin/pages/auth/login', {
+      layout: 'layouts/auth-layout',
+      title: 'admin login',
+      authData,
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 //post admin login
@@ -22,19 +27,19 @@ const authenticateAdmin = (req, res) => {
       // Set admin session
       req.session.isAdmin = true;
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Admin login successful',
         redirect: '/admin/dashboard', // Redirect to admin dashboard
       });
     } else {
-      res.status(401).json({
+      res.status(HTTP_STATUS.UNAUTHORIZED).json({
         success: false,
         message: 'Invalid credentials',
       });
     }
   } catch (error) {
-    res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Server error during authentication',
       error,
@@ -44,20 +49,24 @@ const authenticateAdmin = (req, res) => {
 
 //admin logout
 const adminLogout = (req, res) => {
-  // Destroy the session
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        message: 'Error logging out',
-        error: err,
+  try {
+    // Destroy the session
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          message: 'Error logging out',
+          error: err,
+        });
+      }
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Admin logged out successfully',
       });
-    }
-    res.status(200).json({
-      success: true,
-      message: 'Admin logged out successfully',
     });
-  });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export default {
