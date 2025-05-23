@@ -1,36 +1,31 @@
-// import APIs
 import userProductApi from '../api/userProductApi.js';
 
-// accessing url
-let pathname = window.location.pathname;
-
-// add to wishlist item function
 async function handleAddToWishlist(e) {
   e.preventDefault();
-
-  // product details page wishlist btn
-  let productId = e.target.dataset.productId;
-
-  // console.log('product ID: ', productId);
-
+  const productId = e.target.dataset.productId;
   if (!productId) return false;
 
-  let response = await userProductApi.addToWishlistApi(productId);
-
+  const response = await userProductApi.addToWishlistApi(productId);
   if (response.success) {
     window.location.reload();
     showToast('toast-success', response.message);
   } else {
     if (!productId) return false;
-
     await fetch(`/account/wishlist/delete/${productId}`, {
       method: 'DELETE',
     });
-
     window.location.reload();
-
     showToast('toast-danger', response.message || 'You are not logged');
   }
 }
 
-export { handleAddToWishlist };
+function handleSearch(input) {
+  return async (e) => {
+    e.preventDefault();
+    const searchValue = input.value.trim();
+    console.log('Search value:', searchValue);
+    // The actual search logic is in userProduct.js to update the UI
+  };
+}
+
+export { handleAddToWishlist, handleSearch };

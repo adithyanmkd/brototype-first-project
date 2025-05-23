@@ -9,14 +9,14 @@ import {
 import userProductServices from '../../services/user/userProductService.js';
 import wishlistService from '../../services/user/wishlistService.js';
 
-// get all products
+// display all product
 const products = async (req, res) => {
   let user = req.session.user;
 
   try {
     let wishlistIds = [];
 
-    let { category, sort, page } = req.query;
+    let { category, sort, page, search } = req.query;
     let limit = 6; // Number of products per page
     let currentPage = parseInt(page) || 1;
     let skip = (currentPage - 1) * limit;
@@ -25,6 +25,9 @@ const products = async (req, res) => {
     let query = {};
     if (category && category !== 'all') {
       query.category = category; // Apply category filter
+    }
+    if (search) {
+      query.productName = { $regex: search, $options: 'i' }; // Case-insensitive search
     }
 
     // Sorting Logic
@@ -54,20 +57,31 @@ const products = async (req, res) => {
 
     if (user) {
       const wishlist = await Wishlist.findOne({ userId: user._id }).lean();
-
       wishlistIds = wishlist ? wishlist.items.map((item) => item.product) : [];
     }
 
-    // console.log('Categories log: ', categories);
+    // Handle AJAX requests
+    if (req.xhr || req.headers.accept.indexOf('application/json') > -1) {
+      return res.status(200).json({
+        success: true,
+        products,
+        totalProducts,
+        currentPage,
+        totalPages,
+        categories,
+        wishlistIds,
+      });
+    }
 
     res.render('user/pages/products/products', {
       products,
-      category,
+      category: category || 'all',
       categories,
       sort,
       currentPage,
       totalPages,
       wishlistIds,
+      search: search || '',
     });
   } catch (error) {
     console.error('Error fetching products:', error);
