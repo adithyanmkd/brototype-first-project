@@ -4,7 +4,10 @@ const userProductApi = {
     try {
       let res = await fetch('/account/wishlist', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
         body: JSON.stringify({ productId }),
       });
 
@@ -16,7 +19,8 @@ const userProductApi = {
       return data;
     } catch (error) {
       console.error('Status update error', error);
-      return { success: false };
+      // return { success: false };
+      throw error;
     }
   },
 
@@ -43,6 +47,7 @@ const userProductApi = {
       return data;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   },
 };

@@ -1,15 +1,16 @@
 const auth = (req, res, next) => {
-  console.log(req.headers.accept?.includes('application/json'));
+  console.log(
+    req.headers.accept?.includes('application/json'),
+    'is fetch request'
+  );
   if (
     (req.xhr || req.headers.accept?.includes('application/json')) &&
     !req.session.user
   ) {
-    console.log('printing here');
     return res.json({ success: false, message: 'Please login' });
   }
 
   if (!req.session.user) {
-    console.log('printing here');
     return res.redirect('/auth/login');
   }
 

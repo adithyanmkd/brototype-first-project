@@ -48,7 +48,7 @@ const postEditProfile = async (req, res) => {
     const { id } = req.params;
     const { name, email, number, gender } = req.body;
 
-    console.log('Body log', req.body);
+    // console.log('Body log', req.body);
 
     const user = await User.find({ email });
 
@@ -175,6 +175,7 @@ const getWishlist = async (req, res) => {
 // add wishlist
 const postWishlist = async (req, res) => {
   const user = req.session.user;
+  console.log(user, 'user log');
   const { productId } = req.body;
 
   try {

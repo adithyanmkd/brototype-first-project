@@ -143,6 +143,12 @@ addToCartForm.addEventListener('submit', async (e) => {
         icon: 'error',
         title: 'Oops...',
         text: `${data.message}`,
+        confirmButtonText: 'Go to Login',
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/auth/login';
+        }
       });
       return;
     }

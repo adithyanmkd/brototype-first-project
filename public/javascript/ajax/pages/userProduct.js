@@ -184,11 +184,13 @@ wishlistBtns.forEach((btn) => {
   btn.addEventListener('click', handleAddToWishlist);
 });
 
-searchForm.addEventListener('submit', handleSearch);
-clearSearchBtn.addEventListener('click', clearSearch);
+if (searchForm) {
+  searchForm.addEventListener('submit', handleSearch);
+  clearSearchBtn.addEventListener('click', clearSearch);
 
-// Show clear button if search input has value
-searchInput.addEventListener('input', () => {
+  // Show clear button if search input has value
+  searchInput.addEventListener('input', () => {
+    setDisplay(clearSearchBtn, !!searchInput.value.trim());
+  });
   setDisplay(clearSearchBtn, !!searchInput.value.trim());
-});
-setDisplay(clearSearchBtn, !!searchInput.value.trim());
+}

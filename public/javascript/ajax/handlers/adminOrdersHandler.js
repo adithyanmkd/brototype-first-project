@@ -10,14 +10,30 @@ async function changeOrderStatus(e) {
   let btnName = e.target.value;
   let orderId = e.target.dataset.orderId;
 
-  let response = await updateStatus(btnName, orderId);
-
-  if (response.success) {
-    window.location.reload();
-  } else {
-    console.error('update error', response.message);
-    alert(`update error ${response.message || ''}`);
-  }
+  Swal.fire({
+    icon: 'warning',
+    title: 'Change status',
+    text: 'Are you sure? This action cannot be reverted.',
+    confirmButtonText: 'Proceed',
+    confirmButtonColor: '#3085d6',
+    showCancelButton: true,
+    cancelButtonColor: '#d33',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      let response = await updateStatus(btnName, orderId);
+      if (response.success) {
+        window.location.reload();
+      } else {
+        console.error('update error', response.message);
+        // alert(`update error ${response.message || ''}`);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: `${response.message}`,
+        });
+      }
+    }
+  });
 }
 
 // filter changing handler

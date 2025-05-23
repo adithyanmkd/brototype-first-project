@@ -5,9 +5,6 @@ const router = express.Router();
 // import controllers
 import profileController from '../../controllers/user/profileControllers.js';
 
-// import middlewares
-import { auth } from '../../middlewares/user/auth.js';
-
 // import routes
 import orderRoutes from './orderRoutes.js';
 import walletRoutes from './walletRoutes.js';

@@ -12,6 +12,7 @@ let changeFilterBtn = document.querySelectorAll('.status-item');
 let actionBtns = document.querySelectorAll('.action-btn');
 
 changeBtn.forEach((btn) => {
+  console.log(btn.value);
   btn.addEventListener('click', changeOrderStatus);
 });
 
