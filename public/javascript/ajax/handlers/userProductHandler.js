@@ -2,9 +2,9 @@ import userProductApi from '../api/userProductApi.js';
 
 async function handleAddToWishlist(e) {
   e.preventDefault();
+  const productId = e.target.dataset.productId;
 
   try {
-    const productId = e.target.dataset.productId;
     if (!productId) return false;
 
     const response = await userProductApi.addToWishlistApi(productId);
@@ -22,6 +22,7 @@ async function handleAddToWishlist(e) {
       window.location.reload();
     } else {
       if (!productId) return false;
+      console.log('log here');
 
       await fetch(`/account/wishlist/delete/${productId}`, {
         method: 'DELETE',
@@ -30,7 +31,18 @@ async function handleAddToWishlist(e) {
       window.location.reload();
     }
   } catch (error) {
-    console.error(error, 'from here');
+    console.error(error);
+    console.log(error.message);
+
+    if (error.message == 'product already added in wishlist') {
+      if (!productId) return false;
+      await fetch(`/account/wishlist/delete/${productId}`, {
+        method: 'DELETE',
+      });
+      window.location.reload();
+      return;
+    }
+
     Swal.fire({
       icon: 'error',
       title: 'Error',
